@@ -1,0 +1,23 @@
+{
+    "Accra": {
+        "Kumasi": 250,
+        "Cape Coast": 150,
+        "Takoradi": 230,
+        "Ho": 160,
+        "Tamale": 620,
+        "Sunyani": 400
+    },
+    "Kumasi": {
+        "Accra": 250,
+        "Cape Coast": 200,
+        "Takoradi": 280,
+        "Ho": 350,
+        "Tamale": 380,
+        "Sunyani": 130
+    },
+    "Takoradi": {
+        "Accra": 230,
+        "Kumasi": 280,
+        "Cape Coast": 80
+    }
+}

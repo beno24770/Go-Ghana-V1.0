@@ -1,0 +1,86 @@
+{
+    "fuelPricePerLitre": 14.50,
+    "avgFuelConsumption": 0.12,
+    "trotroFares": [
+        {
+            "from": "Accra",
+            "to": "Kumasi",
+            "price": 80
+        },
+        {
+            "from": "Accra",
+            "to": "Cape Coast",
+            "price": 45
+        },
+        {
+            "from": "Accra",
+            "to": "Takoradi",
+            "price": 65
+        },
+        {
+            "from": "Accra",
+            "to": "Ho",
+            "price": 50
+        },
+        {
+            "from": "Accra",
+            "to": "Tamale",
+            "price": 180
+        },
+        {
+            "from": "Kumasi",
+            "to": "Tamale",
+            "price": 100
+        }
+    ],
+    "vipBusFares": [
+        {
+            "from": "Accra",
+            "to": "Kumasi",
+            "price": 120
+        },
+        {
+            "from": "Accra",
+            "to": "Cape Coast",
+            "price": 70
+        },
+        {
+            "from": "Accra",
+            "to": "Takoradi",
+            "price": 90
+        },
+        {
+            "from": "Accra",
+            "to": "Ho",
+            "price": 80
+        },
+        {
+            "from": "Accra",
+            "to": "Tamale",
+            "price": 250
+        },
+        {
+            "from": "Kumasi",
+            "to": "Tamale",
+            "price": 150
+        }
+    ],
+    "boltRates": {
+        "Accra": {
+            "base": 15,
+            "perKm": 7,
+            "min": 25
+        },
+        "Kumasi": {
+            "base": 12,
+            "perKm": 6,
+            "min": 20
+        },
+        "Takoradi": {
+            "base": 10,
+            "perKm": 5,
+            "min": 15
+        }
+    },
+    "vanRentalPerDay": 1500
+}

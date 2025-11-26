@@ -1,0 +1,41 @@
+[
+    {
+        "id": "deal-001",
+        "title": "Weekend at Aqua Safari",
+        "description": "2 nights stay with breakfast and boat ride",
+        "region": "Greater Accra",
+        "price": 2500,
+        "originalPrice": 3200,
+        "validUntil": "2025-12-31",
+        "tags": [
+            "Weekend Getaway",
+            "Luxury"
+        ]
+    },
+    {
+        "id": "deal-002",
+        "title": "Cape Coast Group Trip",
+        "description": "Day trip for groups of 5+ including transport and castle entry",
+        "region": "Central",
+        "price": 450,
+        "originalPrice": 600,
+        "validUntil": "2025-12-31",
+        "tags": [
+            "Group Excursion",
+            "Culture"
+        ]
+    },
+    {
+        "id": "deal-003",
+        "title": "Volta Adventure Package",
+        "description": "Hiking Wli Falls and Tafi Atome Monkey Sanctuary",
+        "region": "Volta",
+        "price": 800,
+        "originalPrice": 1000,
+        "validUntil": "2025-12-31",
+        "tags": [
+            "Adventure Trip",
+            "Nature"
+        ]
+    }
+]

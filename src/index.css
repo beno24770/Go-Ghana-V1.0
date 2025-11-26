@@ -1,0 +1,246 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Ghana Color Palette */
+  --color-ghana-red: #CE1126;
+  --color-ghana-yellow: #FCD116;
+  --color-ghana-green: #006B3F;
+  --color-ghana-black: #000000;
+  --color-soft-ivory: #FFF8E6;
+
+  /* Theme Colors mapped to Ghana palette */
+  --color-primary: #CE1126;
+  --color-primary-foreground: #ffffff;
+
+  --color-secondary: #f8f8f8;
+  --color-secondary-foreground: #000000;
+
+  --color-accent: #FCD116;
+  --color-accent-foreground: #000000;
+
+  --color-muted: #f8f8f8;
+  --color-muted-foreground: #6b7280;
+
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
+
+  --color-border: #e5e7eb;
+  --color-input: #e5e7eb;
+  --color-ring: #CE1126;
+
+  --color-background: #ffffff;
+  --color-foreground: #000000;
+
+  --color-card: #ffffff;
+  --color-card-foreground: #000000;
+
+  --color-popover: #ffffff;
+  --color-popover-foreground: #000000;
+
+  --radius: 0.5rem;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-feature-settings: "rlig" 1, "calt" 1;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Ghana Star Watermark Background */
+body::before {
+  content: '';
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 800px;
+  height: 800px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,15 61,40 88,40 67,57 75,82 50,65 25,82 33,57 12,40 39,40' fill='%23000000' opacity='0.03'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Smooth Animations */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 5px rgba(252, 209, 22, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 20px rgba(252, 209, 22, 0.6);
+  }
+}
+
+/* Apply animations to main content */
+main>div {
+  animation: fadeSlideUp 0.6s ease-out;
+}
+
+/* Card animations */
+[class*="Card"] {
+  animation: scaleIn 0.4s ease-out;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+[class*="Card"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Button hover effects */
+button {
+  transition: all 0.2s ease;
+}
+
+button:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(206, 17, 38, 0.2);
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* Input focus effects */
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #CE1126;
+  box-shadow: 0 0 0 2px rgba(206, 17, 38, 0.1);
+  transition: all 0.2s ease;
+}
+
+/* Range slider animations */
+input[type="range"]::-webkit-slider-thumb {
+  transition: transform 0.2s ease;
+  background-color: #CE1126;
+}
+
+input[type="range"]:active::-webkit-slider-thumb {
+  transform: scale(1.2);
+  animation: pulse 0.3s ease;
+}
+
+input[type="range"]::-moz-range-thumb {
+  transition: transform 0.2s ease;
+  background-color: #CE1126;
+}
+
+input[type="range"]:active::-moz-range-thumb {
+  transform: scale(1.2);
+}
+
+/* Checkbox/Radio hover effects */
+label:has(input[type="checkbox"]),
+label:has(input[type="radio"]) {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+label:has(input[type="checkbox"]):hover,
+label:has(input[type="radio"]):hover {
+  border-color: #FCD116;
+  box-shadow: 0 0 0 2px rgba(252, 209, 22, 0.2);
+}
+
+label:has(input[type="checkbox"]:checked),
+label:has(input[type="radio"]:checked) {
+  border-color: #CE1126;
+  background-color: rgba(252, 209, 22, 0.05);
+}
+
+/* Region checkbox tap effect */
+label:has(input[type="checkbox"]):active {
+  transform: scale(0.95);
+  transition: transform 0.1s ease;
+}
+
+/* Tour card hover effects */
+[class*="Card"]:has(img) {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[class*="Card"]:has(img):hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(206, 17, 38, 0.15);
+}
+
+/* Badge animations */
+[class*="badge"],
+[class*="Badge"] {
+  animation: scaleIn 0.3s ease-out;
+}
+
+/* Loading state */
+.animate-pulse {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}

@@ -1,0 +1,45 @@
+{
+    "Weekend Getaway": [
+        "Ada",
+        "Aburi",
+        "Akosombo",
+        "Elmina"
+    ],
+    "Holiday Getaway": [
+        "Cape Coast",
+        "Kumasi",
+        "Volta",
+        "Akwapim"
+    ],
+    "Festive Event": [
+        "Volta",
+        "Accra",
+        "Central"
+    ],
+    "Adventure Trip": [
+        "Volta",
+        "Eastern",
+        "Bono",
+        "Oti"
+    ],
+    "Romantic Trip": [
+        "Akosombo",
+        "Aburi",
+        "Akwapim Ridge"
+    ],
+    "Group Excursion": [
+        "Cape Coast",
+        "Ada",
+        "Shai Hills"
+    ],
+    "City Break": [
+        "Accra",
+        "Kumasi",
+        "Takoradi"
+    ],
+    "Food & Culture": [
+        "Accra",
+        "Kumasi",
+        "Cape Coast"
+    ]
+}

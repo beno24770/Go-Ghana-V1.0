@@ -1,0 +1,44 @@
+[
+    {
+        "id": "kakum-canopy",
+        "name": "Kakum Canopy Walk",
+        "region": "Central",
+        "price": 40,
+        "category": "Adventure"
+    },
+    {
+        "id": "elmina-castle",
+        "name": "Elmina Castle",
+        "region": "Central",
+        "price": 20,
+        "category": "Culture"
+    },
+    {
+        "id": "wli-falls",
+        "name": "Wli Waterfalls",
+        "region": "Volta",
+        "price": 30,
+        "category": "Nature"
+    },
+    {
+        "id": "aburi-gardens",
+        "name": "Aburi Botanical Gardens",
+        "region": "Eastern",
+        "price": 25,
+        "category": "Nature"
+    },
+    {
+        "id": "mole-safari",
+        "name": "Mole National Park Safari",
+        "region": "Northern",
+        "price": 100,
+        "category": "Adventure"
+    },
+    {
+        "id": "kintampo-falls",
+        "name": "Kintampo Waterfalls",
+        "region": "Bono East",
+        "price": 30,
+        "category": "Nature"
+    }
+]

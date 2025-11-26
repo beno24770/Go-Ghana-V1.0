@@ -1,0 +1,58 @@
+[
+    {
+        "region": "Greater Accra",
+        "bands": {
+            "budget": 150,
+            "mid": 450,
+            "premium": 1200
+        }
+    },
+    {
+        "region": "Ashanti",
+        "bands": {
+            "budget": 100,
+            "mid": 350,
+            "premium": 900
+        }
+    },
+    {
+        "region": "Central",
+        "bands": {
+            "budget": 120,
+            "mid": 400,
+            "premium": 1000
+        }
+    },
+    {
+        "region": "Western",
+        "bands": {
+            "budget": 130,
+            "mid": 420,
+            "premium": 1100
+        }
+    },
+    {
+        "region": "Eastern",
+        "bands": {
+            "budget": 100,
+            "mid": 300,
+            "premium": 800
+        }
+    },
+    {
+        "region": "Volta",
+        "bands": {
+            "budget": 90,
+            "mid": 280,
+            "premium": 750
+        }
+    },
+    {
+        "region": "Northern",
+        "bands": {
+            "budget": 80,
+            "mid": 250,
+            "premium": 600
+        }
+    }
+]
