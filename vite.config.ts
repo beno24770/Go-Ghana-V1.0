@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'adepa-avatar.jpg', 'goghana-logo.jpg', 'robots.txt'],
+      includeAssets: ['favicon.ico', 'adepa-avatar.jpg', 'goghana-logo.jpg', 'pwa-icon.jpg', 'robots.txt'],
       manifest: {
         name: 'GoGhana Budget Estimator',
         short_name: 'GoGhana',
@@ -22,21 +22,21 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
-            src: '/pwa-192x192.png',
+            src: '/pwa-icon.jpg',
             sizes: '192x192',
-            type: 'image/png',
+            type: 'image/jpeg',
             purpose: 'any'
           },
           {
-            src: '/pwa-512x512.png',
+            src: '/pwa-icon.jpg',
             sizes: '512x512',
-            type: 'image/png',
+            type: 'image/jpeg',
             purpose: 'any'
           },
           {
-            src: '/pwa-512x512.png',
+            src: '/pwa-icon.jpg',
             sizes: '512x512',
-            type: 'image/png',
+            type: 'image/jpeg',
             purpose: 'maskable'
           }
         ],
