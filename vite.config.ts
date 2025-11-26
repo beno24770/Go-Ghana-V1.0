@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'adepa-avatar.jpg', 'robots.txt'],
+      includeAssets: ['favicon.ico', 'adepa-avatar.jpg', 'goghana-logo.jpg', 'robots.txt'],
       manifest: {
         name: 'GoGhana Budget Estimator',
         short_name: 'GoGhana',
