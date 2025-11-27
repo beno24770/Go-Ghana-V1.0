@@ -1,11 +1,13 @@
 // Accommodation Dataset for GoGhana Budget Estimator
 // This data enables specific hotel recommendations and validates budget estimates
 
+import { ACCRA_ACCOMMODATIONS } from './accraAccommodations';
+
 export interface Accommodation {
     // Basic Info
     id: string;
     name: string;
-    type: 'hotel' | 'guesthouse' | 'hostel' | 'resort' | 'apartment' | 'boutique';
+    type: 'hotel' | 'guesthouse' | 'hostel' | 'resort' | 'apartment' | 'boutique' | 'homestay';
 
     // Location
     region: string;
@@ -20,6 +22,7 @@ export interface Accommodation {
         max: number;
         average: number;
     };
+    currency?: 'GHS' | 'USD'; // Defaults to GHS if not specified
 
     // Amenities
     amenities: string[];
@@ -384,6 +387,9 @@ export const ACCOMMODATIONS: Accommodation[] = [
     }
 ];
 
+// Merge new Accra data
+ACCOMMODATIONS.push(...ACCRA_ACCOMMODATIONS);
+
 // ============================================
 // HELPER FUNCTIONS
 // ============================================
@@ -406,7 +412,10 @@ export function getAccommodationsByTier(tier: string): Accommodation[] {
  * Get accommodations within budget
  */
 export function getAccommodationsByBudget(maxBudget: number): Accommodation[] {
-    return ACCOMMODATIONS.filter(acc => acc.pricePerNight.average <= maxBudget);
+    return ACCOMMODATIONS.filter(acc => {
+        const price = acc.currency === 'USD' ? acc.pricePerNight.average * 15.5 : acc.pricePerNight.average;
+        return price <= maxBudget;
+    });
 }
 
 /**
@@ -420,11 +429,12 @@ export function getRecommendations(
     limit: number = 3
 ): Accommodation[] {
     return ACCOMMODATIONS
-        .filter(acc =>
-            acc.region === region &&
-            acc.tier === tier &&
-            acc.pricePerNight.average <= maxBudget
-        )
+        .filter(acc => {
+            const price = acc.currency === 'USD' ? acc.pricePerNight.average * 15.5 : acc.pricePerNight.average;
+            return acc.region === region &&
+                acc.tier === tier &&
+                price <= maxBudget;
+        })
         .sort((a, b) => b.rating.overall - a.rating.overall)
         .slice(0, limit);
 }
@@ -457,7 +467,10 @@ export function validateBudgetEstimate(
     }
 
     const averageActualPrice = accommodations.reduce(
-        (sum, acc) => sum + acc.pricePerNight.average, 0
+        (sum, acc) => {
+            const price = acc.currency === 'USD' ? acc.pricePerNight.average * 15.5 : acc.pricePerNight.average;
+            return sum + price;
+        }, 0
     ) / accommodations.length;
 
     const difference = estimatedDailyBudget - averageActualPrice;
@@ -486,7 +499,9 @@ export function getAccommodationStats(region: string, tier: string) {
         return null;
     }
 
-    const prices = accommodations.map(acc => acc.pricePerNight.average);
+    const prices = accommodations.map(acc =>
+        acc.currency === 'USD' ? acc.pricePerNight.average * 15.5 : acc.pricePerNight.average
+    );
     const ratings = accommodations.map(acc => acc.rating.overall);
 
     return {
