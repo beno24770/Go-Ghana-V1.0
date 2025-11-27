@@ -123,6 +123,18 @@ export function LoginForm({ onSuccess, onSwitchToSignup, onForgotPassword }: Log
                 </Button>
             </form>
 
+            {onForgotPassword && (
+                <div className="text-center mt-4">
+                    <button
+                        type="button"
+                        onClick={onForgotPassword}
+                        className="text-sm text-[#CE1126] hover:underline font-medium"
+                    >
+                        Forgot your password?
+                    </button>
+                </div>
+            )}
+
             <div className="relative my-6">
                 <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-border"></div>
