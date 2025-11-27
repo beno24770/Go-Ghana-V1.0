@@ -1,6 +1,8 @@
 export type TravelerType = 'solo' | 'couple' | 'family' | 'group';
 export type AccommodationLevel = 'backpacker' | 'budget' | 'mid' | 'comfort' | 'luxury';
 export type ActivityInterest = 'nature' | 'culture' | 'adventure' | 'relaxation';
+export type Region = 'Greater Accra' | 'Ashanti' | 'Central' | 'Western' | 'Eastern' | 'Volta' | 'Northern' | 'Upper East' | 'Upper West' | 'Bono' | 'Bono East' | 'Ahafo' | 'Savannah' | 'North East' | 'Oti';
+export type BackpackerSubTier = 'urban' | 'classic';
 
 export interface BudgetFormData {
     duration: number;
@@ -12,6 +14,7 @@ export interface BudgetFormData {
     regions?: string[];
     intensity?: 'Relaxed' | 'Moderate' | 'Packed';
     includeFlights?: boolean;
+    flightCost?: number;
 }
 
 export interface RegionalBudget {
@@ -50,4 +53,19 @@ export interface Tour {
     bestMonths?: string[];
     dailyCost: number;
     range: 'backpacker' | 'budget' | 'mid' | 'comfort' | 'luxury';
+    backpackerSubTier?: BackpackerSubTier; // Optional: 'urban' for Accra street culture, 'classic' for Accra + nearby
+    images?: string[]; // Optional: Array of image paths for tour gallery
+}
+
+export interface LocalItinerary {
+    id: string;
+    title: string;
+    type: 'Cheapest' | 'Balanced' | 'Premium';
+    regions: string[];
+    duration: number;
+    cost: {
+        total: number;
+        perPerson: number;
+    };
+    highlights: string[];
 }

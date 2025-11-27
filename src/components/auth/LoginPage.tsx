@@ -4,9 +4,10 @@ import { LoginForm } from './LoginForm';
 interface LoginPageProps {
     onSuccess: () => void;
     onSwitchToSignup: () => void;
+    onForgotPassword: () => void;
 }
 
-export function LoginPage({ onSuccess, onSwitchToSignup }: LoginPageProps) {
+export function LoginPage({ onSuccess, onSwitchToSignup, onForgotPassword }: LoginPageProps) {
     return (
         <div className="min-h-screen bg-background flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
             <div className="w-full max-w-md space-y-8">
@@ -23,6 +24,7 @@ export function LoginPage({ onSuccess, onSwitchToSignup }: LoginPageProps) {
                     <LoginForm
                         onSuccess={onSuccess}
                         onSwitchToSignup={onSwitchToSignup}
+                        onForgotPassword={onForgotPassword}
                     />
                 </div>
             </div>

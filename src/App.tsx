@@ -10,6 +10,7 @@ import { DecisionNode } from './components/DecisionNode';
 import { TripPlanner } from './components/TripPlanner';
 import { SignUpPage } from './components/auth/SignUpPage';
 import { LoginPage } from './components/auth/LoginPage';
+import { ForgotPasswordForm } from './components/auth/ForgotPasswordForm';
 import { LocalAuthPage } from './components/auth/LocalAuthPage';
 import { TripSummary } from './components/TripSummary';
 import { Dashboard } from './components/Dashboard';
@@ -38,8 +39,8 @@ function AppContent() {
 
   // Step 1: Landing Screen
   const handleStart = () => {
-    // Go to Sign‑Up page
-    setCurrentStep(2);
+    // Go to Budget Form directly (Bypass Auth for Testing)
+    setCurrentStep(3);
   };
 
   // Step 2: Sign‑Up Page
@@ -103,7 +104,11 @@ function AppContent() {
 
   // Step 11: Login Page
   const handleLoginSuccess = () => {
-    setCurrentStep(10); // Go to Dashboard
+    setCurrentStep(3); // Go to Budget Form for better UX
+  };
+
+  const handleForgotPassword = () => {
+    setCurrentStep(14); // Go to Forgot Password
   };
 
   // Local Mode Toggle Handler
@@ -235,6 +240,7 @@ function AppContent() {
           <LoginPage
             onSuccess={handleLoginSuccess}
             onSwitchToSignup={() => setCurrentStep(2)}
+            onForgotPassword={handleForgotPassword}
           />
         )}
 
@@ -250,6 +256,12 @@ function AppContent() {
           <LocalAuthPage
             onSuccess={handleLocalAuthSuccess}
             onCancel={() => handleLocalModeToggle(false)}
+          />
+        )}
+
+        {currentStep === 14 && (
+          <ForgotPasswordForm
+            onBack={() => setCurrentStep(11)}
           />
         )}
       </StepTransition>
@@ -287,7 +299,7 @@ function AppContent() {
               <span>🏠</span> <span className="hidden sm:inline">Home</span>
             </button>
           )}
-          {currentStep !== 1 && currentStep !== 10 && currentStep !== 11 && currentStep !== 12 && currentStep !== 13 && (
+          {currentStep !== 1 && currentStep !== 10 && currentStep !== 11 && currentStep !== 12 && currentStep !== 13 && currentStep !== 14 && (
             <button
               onClick={() => setCurrentStep(10)}
               className="px-3 sm:px-4 py-1.5 sm:py-2 bg-white/90 backdrop-blur shadow-md rounded-full text-xs sm:text-sm font-medium hover:bg-white transition-colors min-h-[44px] whitespace-nowrap"
@@ -295,12 +307,12 @@ function AppContent() {
               My Trips
             </button>
           )}
-          {(currentStep === 10 || currentStep === 11 || currentStep === 12 || currentStep === 13) && (
+          {(currentStep === 2 || currentStep === 10 || currentStep === 11 || currentStep === 12 || currentStep === 13 || currentStep === 14) && (
             <button
               onClick={() => {
-                if (currentStep === 11) {
-                  // If on Login, go back to Sign Up (Step 2)
-                  setCurrentStep(2);
+                if (currentStep === 2 || currentStep === 11) {
+                  // If on Sign Up or Login, go back to Landing
+                  setCurrentStep(1);
                 } else if (currentStep === 10 && formData) {
                   // If on Dashboard and have data, go back to Summary (Step 9)
                   setCurrentStep(9);
@@ -310,6 +322,9 @@ function AppContent() {
                 } else if (currentStep === 13) {
                   // If on Local Auth, cancel
                   handleLocalModeToggle(false);
+                } else if (currentStep === 14) {
+                  // If on Forgot Password, go back to Login (Step 11)
+                  setCurrentStep(11);
                 } else {
                   // Default to Home
                   setCurrentStep(1);

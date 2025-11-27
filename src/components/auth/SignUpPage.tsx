@@ -1,5 +1,4 @@
-// SignUpPage component
-import React from 'react';
+
 import { SignupForm } from './SignupForm';
 
 interface SignUpPageProps {

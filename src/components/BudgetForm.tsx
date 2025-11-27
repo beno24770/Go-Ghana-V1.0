@@ -1,7 +1,7 @@
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Calculator, Info, AlertTriangle } from 'lucide-react';
+import { Calculator, AlertTriangle } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Label } from './ui/Label';
 import { Checkbox } from './ui/Checkbox';
@@ -56,6 +56,7 @@ const formSchema = z.object({
     accommodationType: z.enum(['Hotels', 'Guesthouses', 'Airbnb']),
     intensity: z.enum(['Relaxed', 'Moderate', 'Packed']),
     includeFlights: z.boolean(),
+    flightCost: z.number().optional(),
     interests: z.array(z.string()),
 });
 
@@ -85,6 +86,7 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
             accommodationType: 'Hotels',
             intensity: 'Moderate',
             includeFlights: false,
+            flightCost: undefined,
             interests: [],
         },
     });
@@ -155,6 +157,7 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
             regions: data.regions,
             intensity: data.intensity,
             includeFlights: data.includeFlights,
+            flightCost: data.flightCost,
         });
     };
 
@@ -332,22 +335,57 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                     </div>
 
                     {/* 8. Include International Flights */}
-                    <div className="flex items-start space-x-3 p-4 border rounded-lg bg-secondary/10">
-                        <Checkbox
-                            id="includeFlights"
-                            checked={watchedIncludeFlights}
-                            onChange={(e) => setValue('includeFlights', e.target.checked)}
-                        />
-                        <div className="space-y-1">
-                            <Label htmlFor="includeFlights" className="font-semibold cursor-pointer">
-                                Include International Flights
-                            </Label>
-                            {watchedIncludeFlights && (
-                                <p className="text-sm text-muted-foreground flex items-center gap-1">
-                                    <Info className="h-3 w-3" /> Est. ~$900/person from US/Europe
+                    <div className="space-y-4 p-4 border rounded-lg bg-secondary/10">
+                        <div className="flex items-start space-x-3">
+                            <Checkbox
+                                id="includeFlights"
+                                checked={watchedIncludeFlights}
+                                onChange={(e) => setValue('includeFlights', e.target.checked)}
+                            />
+                            <div className="space-y-1">
+                                <Label htmlFor="includeFlights" className="font-semibold cursor-pointer">
+                                    Include International Flights
+                                </Label>
+                                <p className="text-sm text-muted-foreground">
+                                    We'll add flight costs to your total budget.
                                 </p>
-                            )}
+                            </div>
                         </div>
+
+                        {watchedIncludeFlights && (
+                            <div className="ml-7 space-y-4 animate-in fade-in slide-in-from-top-2">
+                                <div className="p-3 bg-blue-50 border border-blue-100 rounded-md text-sm text-blue-800">
+                                    <p className="font-medium mb-2">Check real-time prices:</p>
+                                    <a
+                                        href={`https://www.google.com/travel/flights?q=Flights+to+Accra+Ghana+in+${watchedMonth}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium"
+                                    >
+                                        🔎 Check Google Flights
+                                    </a>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="flightCost" className="text-sm font-medium">
+                                        Estimated Cost Per Person ($)
+                                    </Label>
+                                    <div className="relative">
+                                        <span className="absolute left-3 top-2.5 text-gray-500">$</span>
+                                        <input
+                                            id="flightCost"
+                                            type="number"
+                                            placeholder="e.g. 1200"
+                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 pl-7 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                            {...register('flightCost', { valueAsNumber: true })}
+                                        />
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">
+                                        Enter the price you found. We'll multiply this by {watchedTravelers} traveler{watchedTravelers > 1 ? 's' : ''}.
+                                    </p>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* 9. Interests */}

@@ -2,6 +2,12 @@
 // This data enables specific hotel recommendations and validates budget estimates
 
 import { ACCRA_ACCOMMODATIONS } from './accraAccommodations';
+import { CENTRAL_REGION_ACCOMMODATIONS } from './centralRegionAccommodations';
+import { VOLTA_REGION_ACCOMMODATIONS } from './voltaRegionAccommodations';
+import { ASHANTI_REGION_ACCOMMODATIONS } from './ashantiRegionAccommodations';
+import { EASTERN_REGION_ACCOMMODATIONS } from './easternRegionAccommodations';
+import { WESTERN_REGION_ACCOMMODATIONS } from './westernRegionAccommodations';
+import { NORTHERN_REGION_ACCOMMODATIONS } from './northernRegionAccommodations';
 
 export interface Accommodation {
     // Basic Info
@@ -389,6 +395,12 @@ export const ACCOMMODATIONS: Accommodation[] = [
 
 // Merge new Accra data
 ACCOMMODATIONS.push(...ACCRA_ACCOMMODATIONS);
+ACCOMMODATIONS.push(...CENTRAL_REGION_ACCOMMODATIONS);
+ACCOMMODATIONS.push(...VOLTA_REGION_ACCOMMODATIONS);
+ACCOMMODATIONS.push(...ASHANTI_REGION_ACCOMMODATIONS);
+ACCOMMODATIONS.push(...EASTERN_REGION_ACCOMMODATIONS);
+ACCOMMODATIONS.push(...WESTERN_REGION_ACCOMMODATIONS);
+ACCOMMODATIONS.push(...NORTHERN_REGION_ACCOMMODATIONS);
 
 // ============================================
 // HELPER FUNCTIONS

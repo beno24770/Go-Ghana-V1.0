@@ -10,7 +10,7 @@ import { useState } from 'react';
 interface TripSummaryProps {
     formData: BudgetFormData;
     budgetBreakdown: BudgetBreakdown;
-    selectedTour: Tour | null;
+    selectedTour?: Tour | null;
     onStartOver: () => void;
 }
 
@@ -46,7 +46,7 @@ export function TripSummary({ formData, budgetBreakdown, selectedTour, onStartOv
                 description: `A ${formData.accommodationLevel} trip for ${travelerCount} people.`,
                 formData,
                 breakdown: budgetBreakdown,
-                selectedTour
+                selectedTour: selectedTour || undefined
             });
             setSaveSuccess(true);
         } catch (err) {

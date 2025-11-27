@@ -1,4 +1,4 @@
-import { Region } from '../types';
+import type { Region } from '../types';
 
 export interface Restaurant {
     id: string;

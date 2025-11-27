@@ -1,25 +1,25 @@
 // Base daily costs per traveler (in GHS - Ghana Cedis)
 export const BASE_COSTS = {
     accommodation: {
-        backpacker: 150,
-        budget: 280,
-        mid: 550,
-        comfort: 1100,
-        luxury: 2200
+        backpacker: 250,        // Realistic Accra hostels/budget hotels (200-350 GHS)
+        budget: 400,            // Budget hotels for regional trips (350-500 GHS)
+        mid: 650,               // Mid-range hotels (500-800 GHS)
+        comfort: 1200,          // Comfort hotels
+        luxury: 2500            // Luxury resorts
     },
     food: {
-        backpacker: 100,
-        budget: 150,
-        mid: 300,
-        comfort: 500,
-        luxury: 800
+        backpacker: 150,        // Realistic local meals for tourists
+        budget: 200,            // Budget restaurant meals
+        mid: 350,               // Mid-range dining
+        comfort: 550,           // Quality restaurants
+        luxury: 900             // Fine dining
     },
     transport: {
-        backpacker: 50,
-        budget: 80,
-        mid: 150,
-        comfort: 300,
-        luxury: 600
+        backpacker: 150,        // Trotro + local transport (realistic Accra cost)
+        budget: 200,            // Trotro for regional trips + occasional taxi
+        mid: 300,               // AC vehicle/VIP bus
+        comfort: 450,           // Comfort vehicle with driver
+        luxury: 700             // Private vehicle with driver
     },
     activities: {
         relaxed: 150,
@@ -95,20 +95,23 @@ export const FLIGHT_ESTIMATES = {
     }
 } as const;
 
+// Approximate Exchange Rate for Estimations (1 USD = ~15.87 GHS)
+export const USD_TO_GHS_RATE = 15.87;
+
 // Budget range thresholds (daily cost per person in GHS)
 export const BUDGET_RANGES = {
-    backpacker: { min: 0, max: 500 },
-    budget: { min: 500, max: 800 },
-    mid: { min: 800, max: 1200 },
-    comfort: { min: 1200, max: 2000 },
-    luxury: { min: 2000, max: Infinity }
+    backpacker: { min: 0, max: 750 },       // 400-750 GHS (Accra-only trips)
+    budget: { min: 700, max: 1500 },        // 700-1500 GHS (regional trips minimum)
+    mid: { min: 1000, max: 2000 },          // 1000-2000 GHS
+    comfort: { min: 1500, max: 2500 },      // 1500-2500 GHS
+    luxury: { min: 2000, max: Infinity }    // 2000+ GHS
 } as const;
 
 // Helper function to get budget range from daily cost
 export function getBudgetRange(dailyCostPerPerson: number): 'backpacker' | 'budget' | 'mid' | 'comfort' | 'luxury' {
-    if (dailyCostPerPerson <= 500) return 'backpacker';
-    if (dailyCostPerPerson <= 800) return 'budget';
-    if (dailyCostPerPerson <= 1200) return 'mid';
-    if (dailyCostPerPerson <= 2000) return 'comfort';
+    if (dailyCostPerPerson <= 750) return 'backpacker';    // Accra-only trips
+    if (dailyCostPerPerson <= 1500) return 'budget';       // Regional trips minimum
+    if (dailyCostPerPerson <= 2000) return 'mid';
+    if (dailyCostPerPerson <= 2500) return 'comfort';
     return 'luxury';
 }

@@ -60,9 +60,20 @@ export function Dashboard() {
 
             {trips.length === 0 ? (
                 <div className="text-center py-12 bg-muted/30 rounded-lg">
-                    <h3 className="text-xl font-semibold mb-2">No trips saved yet</h3>
-                    <p className="text-muted-foreground mb-6">Start planning your dream trip to Ghana!</p>
-                    {/* Navigation to start planning would go here */}
+                    <div className="max-w-md mx-auto">
+                        <div className="mb-6">
+                            <div className="text-6xl mb-4">✈️</div>
+                            <h3 className="text-xl font-semibold mb-2">No trips saved yet</h3>
+                            <p className="text-muted-foreground mb-6">Start planning your dream trip to Ghana!</p>
+                        </div>
+                        <Button
+                            onClick={() => window.location.reload()}
+                            className="bg-[#CE1126] hover:bg-[#A00E1E] text-white px-8 py-3"
+                            size="lg"
+                        >
+                            Plan New Trip
+                        </Button>
+                    </div>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

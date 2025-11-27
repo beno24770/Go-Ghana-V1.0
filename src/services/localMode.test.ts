@@ -37,7 +37,7 @@ describe('Local Mode Services', () => {
         });
 
         it('should calculate Self-drive cost based on distance', () => {
-            const result = calculateTransportCost('Self-drive', 'Accra', ['Ashanti'], 2);
+            const result = calculateTransportCost('Fuel car', 'Accra', ['Ashanti'], 2);
 
             expect(result.totalCost).toBeGreaterThan(0);
             expect(result.details).toContain('Drive');

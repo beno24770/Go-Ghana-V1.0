@@ -1,7 +1,7 @@
-import { MapPin, DollarSign, Calendar, ArrowRight } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
+import { MapPin, Calendar, ArrowRight } from 'lucide-react';
 import { Button } from '../ui/Button';
-import type { LocalItinerary } from '../../types/local';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
+import type { LocalItinerary } from '../../types';
 
 interface ItineraryCardProps {
     itinerary: LocalItinerary;
@@ -56,7 +56,7 @@ export function ItineraryCard({ itinerary, onViewDetails }: ItineraryCardProps) 
                 <div className="space-y-2">
                     <p className="text-sm font-medium">Highlights:</p>
                     <ul className="text-sm text-muted-foreground space-y-1">
-                        {itinerary.highlights.slice(0, 3).map((highlight, idx) => (
+                        {itinerary.highlights.slice(0, 3).map((highlight: string, idx: number) => (
                             <li key={idx} className="flex items-start gap-2">
                                 <span className="text-[#FCD116] mt-0.5">★</span>
                                 <span>{highlight}</span>

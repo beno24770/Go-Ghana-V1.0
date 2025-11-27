@@ -18,6 +18,12 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
+    // Email validation function
+    const validateEmail = (email: string): boolean => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
@@ -25,6 +31,12 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
         // Validation
         if (!email || !password || !confirmPassword) {
             setError('Please fill in all fields');
+            return;
+        }
+
+        // Email format validation
+        if (!validateEmail(email)) {
+            setError('Please enter a valid email address');
             return;
         }
 

@@ -22,17 +22,9 @@ if (missingKeys.length > 0) {
 }
 
 // Initialize Firebase
-let app;
-let auth;
-let db;
-
-try {
-    app = initializeApp(firebaseConfig);
-    auth = getAuth(app);
-    db = getFirestore(app);
-} catch (error) {
-    console.error('Error initializing Firebase:', error);
-}
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
 export { auth, db };
 export default app;

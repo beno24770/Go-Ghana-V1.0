@@ -5,7 +5,8 @@ import {
     SEASONAL_MULTIPLIERS,
     ESSENTIAL_COSTS,
     FLIGHT_ESTIMATES,
-    INTER_REGION_TRANSPORT
+    INTER_REGION_TRANSPORT,
+    USD_TO_GHS_RATE
 } from '../data/costData';
 import { REGION_INFO } from '../data/regionData';
 
@@ -77,9 +78,19 @@ export function calculateBudget(data: BudgetFormData): BudgetBreakdown {
     );
 
     // 8. Calculate flight costs (if included)
-    const flightsTotal = data.includeFlights
-        ? Math.round(FLIGHT_ESTIMATES.defaultFlightEstimate * travelerCount)
-        : 0;
+    let flightsTotal = 0;
+    if (data.includeFlights) {
+        let flightCostUSD = 0;
+        if (data.flightCost && data.flightCost > 0) {
+            // Use user-provided estimate (USD)
+            flightCostUSD = data.flightCost;
+        } else {
+            // Fallback to default estimate (USD)
+            flightCostUSD = FLIGHT_ESTIMATES.defaultFlightEstimate;
+        }
+        // Convert USD to GHS
+        flightsTotal = Math.round(flightCostUSD * USD_TO_GHS_RATE * travelerCount);
+    }
 
     // 9. Calculate subtotal
     const subtotal = totalDailyCost + essentialsTotal + flightsTotal;
