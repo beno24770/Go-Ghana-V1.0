@@ -85,17 +85,17 @@ export function calculateBudget(data: BudgetFormData): BudgetBreakdown {
     // --- STEP 4: INTERESTS & ACTIVITIES ---
     // Calculate daily activity add-on
     let dailyActivityAddon = 0;
-    if (data.interests && data.interests.length > 0) {
-        data.interests.forEach(interest => {
+    if (data.activities && data.activities.length > 0) {
+        data.activities.forEach(activity => {
             // Map interest string to key in INTEREST_ADDONS
             // Interest strings might be capitalized, e.g. "Culture", "Wildlife"
-            const key = interest.toLowerCase();
-            if (key.includes('culture')) dailyActivityAddon += INTEREST_ADDONS.culture;
-            else if (key.includes('adventure')) dailyActivityAddon += INTEREST_ADDONS.adventure;
-            else if (key.includes('nightlife')) dailyActivityAddon += INTEREST_ADDONS.nightlife;
-            else if (key.includes('beach') || key.includes('relax')) dailyActivityAddon += INTEREST_ADDONS.relaxation;
-            else if (key.includes('wildlife') || key.includes('nature')) dailyActivityAddon += INTEREST_ADDONS.nature;
-            else if (key.includes('food')) dailyActivityAddon += INTEREST_ADDONS.food;
+            // activity is already mapped to ActivityInterest type
+            if (activity === 'culture') dailyActivityAddon += INTEREST_ADDONS.culture;
+            else if (activity === 'adventure') dailyActivityAddon += INTEREST_ADDONS.adventure;
+            // nightlife maps to culture dailyActivityAddon += INTEREST_ADDONS.nightlife;
+            else if (activity === 'relaxation') dailyActivityAddon += INTEREST_ADDONS.relaxation;
+            else if (activity === 'nature') dailyActivityAddon += INTEREST_ADDONS.nature;
+            // food maps to culture dailyActivityAddon += INTEREST_ADDONS.food;
         });
     }
 
