@@ -24,6 +24,7 @@ export interface BudgetFormData {
     transportMode?: 'bolt' | 'private_driver' | 'rental' | 'public' | 'flight';
     accommodationType?: 'hotel' | 'guesthouse' | 'airbnb';
     isNewToGhana?: boolean;
+    interests?: string[];
 }
 
 export interface RegionalBudget {

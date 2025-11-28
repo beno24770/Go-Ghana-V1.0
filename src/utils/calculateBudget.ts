@@ -1,14 +1,14 @@
 import type { BudgetFormData, BudgetBreakdown, RegionalBudget } from '../types';
 import {
     BASE_COSTS,
-    REGIONAL_MULTIPLIERS,
+    REGIONAL_ADJUSTMENTS,
     SEASONAL_MULTIPLIERS,
     ESSENTIAL_COSTS,
     FLIGHT_ESTIMATES,
-    INTER_REGION_TRANSPORT,
     USD_TO_GHS_RATE,
     TRANSPORT_MODE_COSTS,
-    ROOM_SHARING_MULTIPLIERS
+    ROOM_SHARING_MULTIPLIERS,
+    INTEREST_ADDONS
 } from '../data/costData';
 import { REGION_INFO } from '../data/regionData';
 
@@ -23,80 +23,148 @@ export function calculateBudget(data: BudgetFormData): BudgetBreakdown {
     const travelerCount = data.travelers || TRAVELER_COUNTS[data.travelerType] || 1;
     const duration = data.duration;
 
-    // 1. Get base costs from accommodation level and activity intensity
-    let accommodationCost = BASE_COSTS.accommodation[data.accommodationLevel];
+    // --- STEP 1: SEASON FACTOR ---
+    const seasonFactor = data.month ? (SEASONAL_MULTIPLIERS[data.month] || 1.0) : 1.0;
 
-    // Apply Room Sharing Multiplier
-    if (data.roomSharing && ROOM_SHARING_MULTIPLIERS[data.roomSharing]) {
-        accommodationCost *= ROOM_SHARING_MULTIPLIERS[data.roomSharing];
-    }
+    // --- STEP 2: BASE COSTS & ROOM SHARING ---
+    // Get base daily costs based on Travel Style (accommodationLevel)
+    const style = data.accommodationLevel; // backpacker, budget, mid, comfort, luxury
+    let baseAccom = BASE_COSTS.accommodation[style];
+    const baseFood = BASE_COSTS.food[style];
+    let baseTransport = BASE_COSTS.transport[style];
 
-    const foodCost = BASE_COSTS.food[data.accommodationLevel];
+    // Apply Room Sharing Multiplier to Accommodation
+    // one_per_room (private) -> 1.0
+    // two_sharing (shared) -> 0.6
+    // family_sharing (family) -> 0.45
+    const roomSharingMult = data.roomSharing && ROOM_SHARING_MULTIPLIERS[data.roomSharing]
+        ? ROOM_SHARING_MULTIPLIERS[data.roomSharing]
+        : 1.0;
 
-    // Determine Transport Cost based on Mode or Fallback to Tier
-    let transportCost = 0;
+    // --- STEP 3: TRANSPORT LOGIC ---
+    // Override base transport if specific mode is selected
     if (data.transportMode && TRANSPORT_MODE_COSTS[data.transportMode] !== undefined) {
-        // Some modes are per vehicle (Private Driver, Rental), others per person (Bolt, Public)
-        // We need to normalize to "per person" for the daily calculation
         const modeCost = TRANSPORT_MODE_COSTS[data.transportMode];
 
-        if (['private_driver', 'rental'].includes(data.transportMode)) {
-            // Cost is per vehicle, so divide by travelers
-            transportCost = modeCost / travelerCount;
+        if (['private_driver', 'private_driver_suv', 'rental'].includes(data.transportMode)) {
+            // Per vehicle costs - divided by travelers
+            // Note: private_driver_suv might need to be handled if added to form, currently mapping 'private_driver' to sedan
+            // If user selected 'private_driver', we assume Sedan (1000) unless we have extra logic.
+            // Prompt says: Sedan 800-1200, SUV 1200-1500.
+            // We'll use the value from TRANSPORT_MODE_COSTS.
+            baseTransport = modeCost / travelerCount;
+        } else if (data.transportMode === 'bolt') {
+            // Bolt: 120-200/day. Is this per person?
+            // Usually per car. Let's assume 3 people max per Bolt.
+            // If solo -> full cost. If 2 -> split.
+            // Let's treat it as per-vehicle cost for simplicity, or per-person if public.
+            // Prompt: "Inside Accra -> 120-200/day".
+            // Let's assume per vehicle cost shared by up to 3 people.
+            const carsNeeded = Math.ceil(travelerCount / 3);
+            baseTransport = (modeCost * carsNeeded) / travelerCount;
         } else {
-            // Cost is per person (Bolt, Public)
-            transportCost = modeCost;
+            // Public transport is per person
+            baseTransport = modeCost;
         }
-    } else {
-        // Fallback to tier-based transport cost
-        transportCost = BASE_COSTS.transport[data.accommodationLevel];
     }
 
-    const activityCost = BASE_COSTS.activities[data.intensity?.toLowerCase() as 'relaxed' | 'moderate' | 'packed' || 'moderate'];
+    // Domestic Flights Logic
+    // If Northern, Upper East, Upper West selected -> Add flight cost
+    // Prompt: "Accra <-> Tamale/Wa -> Auto-add domestic flight cost"
+    // We'll add this as a one-time cost, not daily.
+    let domesticFlightCost = 0;
+    const northernRegions = ['Northern', 'Upper East', 'Upper West', 'Savannah', 'North East'];
+    const hasNorthernLeg = data.regions?.some(r => northernRegions.includes(r));
 
-    // 2. Calculate average regional multiplier
-    let avgRegionalMultiplier = 1.0;
-    if (data.regions && data.regions.length > 0) {
-        const multipliers = data.regions
-            .map(region => REGIONAL_MULTIPLIERS[region] || 1.0);
-        avgRegionalMultiplier = multipliers.reduce((sum, m) => sum + m, 0) / multipliers.length;
+    if (hasNorthernLeg) {
+        // Approx $100-150 USD return flight? Or GHS?
+        // Let's estimate 2000 GHS return per person
+        domesticFlightCost = 2000;
     }
 
-    // 3. Get seasonal multiplier
-    const seasonalMultiplier = data.month ? (SEASONAL_MULTIPLIERS[data.month] || 1.0) : 1.0;
+    // --- STEP 4: INTERESTS & ACTIVITIES ---
+    // Calculate daily activity add-on
+    let dailyActivityAddon = 0;
+    if (data.interests && data.interests.length > 0) {
+        data.interests.forEach(interest => {
+            // Map interest string to key in INTEREST_ADDONS
+            // Interest strings might be capitalized, e.g. "Culture", "Wildlife"
+            const key = interest.toLowerCase();
+            if (key.includes('culture')) dailyActivityAddon += INTEREST_ADDONS.culture;
+            else if (key.includes('adventure')) dailyActivityAddon += INTEREST_ADDONS.adventure;
+            else if (key.includes('nightlife')) dailyActivityAddon += INTEREST_ADDONS.nightlife;
+            else if (key.includes('beach') || key.includes('relax')) dailyActivityAddon += INTEREST_ADDONS.relaxation;
+            else if (key.includes('wildlife') || key.includes('nature')) dailyActivityAddon += INTEREST_ADDONS.nature;
+            else if (key.includes('food')) dailyActivityAddon += INTEREST_ADDONS.food;
+        });
+    }
 
-    // 4. Calculate daily cost per traveler
-    const dailyCostPerTraveler =
-        (accommodationCost + foodCost + transportCost + activityCost) *
-        avgRegionalMultiplier *
-        seasonalMultiplier;
+    // --- STEP 5: REGIONAL CALCULATIONS ---
+    // Iterate through regions to calculate weighted daily costs
+    // If no regions selected, default to Accra
+    const regions = (data.regions && data.regions.length > 0) ? data.regions : ['Greater Accra'];
+    const daysPerRegion = duration / regions.length;
 
-    // 5. Calculate total daily costs
-    const totalDailyCost = dailyCostPerTraveler * duration * travelerCount;
+    let totalAccom = 0;
+    let totalFood = 0;
+    let totalTransport = 0;
+    let totalActivities = 0;
+    let regionalBreakdown: RegionalBudget[] = [];
 
-    // 6. Calculate breakdown components
-    const accommodationTotal = Math.round(
-        accommodationCost * duration * travelerCount * avgRegionalMultiplier * seasonalMultiplier
-    );
-    const foodTotal = Math.round(
-        foodCost * duration * travelerCount * avgRegionalMultiplier * seasonalMultiplier
-    );
+    regions.forEach(region => {
+        const adjustments = REGIONAL_ADJUSTMENTS[region] || { transport: 1.0, food: 1.0 };
 
-    // Calculate transport with inter-region travel costs
-    const numRegions = data.regions?.length || 1;
-    const interRegionMoves = Math.max(0, numRegions - 1);
-    const interRegionCostPerMove = INTER_REGION_TRANSPORT[data.accommodationLevel];
-    const interRegionTotal = interRegionMoves * interRegionCostPerMove * travelerCount;
+        // Daily Cost Per Person for this Region
+        // Formula:
+        // (accom * season * room_share) 
+        // + (food * region_food_mult) 
+        // + (transport * region_transport_mult) 
+        // + activity_addon
 
-    const transportTotal = Math.round(
-        (transportCost * duration * travelerCount * avgRegionalMultiplier * seasonalMultiplier) +
-        interRegionTotal
-    );
-    const activitiesTotal = Math.round(
-        activityCost * duration * travelerCount * avgRegionalMultiplier * seasonalMultiplier
-    );
+        // Note: Season factor applies to Accom. Does it apply to Food/Transport?
+        // Prompt: "accomodation_cost x season_factor x room_sharing_multiplier"
+        // Prompt: "food_cost x regional_food_multiplier" (No season?)
+        // Prompt: "transport_cost x regional_transport_multiplier" (No season?)
+        // Usually high season means everything is expensive, but prompt specifically put season on accom.
+        // Let's follow prompt EXACTLY.
 
-    // 7. Calculate essential costs (one-time per traveler)
+        const regionDailyAccom = baseAccom * seasonFactor * roomSharingMult;
+        const regionDailyFood = baseFood * adjustments.food;
+        const regionDailyTransport = baseTransport * adjustments.transport;
+        const regionDailyActivity = dailyActivityAddon; // Base activity is 0 now, only add-ons
+
+        const regionDays = daysPerRegion; // Simple equal split
+
+        const rAccom = regionDailyAccom * regionDays * travelerCount;
+        const rFood = regionDailyFood * regionDays * travelerCount;
+        const rTransport = regionDailyTransport * regionDays * travelerCount;
+        const rActivity = regionDailyActivity * regionDays * travelerCount;
+
+        totalAccom += rAccom;
+        totalFood += rFood;
+        totalTransport += rTransport;
+        totalActivities += rActivity;
+
+        const info = REGION_INFO[region] || { tips: [], note: '', highlights: [] };
+
+        regionalBreakdown.push({
+            region,
+            dailyCost: Math.round(regionDailyAccom + regionDailyFood + regionDailyTransport + regionDailyActivity),
+            totalCost: Math.round(rAccom + rFood + rTransport + rActivity),
+            accommodation: Math.round(rAccom),
+            food: Math.round(rFood),
+            transport: Math.round(rTransport),
+            activities: Math.round(rActivity),
+            tips: info.tips,
+            note: info.note
+        });
+    });
+
+    // Add Domestic Flights to Transport Total
+    const totalDomesticFlightCost = domesticFlightCost * travelerCount;
+    totalTransport += totalDomesticFlightCost;
+
+    // --- STEP 6: ESSENTIALS & INTERNATIONAL FLIGHTS ---
     const essentialsTotal = Math.round(
         (ESSENTIAL_COSTS.visa +
             ESSENTIAL_COSTS.airportTransfer +
@@ -104,77 +172,22 @@ export function calculateBudget(data: BudgetFormData): BudgetBreakdown {
             (data.includeInsurance ? ESSENTIAL_COSTS.travelInsurance : 0)) * travelerCount
     );
 
-    // 8. Calculate flight costs (if included)
     let flightsTotal = 0;
     if (data.includeFlights) {
-        let flightCostUSD = 0;
-        if (data.flightCost && data.flightCost > 0) {
-            // Use user-provided estimate (USD)
-            flightCostUSD = data.flightCost;
-        } else {
-            // Fallback to default estimate (USD)
-            flightCostUSD = FLIGHT_ESTIMATES.defaultFlightEstimate;
-        }
-        // Convert USD to GHS
+        let flightCostUSD = data.flightCost || FLIGHT_ESTIMATES.defaultFlightEstimate;
         flightsTotal = Math.round(flightCostUSD * USD_TO_GHS_RATE * travelerCount);
     }
 
-    // 9. Calculate subtotal
-    const subtotal = totalDailyCost + essentialsTotal + flightsTotal;
-
-    // 10. Apply contingency (10% buffer)
+    // --- STEP 7: TOTALS ---
+    const subtotal = totalAccom + totalFood + totalTransport + totalActivities + essentialsTotal + flightsTotal;
     const contingencyAmount = Math.round(subtotal * ESSENTIAL_COSTS.contingency);
     const total = Math.round(subtotal + contingencyAmount);
 
-    // 11. Calculate Regional Breakdown
-    let regionalBreakdown: RegionalBudget[] = [];
-    if (data.regions && data.regions.length > 0) {
-        const numRegions = data.regions.length;
-        const daysPerRegion = duration / numRegions;
-
-        regionalBreakdown = data.regions.map(region => {
-            const regionMultiplier = REGIONAL_MULTIPLIERS[region] || 1.0;
-            const info = REGION_INFO[region] || { tips: [], note: '', highlights: [] };
-
-            // Calculate daily cost for this specific region
-            // We use the base costs * region specific multiplier * seasonal multiplier
-            const regionDailyCostPerTraveler =
-                (accommodationCost + foodCost + transportCost + activityCost) *
-                regionMultiplier *
-                seasonalMultiplier;
-
-            const regionTotalCost = Math.round(regionDailyCostPerTraveler * daysPerRegion * travelerCount);
-
-            // Breakdown for this region (approximate based on ratios)
-            const regionAccom = Math.round(accommodationCost * daysPerRegion * travelerCount * regionMultiplier * seasonalMultiplier);
-            const regionFood = Math.round(foodCost * daysPerRegion * travelerCount * regionMultiplier * seasonalMultiplier);
-
-            // Transport includes local daily transport + allocated inter-region cost
-            const regionLocalTransport = Math.round(transportCost * daysPerRegion * travelerCount * regionMultiplier * seasonalMultiplier);
-            const allocatedInterRegionCost = Math.round(interRegionTotal / numRegions); // Distribute inter-region costs evenly
-            const regionTransport = regionLocalTransport + allocatedInterRegionCost;
-
-            const regionActivities = Math.round(activityCost * daysPerRegion * travelerCount * regionMultiplier * seasonalMultiplier);
-
-            return {
-                region,
-                dailyCost: Math.round(regionDailyCostPerTraveler * travelerCount), // Daily cost for the whole group
-                totalCost: regionTotalCost,
-                accommodation: regionAccom,
-                food: regionFood,
-                transport: regionTransport,
-                activities: regionActivities,
-                tips: info.tips,
-                note: info.note
-            };
-        });
-    }
-
     return {
-        accommodation: accommodationTotal,
-        food: foodTotal,
-        transport: transportTotal,
-        activities: activitiesTotal,
+        accommodation: Math.round(totalAccom),
+        food: Math.round(totalFood),
+        transport: Math.round(totalTransport),
+        activities: Math.round(totalActivities),
         essentials: essentialsTotal,
         flights: flightsTotal,
         contingency: contingencyAmount,
