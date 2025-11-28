@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/Go-Ghana-V1.0/sw.js', { scope: '/Go-Ghana-V1.0/' })})}
