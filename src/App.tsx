@@ -37,6 +37,54 @@ function AppContent() {
     knowledgeService.ingestMockData().catch(console.error);
   }, []);
 
+  // Load state from localStorage on mount
+  useEffect(() => {
+    const savedStep = localStorage.getItem('currentStep');
+    const savedFormData = localStorage.getItem('formData');
+    const savedBudgetResult = localStorage.getItem('budgetResult');
+    const savedSelectedTour = localStorage.getItem('selectedTour');
+    const savedIsLocalMode = localStorage.getItem('isLocalMode');
+
+    if (savedStep) setCurrentStep(parseInt(savedStep));
+    if (savedFormData) setFormData(JSON.parse(savedFormData));
+    if (savedBudgetResult) setBudgetResult(JSON.parse(savedBudgetResult));
+    if (savedSelectedTour) setSelectedTour(JSON.parse(savedSelectedTour));
+    if (savedIsLocalMode) setIsLocalMode(savedIsLocalMode === 'true');
+  }, []);
+
+  // Save state to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('currentStep', currentStep.toString());
+  }, [currentStep]);
+
+  useEffect(() => {
+    if (formData) {
+      localStorage.setItem('formData', JSON.stringify(formData));
+    } else {
+      localStorage.removeItem('formData');
+    }
+  }, [formData]);
+
+  useEffect(() => {
+    if (budgetResult) {
+      localStorage.setItem('budgetResult', JSON.stringify(budgetResult));
+    } else {
+      localStorage.removeItem('budgetResult');
+    }
+  }, [budgetResult]);
+
+  useEffect(() => {
+    if (selectedTour) {
+      localStorage.setItem('selectedTour', JSON.stringify(selectedTour));
+    } else {
+      localStorage.removeItem('selectedTour');
+    }
+  }, [selectedTour]);
+
+  useEffect(() => {
+    localStorage.setItem('isLocalMode', isLocalMode.toString());
+  }, [isLocalMode]);
+
   // Step 1: Landing Screen
   const handleStart = () => {
     // Go to Budget Form directly (Bypass Auth for Testing)
@@ -100,6 +148,14 @@ function AppContent() {
     setFormData(null);
     setBudgetResult(null);
     setSelectedTour(null);
+    // Clear localStorage
+    localStorage.removeItem('currentStep');
+    localStorage.removeItem('formData');
+    localStorage.removeItem('budgetResult');
+    localStorage.removeItem('selectedTour');
+    // Keep isLocalMode preference? Maybe reset it too if starting over completely.
+    // For now, let's keep isLocalMode as is, or reset if desired. User said "system resets", so let's be clean.
+    // Actually, if they start over, they probably want to start fresh.
   };
 
   // Step 11: Login Page

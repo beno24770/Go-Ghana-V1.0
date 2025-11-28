@@ -12,9 +12,10 @@ interface TourRecommendationsProps {
     month?: string;
     onSelectTour?: (tour: Tour) => void;
     onSkip?: () => void;
+    embedded?: boolean;
 }
 
-export function TourRecommendations({ interests, budget, regions, month, onSelectTour, onSkip }: TourRecommendationsProps) {
+export function TourRecommendations({ interests, budget, regions, month, onSelectTour, onSkip, embedded }: TourRecommendationsProps) {
     const { convertAndFormat } = useCurrency();
 
     // Calculate budget per day per person (simplified: total / 7 days)
@@ -72,6 +73,78 @@ export function TourRecommendations({ interests, budget, regions, month, onSelec
         if (tour.range === 'comfort') return 'Comfort';
         return 'Luxury';
     };
+
+    if (embedded) {
+        return (
+            <div className="space-y-6 animate-[fadeSlideUp_0.6s_ease-out_0.4s]">
+                <div className="flex items-center gap-2 mb-4">
+                    <Star className="h-6 w-6 text-[#FCD116] fill-[#FCD116]" />
+                    <h3 className="text-2xl font-bold text-foreground">Suggested Tours</h3>
+                </div>
+
+                {selectedTours.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {selectedTours.map((tour) => (
+                            <Card
+                                key={tour.id}
+                                className="hover:border-[#FCD116] hover:shadow-xl transition-all duration-300 hover:scale-[1.03] group"
+                            >
+                                <CardHeader className="pb-3">
+                                    <div className="flex items-start justify-between mb-2">
+                                        <span className="px-2 py-1 bg-[#FCD116] text-black text-xs font-semibold rounded">
+                                            {getTourCategory(tour)}
+                                        </span>
+                                        {isBestTime(tour) && (
+                                            <span className="flex items-center gap-1 px-2 py-1 bg-[#006B3F] text-white text-xs font-semibold rounded">
+                                                <Calendar className="h-3 w-3" />
+                                                Best Time!
+                                            </span>
+                                        )}
+                                    </div>
+                                    <CardTitle className="text-lg group-hover:text-[#CE1126] transition-colors line-clamp-2">
+                                        {tour.title}
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-2 pb-3">
+                                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                        <Clock className="h-4 w-4" />
+                                        <span>{tour.duration}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                        <Star className="h-4 w-4 fill-[#FCD116] text-[#FCD116]" />
+                                        <span className="font-semibold">{tour.rating}</span>
+                                    </div>
+                                    <div className="pt-1">
+                                        <p className="text-2xl font-bold text-[#006B3F]">{convertAndFormat(tour.price)}</p>
+                                        <p className="text-xs text-muted-foreground">per person</p>
+                                    </div>
+                                </CardContent>
+                                <CardFooter>
+                                    {onSelectTour && (
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="w-full border-[#006B3F] text-[#006B3F] hover:bg-[#006B3F] hover:text-white"
+                                            onClick={() => onSelectTour(tour)}
+                                        >
+                                            View Details
+                                            <ArrowRight className="ml-2 h-4 w-4" />
+                                        </Button>
+                                    )}
+                                </CardFooter>
+                            </Card>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="p-6 text-center border rounded-lg bg-muted/30">
+                        <p className="text-muted-foreground">
+                            No specific tours found for your exact budget. Try adjusting your preferences.
+                        </p>
+                    </div>
+                )}
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-background py-12">

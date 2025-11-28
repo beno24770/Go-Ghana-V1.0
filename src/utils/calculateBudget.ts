@@ -6,7 +6,9 @@ import {
     ESSENTIAL_COSTS,
     FLIGHT_ESTIMATES,
     INTER_REGION_TRANSPORT,
-    USD_TO_GHS_RATE
+    USD_TO_GHS_RATE,
+    TRANSPORT_MODE_COSTS,
+    ROOM_SHARING_MULTIPLIERS
 } from '../data/costData';
 import { REGION_INFO } from '../data/regionData';
 
@@ -18,13 +20,38 @@ const TRAVELER_COUNTS = {
 };
 
 export function calculateBudget(data: BudgetFormData): BudgetBreakdown {
-    const travelerCount = TRAVELER_COUNTS[data.travelerType];
+    const travelerCount = data.travelers || TRAVELER_COUNTS[data.travelerType] || 1;
     const duration = data.duration;
 
     // 1. Get base costs from accommodation level and activity intensity
-    const accommodationCost = BASE_COSTS.accommodation[data.accommodationLevel];
+    let accommodationCost = BASE_COSTS.accommodation[data.accommodationLevel];
+
+    // Apply Room Sharing Multiplier
+    if (data.roomSharing && ROOM_SHARING_MULTIPLIERS[data.roomSharing]) {
+        accommodationCost *= ROOM_SHARING_MULTIPLIERS[data.roomSharing];
+    }
+
     const foodCost = BASE_COSTS.food[data.accommodationLevel];
-    const transportCost = BASE_COSTS.transport[data.accommodationLevel];
+
+    // Determine Transport Cost based on Mode or Fallback to Tier
+    let transportCost = 0;
+    if (data.transportMode && TRANSPORT_MODE_COSTS[data.transportMode] !== undefined) {
+        // Some modes are per vehicle (Private Driver, Rental), others per person (Bolt, Public)
+        // We need to normalize to "per person" for the daily calculation
+        const modeCost = TRANSPORT_MODE_COSTS[data.transportMode];
+
+        if (['private_driver', 'rental'].includes(data.transportMode)) {
+            // Cost is per vehicle, so divide by travelers
+            transportCost = modeCost / travelerCount;
+        } else {
+            // Cost is per person (Bolt, Public)
+            transportCost = modeCost;
+        }
+    } else {
+        // Fallback to tier-based transport cost
+        transportCost = BASE_COSTS.transport[data.accommodationLevel];
+    }
+
     const activityCost = BASE_COSTS.activities[data.intensity?.toLowerCase() as 'relaxed' | 'moderate' | 'packed' || 'moderate'];
 
     // 2. Calculate average regional multiplier
@@ -74,7 +101,7 @@ export function calculateBudget(data: BudgetFormData): BudgetBreakdown {
         (ESSENTIAL_COSTS.visa +
             ESSENTIAL_COSTS.airportTransfer +
             ESSENTIAL_COSTS.simCard +
-            ESSENTIAL_COSTS.travelInsurance) * travelerCount
+            (data.includeInsurance ? ESSENTIAL_COSTS.travelInsurance : 0)) * travelerCount
     );
 
     // 8. Calculate flight costs (if included)

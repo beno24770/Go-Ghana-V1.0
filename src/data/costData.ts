@@ -28,6 +28,22 @@ export const BASE_COSTS = {
     }
 } as const;
 
+// Transport Mode Daily Costs (per vehicle or per person depending on mode)
+export const TRANSPORT_MODE_COSTS = {
+    bolt: 350,              // Daily avg for city rides
+    private_driver: 1800,   // SUV/Sedan + Driver daily rate
+    rental: 1200,           // Self-drive rental + fuel est
+    public: 80,             // Trotro/Bus daily avg
+    flight: 0               // Handled separately
+} as const;
+
+// Room Sharing Multipliers (applied to accommodation cost)
+export const ROOM_SHARING_MULTIPLIERS = {
+    private: 1.0,   // 1 person per room
+    shared: 0.6,    // 2 people per room (cost per person is less)
+    family: 0.8     // Family suite/sharing
+} as const;
+
 // Inter-region transport costs (one-time per region-to-region move, per traveler)
 // These represent the cost of traveling between major regions (e.g., Accra to Kumasi)
 export const INTER_REGION_TRANSPORT = {

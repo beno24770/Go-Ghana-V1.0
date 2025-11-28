@@ -6,6 +6,7 @@ export type BackpackerSubTier = 'urban' | 'classic';
 
 export interface BudgetFormData {
     duration: number;
+    travelers: number;
     travelerType: TravelerType;
     accommodationLevel: AccommodationLevel;
     activities: ActivityInterest[];
@@ -15,6 +16,14 @@ export interface BudgetFormData {
     intensity?: 'Relaxed' | 'Moderate' | 'Packed';
     includeFlights?: boolean;
     flightCost?: number;
+    includeInsurance?: boolean;
+
+    // Revamp fields
+    roomSharing?: 'private' | 'shared' | 'family';
+    arrivalCity?: string;
+    transportMode?: 'bolt' | 'private_driver' | 'rental' | 'public' | 'flight';
+    accommodationType?: 'hotel' | 'guesthouse' | 'airbnb';
+    isNewToGhana?: boolean;
 }
 
 export interface RegionalBudget {

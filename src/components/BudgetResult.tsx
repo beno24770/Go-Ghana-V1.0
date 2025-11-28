@@ -1,11 +1,13 @@
-import { Wallet, Utensils, Car, Map as MapIcon, Plane, TrendingUp, Users, Calendar as CalendarIcon, MapPin, Shield, MessageCircle, Phone, Lightbulb } from 'lucide-react';
+import { Wallet, Utensils, Car, Map as MapIcon, Plane, TrendingUp, Users, Calendar as CalendarIcon, MapPin, Shield, MessageCircle, Phone } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
 import { Button } from './ui/Button';
 import { CurrencySelector } from './ui/CurrencySelector';
 import { useCurrency } from '../contexts/CurrencyContext';
 import { useChat } from '../contexts/ChatContext';
 import type { BudgetBreakdown, BudgetFormData } from '../types';
-import { BASE_COSTS, REGIONAL_MULTIPLIERS, SEASONAL_MULTIPLIERS, INTER_REGION_TRANSPORT } from '../data/costData';
+import { BASE_COSTS, REGIONAL_MULTIPLIERS, SEASONAL_MULTIPLIERS, INTER_REGION_TRANSPORT, TRANSPORT_MODE_COSTS, ROOM_SHARING_MULTIPLIERS } from '../data/costData';
+
+import { TourRecommendations } from './TourRecommendations';
 
 interface BudgetResultProps {
     breakdown: BudgetBreakdown | null;
@@ -74,187 +76,217 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
 
 
 
+
+
     const isPeakSeason = formData?.month && ['January', 'August', 'December'].includes(formData.month);
 
     return (
         <div className="w-full max-w-4xl mx-auto mt-8 space-y-8">
-            {/* Success Message with Currency Selector */}
+            {/* Header Section */}
             <div className="text-center space-y-4 animate-[fadeSlideUp_0.6s_ease-out]">
-                <h2 className="text-3xl font-bold text-foreground">
-                    Your Estimated Budget Is Ready!
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+                    💰 Your Ghana Trip Budget Estimate
                 </h2>
+                <p className="text-xl text-muted-foreground">
+                    A breakdown based on your preferences
+                </p>
                 <div className="w-32 h-1 bg-[#CE1126] mx-auto rounded-full"></div>
                 <div className="flex justify-center pt-2">
                     <CurrencySelector />
                 </div>
             </div>
 
-            {/* Summary Section */}
-            <Card className="shadow-xl border-t-4 border-t-[#FCD116] animate-[scaleIn_0.5s_ease-out] hover:scale-[1.02] transition-all duration-300">
-                <CardHeader className="pb-4">
-                    <CardTitle className="text-2xl">Budget Summary</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                    {/* Grand Total */}
-                    <div className="text-center p-6 bg-gradient-to-br from-[#CE1126] to-[#A00E1E] rounded-lg text-white">
-                        <p className="text-sm opacity-90 mb-2">Grand Total</p>
-                        <p className="text-5xl font-bold tracking-tight">{formatCurrency(breakdown.total)}</p>
-                        <p className="text-sm opacity-75 mt-2">Range: {formatCurrency(minRange)} - {formatCurrency(maxRange)}</p>
-                    </div>
+            {/* Key Metrics Section */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-[scaleIn_0.5s_ease-out]">
+                {/* Total Trip Cost */}
+                <Card className="border-t-4 border-t-[#006B3F] shadow-lg bg-gradient-to-br from-white to-[#006B3F]/5">
+                    <CardContent className="p-6 text-center">
+                        <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-1">Total Trip Cost</p>
+                        <p className="text-4xl md:text-5xl font-extrabold text-[#006B3F] tracking-tight">
+                            {formatCurrency(breakdown.total)}
+                        </p>
+                        <p className="text-sm text-muted-foreground mt-2">
+                            Range: {formatCurrency(minRange)} - {formatCurrency(maxRange)}
+                        </p>
+                    </CardContent>
+                </Card>
 
-                    {/* Key Metrics */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="p-4 bg-muted/50 rounded-lg border-l-4 border-l-[#006B3F]">
-                            <div className="flex items-center gap-2 mb-2">
-                                <Users className="h-4 w-4 text-[#006B3F]" />
-                                <p className="text-sm text-muted-foreground">Per Person</p>
-                            </div>
-                            <p className="text-2xl font-bold text-[#006B3F]">{formatCurrency(perPerson)}</p>
+                {/* Cost Per Person */}
+                <Card className="border-t-4 border-t-[#FCD116] shadow-lg bg-gradient-to-br from-white to-[#FCD116]/5">
+                    <CardContent className="p-6 text-center">
+                        <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-1">Cost Per Person</p>
+                        <p className="text-4xl md:text-5xl font-extrabold text-foreground tracking-tight">
+                            {formatCurrency(perPerson)}
+                        </p>
+                        <div className="flex items-center justify-center gap-2 mt-2 text-sm text-muted-foreground">
+                            <Users className="h-4 w-4" />
+                            <span>{travelerCount} Traveler{travelerCount !== 1 ? 's' : ''}</span>
                         </div>
-                        <div className="p-4 bg-muted/50 rounded-lg border-l-4 border-l-[#006B3F]">
-                            <div className="flex items-center gap-2 mb-2">
-                                <CalendarIcon className="h-4 w-4 text-[#006B3F]" />
-                                <p className="text-sm text-muted-foreground">Daily Average</p>
-                            </div>
-                            <p className="text-2xl font-bold text-[#006B3F]">{formatCurrency(dailyAverage)}</p>
-                        </div>
-                    </div>
+                    </CardContent>
+                </Card>
+            </div>
 
-                    {/* Badges */}
-                    <div className="flex flex-wrap gap-2">
-                        {formData?.duration && (
-                            <div className="flex items-center gap-1 px-3 py-1.5 bg-[#006B3F] text-white rounded-full text-sm font-medium">
-                                <CalendarIcon className="h-3 w-3" />
-                                {formData.duration} {formData.duration === 1 ? 'Day' : 'Days'}
-                            </div>
-                        )}
-                        {formData?.regions && formData.regions.length > 0 && (
-                            <div className="flex items-center gap-1 px-3 py-1.5 bg-[#FCD116] text-black rounded-full text-sm font-medium">
-                                <MapPin className="h-3 w-3" />
-                                {formData.regions.length} {formData.regions.length === 1 ? 'Region' : 'Regions'}
-                            </div>
-                        )}
-                        {formData?.month && (
-                            <div className={`px-3 py-1.5 rounded-full text-sm font-medium ${isPeakSeason ? 'bg-[#CE1126] text-white' : 'bg-[#FCD116] text-black'}`}>
-                                {formData.month} {isPeakSeason ? '(Peak Season)' : ''}
-                            </div>
-                        )}
-                        {breakdown.flights > 0 && (
-                            <div className="flex items-center gap-1 px-3 py-1.5 bg-[#FCD116] text-black rounded-full text-sm font-medium">
-                                <Plane className="h-3 w-3" />
-                                Flights Included
-                            </div>
-                        )}
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* Compact Expense Breakdown Section */}
-            <Card className="shadow-lg animate-[scaleIn_0.6s_ease-out_0.1s] hover:scale-[1.01] transition-all duration-300">
+            {/* Breakdown by Category */}
+            <Card className="shadow-xl animate-[scaleIn_0.6s_ease-out_0.1s]">
                 <CardHeader>
                     <CardTitle className="text-xl flex items-center gap-2">
                         <div className="w-1 h-6 bg-[#CE1126] rounded-full"></div>
-                        Expense Breakdown
+                        Breakdown by Category
                     </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                    {expenseItems.map((item) => {
-                        const Icon = item.icon;
-                        const percentage = (item.amount / breakdown.total) * 100;
-                        const dailyAvg = item.amount / (formData?.duration || 7);
-                        const numRegions = formData?.regions?.length || 1;
-                        const interRegionMoves = Math.max(0, numRegions - 1);
-
-                        return (
-                            <div key={item.label} className="space-y-1.5">
-                                {/* Header Row */}
-                                <div className="flex items-center justify-between text-sm">
-                                    <div className="flex items-center gap-2">
-                                        <Icon className="h-4 w-4" style={{ color: item.color }} />
-                                        <span className="font-medium">{item.label.split(' (')[0]}</span>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <span className="text-xs text-muted-foreground">
-                                            Daily: {formatCurrency(dailyAvg)}
-                                        </span>
-                                        <span className="font-bold text-[#006B3F] min-w-[100px] text-right">
-                                            {formatCurrency(item.amount)}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {/* Progress Bar */}
-                                <div className="h-2.5 bg-muted rounded-full overflow-hidden">
-                                    <div
-                                        className="h-full rounded-full transition-all duration-1000 ease-out"
-                                        style={{
-                                            width: `${percentage}%`,
-                                            backgroundColor: item.color
-                                        }}
-                                    />
-                                </div>
-
-                                {/* Contextual Note for Transportation */}
-                                {item.label.includes('Transportation') && interRegionMoves > 0 && (
-                                    <p className="text-xs text-muted-foreground italic pl-6">
-                                        Includes {interRegionMoves} inter-region move{interRegionMoves > 1 ? 's' : ''}
-                                    </p>
-                                )}
+                <CardContent className="space-y-6">
+                    {/* Accommodation */}
+                    <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                            <div className="flex items-center gap-2">
+                                <Wallet className="h-5 w-5 text-[#CE1126]" />
+                                <span className="font-medium">Accommodation</span>
                             </div>
-                        );
-                    })}
+                            <span className="font-bold">{formatCurrency(breakdown.accommodation)}</span>
+                        </div>
+                        <div className="h-2 bg-muted rounded-full overflow-hidden">
+                            <div className="h-full bg-[#CE1126]" style={{ width: `${(breakdown.accommodation / breakdown.total) * 100}%` }} />
+                        </div>
+                    </div>
+
+                    {/* Transport */}
+                    <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                            <div className="flex items-center gap-2">
+                                <Car className="h-5 w-5 text-[#FCD116]" />
+                                <span className="font-medium">Transport</span>
+                            </div>
+                            <span className="font-bold">{formatCurrency(breakdown.transport)}</span>
+                        </div>
+                        <div className="h-2 bg-muted rounded-full overflow-hidden">
+                            <div className="h-full bg-[#FCD116]" style={{ width: `${(breakdown.transport / breakdown.total) * 100}%` }} />
+                        </div>
+                    </div>
+
+                    {/* Activities */}
+                    <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                            <div className="flex items-center gap-2">
+                                <MapIcon className="h-5 w-5 text-[#006B3F]" />
+                                <span className="font-medium">Activities</span>
+                            </div>
+                            <span className="font-bold">{formatCurrency(breakdown.activities)}</span>
+                        </div>
+                        <div className="h-2 bg-muted rounded-full overflow-hidden">
+                            <div className="h-full bg-[#006B3F]" style={{ width: `${(breakdown.activities / breakdown.total) * 100}%` }} />
+                        </div>
+                    </div>
+
+                    {/* Food */}
+                    <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                            <div className="flex items-center gap-2">
+                                <Utensils className="h-5 w-5 text-[#CE1126]" />
+                                <span className="font-medium">Food</span>
+                            </div>
+                            <span className="font-bold">{formatCurrency(breakdown.food)}</span>
+                        </div>
+                        <div className="h-2 bg-muted rounded-full overflow-hidden">
+                            <div className="h-full bg-[#CE1126]" style={{ width: `${(breakdown.food / breakdown.total) * 100}%` }} />
+                        </div>
+                    </div>
+
+                    {/* Miscellaneous (Essentials + Contingency) */}
+                    <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                            <div className="flex items-center gap-2">
+                                <Shield className="h-5 w-5 text-[#FCD116]" />
+                                <span className="font-medium">Miscellaneous</span>
+                            </div>
+                            <span className="font-bold">{formatCurrency(breakdown.essentials + breakdown.contingency)}</span>
+                        </div>
+                        <div className="h-2 bg-muted rounded-full overflow-hidden">
+                            <div className="h-full bg-[#FCD116]" style={{ width: `${((breakdown.essentials + breakdown.contingency) / breakdown.total) * 100}%` }} />
+                        </div>
+                        <p className="text-xs text-muted-foreground pl-7">Includes Visa, SIM, Insurance & 10% Contingency</p>
+                    </div>
+
+                    {/* Flights & Add-ons */}
+                    {breakdown.flights > 0 && (
+                        <div className="space-y-2">
+                            <div className="flex justify-between items-center">
+                                <div className="flex items-center gap-2">
+                                    <Plane className="h-5 w-5 text-[#006B3F]" />
+                                    <span className="font-medium">Flights & Add-ons</span>
+                                </div>
+                                <span className="font-bold">{formatCurrency(breakdown.flights)}</span>
+                            </div>
+                            <div className="h-2 bg-muted rounded-full overflow-hidden">
+                                <div className="h-full bg-[#006B3F]" style={{ width: `${(breakdown.flights / breakdown.total) * 100}%` }} />
+                            </div>
+                        </div>
+                    )}
                 </CardContent>
             </Card>
 
-            {/* Regional Breakdown Section */}
+            {/* Regional Cost Breakdown */}
             {breakdown.regionalBreakdown && breakdown.regionalBreakdown.length > 0 && (
-                <div className="space-y-6 animate-[fadeSlideUp_0.7s_ease-out_0.2s]">
+                <div className="space-y-4 animate-[fadeSlideUp_0.7s_ease-out_0.2s]">
                     <h3 className="text-2xl font-bold flex items-center gap-2">
                         <MapPin className="h-6 w-6 text-[#CE1126]" />
-                        Regional Breakdown & Tips
+                        Regional Cost Breakdown
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {breakdown.regionalBreakdown.map((region) => (
-                            <Card key={region.region} className="shadow-md hover:shadow-xl transition-all duration-300 border-t-4 border-t-[#006B3F]">
+                            <Card key={region.region} className="border-l-4 border-l-[#006B3F]">
                                 <CardHeader className="pb-2">
-                                    <CardTitle className="text-xl flex justify-between items-start">
-                                        <span>{region.region} Region</span>
-                                        <div className="text-right">
-                                            <p className="text-sm font-normal text-muted-foreground">Est. Total</p>
-                                            <p className="text-lg font-bold text-[#006B3F]">{formatCurrency(region.totalCost)}</p>
-                                        </div>
+                                    <CardTitle className="text-lg flex justify-between">
+                                        <span>{region.region}</span>
+                                        <span className="text-[#006B3F]">{formatCurrency(region.totalCost)}</span>
                                     </CardTitle>
                                 </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/30 p-2 rounded">
-                                        <CalendarIcon className="h-4 w-4" />
-                                        <span>Daily Approx: <span className="font-semibold text-foreground">{formatCurrency(region.dailyCost)}</span></span>
-                                    </div>
-
+                                <CardContent>
+                                    <p className="text-sm text-muted-foreground">
+                                        Est. Daily: {formatCurrency(region.dailyCost)}
+                                    </p>
                                     {region.note && (
-                                        <div className="text-sm italic text-muted-foreground border-l-2 border-[#FCD116] pl-3 py-1">
-                                            "{region.note}"
-                                        </div>
-                                    )}
-
-                                    {region.tips && region.tips.length > 0 && (
-                                        <div className="space-y-2">
-                                            <p className="text-sm font-semibold flex items-center gap-1">
-                                                <Lightbulb className="h-3 w-3 text-[#FCD116]" />
-                                                Adepa's Tips:
-                                            </p>
-                                            <ul className="text-sm space-y-1 list-disc list-inside text-muted-foreground">
-                                                {region.tips.map((tip, i) => (
-                                                    <li key={i}>{tip}</li>
-                                                ))}
-                                            </ul>
-                                        </div>
+                                        <p className="text-xs italic text-muted-foreground mt-2">"{region.note}"</p>
                                     )}
                                 </CardContent>
                             </Card>
                         ))}
                     </div>
                 </div>
+            )}
+
+            {/* Daily Spend Estimate */}
+            <Card className="bg-muted/30 animate-[fadeSlideUp_0.7s_ease-out_0.3s]">
+                <CardContent className="p-6 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="p-3 bg-[#006B3F]/10 rounded-full">
+                            <CalendarIcon className="h-6 w-6 text-[#006B3F]" />
+                        </div>
+                        <div>
+                            <p className="font-bold text-lg">Daily Spend Estimate</p>
+                            <p className="text-sm text-muted-foreground">Average cost per day</p>
+                        </div>
+                    </div>
+                    <p className="text-2xl font-bold text-[#006B3F]">{formatCurrency(dailyAverage)}</p>
+                </CardContent>
+            </Card>
+
+            {/* Suggested Tours */}
+            {formData && (
+                <TourRecommendations
+                    interests={formData.activities}
+                    budget={breakdown.total}
+                    regions={formData.regions}
+                    month={formData.month}
+                    embedded={true}
+                    onSelectTour={(tour) => {
+                        // Handle tour selection - maybe scroll to top or open modal?
+                        // For now, we'll just log it or pass it up if onContinue handles it
+                        console.log('Selected tour:', tour);
+                        // If we had a prop for this, we'd call it.
+                        // Since onContinue is for "Continue to Tours" in the old flow,
+                        // we might want to repurpose it or add a new prop.
+                    }}
+                />
             )}
 
             {/* Action Buttons */}
@@ -270,14 +302,6 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                     // Calculate detailed context for Adepa
                                     const travelerCount = TRAVELER_COUNTS[formData.travelerType];
 
-                                    // Get base costs
-                                    const baseCosts = {
-                                        accommodation: BASE_COSTS.accommodation[formData.accommodationLevel],
-                                        food: BASE_COSTS.food[formData.accommodationLevel],
-                                        transport: BASE_COSTS.transport[formData.accommodationLevel],
-                                        activities: BASE_COSTS.activities[formData.intensity?.toLowerCase() as 'relaxed' | 'moderate' | 'packed' || 'moderate']
-                                    };
-
                                     // Calculate multipliers
                                     const regions = formData.regions || [];
                                     const regionalMultipliers = regions.map(r => REGIONAL_MULTIPLIERS[r] || 1.0);
@@ -285,6 +309,31 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                         ? regionalMultipliers.reduce((sum, m) => sum + m, 0) / regionalMultipliers.length
                                         : 1.0;
                                     const seasonalMultiplier = formData.month ? (SEASONAL_MULTIPLIERS[formData.month] || 1.0) : 1.0;
+
+                                    // Get base costs with new factors
+                                    let accommodationBase = BASE_COSTS.accommodation[formData.accommodationLevel];
+                                    if (formData.roomSharing && ROOM_SHARING_MULTIPLIERS[formData.roomSharing]) {
+                                        accommodationBase *= ROOM_SHARING_MULTIPLIERS[formData.roomSharing];
+                                    }
+
+                                    let transportBase = 0;
+                                    if (formData.transportMode && TRANSPORT_MODE_COSTS[formData.transportMode] !== undefined) {
+                                        const modeCost = TRANSPORT_MODE_COSTS[formData.transportMode];
+                                        if (['private_driver', 'rental'].includes(formData.transportMode)) {
+                                            transportBase = modeCost / travelerCount;
+                                        } else {
+                                            transportBase = modeCost;
+                                        }
+                                    } else {
+                                        transportBase = BASE_COSTS.transport[formData.accommodationLevel];
+                                    }
+
+                                    const baseCosts = {
+                                        accommodation: accommodationBase,
+                                        food: BASE_COSTS.food[formData.accommodationLevel],
+                                        transport: transportBase,
+                                        activities: BASE_COSTS.activities[formData.intensity?.toLowerCase() as 'relaxed' | 'moderate' | 'packed' || 'moderate']
+                                    };
 
                                     // Calculate daily costs per person
                                     const dailyCosts = {
@@ -320,10 +369,10 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                 }
                                 toggleChat();
                             }}
-                            className="px-8 py-6 border-2 border-[#FCD116] hover:bg-[#FCD116] hover:text-black transition-all duration-300 group"
+                            className="px-8 py-6 border-2 border-[#FCD116] hover:bg-[#FCD116] hover:text-black transition-all duration-300 group w-full sm:w-auto"
                         >
                             <MessageCircle className="mr-2 h-5 w-5 group-hover:animate-pulse" />
-                            Chat with Adepa - Your Free Ghana Travel Planner
+                            Chat with Adepa about this Budget
                         </Button>
                     </div>
 
@@ -335,24 +384,10 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                             onClick={() => {
                                 window.open('https://calendly.com/weareitv98/30min', '_blank');
                             }}
-                            className="px-8 py-6 border-2 border-[#006B3F] hover:bg-[#006B3F] hover:text-white transition-all duration-300 group"
+                            className="px-8 py-6 border-2 border-[#006B3F] hover:bg-[#006B3F] hover:text-white transition-all duration-300 group w-full sm:w-auto"
                         >
                             <Phone className="mr-2 h-5 w-5 group-hover:animate-bounce" />
-                            Book a Free 30-Min Consultation with Our Ghana Experts
-                        </Button>
-                    </div>
-
-                    {/* Continue to Tours Button */}
-                    <div className="flex justify-center">
-                        <Button
-                            size="lg"
-                            onClick={onContinue}
-                            className="px-12 py-6 bg-[#CE1126] hover:bg-[#A00E1E] text-white"
-                        >
-                            Let Me Show You What Tours Your Budget Can Get You
-                            <svg className="ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                            </svg>
+                            Book a Free 30-Min Consultation
                         </Button>
                     </div>
                 </div>
