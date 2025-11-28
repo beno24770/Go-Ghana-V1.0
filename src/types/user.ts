@@ -39,3 +39,14 @@ export interface CreateTripData {
     chatHistory?: ChatMessage[];
     selectedTour?: Tour;
 }
+
+export interface ConsultationRequest {
+    id: string;
+    userId: string;
+    tripId?: string; // Optional link to a saved trip
+    status: 'requested' | 'scheduled' | 'completed' | 'cancelled';
+    budgetSummary?: BudgetBreakdown; // Snapshot of budget when requested
+    formData?: BudgetFormData;
+    createdAt: Timestamp;
+    updatedAt: Timestamp;
+}

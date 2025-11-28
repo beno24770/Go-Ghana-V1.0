@@ -1,9 +1,14 @@
-import { Wallet, Utensils, Car, Map as MapIcon, Plane, TrendingUp, Users, Calendar as CalendarIcon, MapPin, Shield, MessageCircle, Phone } from 'lucide-react';
+import { useState } from 'react';
+import { Wallet, Utensils, Car, Map as MapIcon, Plane, TrendingUp, Users, Calendar as CalendarIcon, MapPin, Shield, MessageCircle, Phone, Download, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
 import { Button } from './ui/Button';
 import { CurrencySelector } from './ui/CurrencySelector';
 import { useCurrency } from '../contexts/CurrencyContext';
 import { useChat } from '../contexts/ChatContext';
+import { useAuth } from '../contexts/AuthContext';
+import { AuthModal } from './auth/AuthModal';
+import { generateBudgetPDF } from '../utils/pdfGenerator';
+import * as firestoreService from '../services/firestoreService';
 import type { BudgetBreakdown, BudgetFormData } from '../types';
 import { BASE_COSTS, REGIONAL_MULTIPLIERS, SEASONAL_MULTIPLIERS, INTER_REGION_TRANSPORT, TRANSPORT_MODE_COSTS, ROOM_SHARING_MULTIPLIERS } from '../data/costData';
 
@@ -24,8 +29,14 @@ const TRAVELER_COUNTS = {
 };
 
 export function BudgetResult({ breakdown, isLoading = false, formData, onContinue }: BudgetResultProps) {
-    const { convertAndFormat } = useCurrency();
+    const { convertAndFormat, selectedCurrency } = useCurrency();
     const { toggleChat, setBudgetContext } = useChat();
+    const { user } = useAuth();
+
+    const [showAuthModal, setShowAuthModal] = useState(false);
+    const [pendingAction, setPendingAction] = useState<'chat' | 'consultation' | 'pdf' | null>(null);
+    const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+    const [isBooking, setIsBooking] = useState(false);
 
     if (isLoading) {
         return (
@@ -74,11 +85,159 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
 
     expenseItems.push({ label: 'Contingency Buffer (10%)', amount: breakdown.contingency, icon: TrendingUp, color: '#FCD116' });
 
+    // --- ACTION HANDLERS ---
 
+    const handleAction = (action: 'chat' | 'consultation' | 'pdf') => {
+        if (!user) {
+            setPendingAction(action);
+            setShowAuthModal(true);
+        } else {
+            executeAction(action);
+        }
+    };
 
+    const executeAction = async (action: 'chat' | 'consultation' | 'pdf') => {
+        if (!formData || !breakdown) return;
 
+        switch (action) {
+            case 'chat':
+                prepareAndOpenChat();
+                break;
+            case 'consultation':
+                await handleConsultationBooking();
+                break;
+            case 'pdf':
+                await handlePdfDownload();
+                break;
+        }
+    };
 
-    const isPeakSeason = formData?.month && ['January', 'August', 'December'].includes(formData.month);
+    const handleAuthSuccess = () => {
+        setShowAuthModal(false);
+        if (pendingAction) {
+            executeAction(pendingAction);
+            setPendingAction(null);
+        }
+    };
+
+    const prepareAndOpenChat = () => {
+        if (breakdown && formData) {
+            // Calculate detailed context for Adepa
+            const travelerCount = TRAVELER_COUNTS[formData.travelerType];
+
+            // Calculate multipliers
+            const regions = formData.regions || [];
+            const regionalMultipliers = regions.map(r => REGIONAL_MULTIPLIERS[r] || 1.0);
+            const avgRegionalMultiplier = regionalMultipliers.length > 0
+                ? regionalMultipliers.reduce((sum, m) => sum + m, 0) / regionalMultipliers.length
+                : 1.0;
+            const seasonalMultiplier = formData.month ? (SEASONAL_MULTIPLIERS[formData.month] || 1.0) : 1.0;
+
+            // Get base costs with new factors
+            let accommodationBase = BASE_COSTS.accommodation[formData.accommodationLevel];
+            if (formData.roomSharing && ROOM_SHARING_MULTIPLIERS[formData.roomSharing]) {
+                accommodationBase *= ROOM_SHARING_MULTIPLIERS[formData.roomSharing];
+            }
+
+            let transportBase = 0;
+            if (formData.transportMode && TRANSPORT_MODE_COSTS[formData.transportMode] !== undefined) {
+                const modeCost = TRANSPORT_MODE_COSTS[formData.transportMode];
+                if (['private_driver', 'rental'].includes(formData.transportMode)) {
+                    transportBase = modeCost / travelerCount;
+                } else {
+                    transportBase = modeCost;
+                }
+            } else {
+                transportBase = BASE_COSTS.transport[formData.accommodationLevel];
+            }
+
+            const baseCosts = {
+                accommodation: accommodationBase,
+                food: BASE_COSTS.food[formData.accommodationLevel],
+                transport: transportBase,
+                activities: BASE_COSTS.activities[formData.intensity?.toLowerCase() as 'relaxed' | 'moderate' | 'packed' || 'moderate']
+            };
+
+            // Calculate daily costs per person
+            const dailyCosts = {
+                accommodation: baseCosts.accommodation * avgRegionalMultiplier * seasonalMultiplier,
+                food: baseCosts.food * avgRegionalMultiplier * seasonalMultiplier,
+                transport: baseCosts.transport * avgRegionalMultiplier * seasonalMultiplier,
+                activities: baseCosts.activities * avgRegionalMultiplier * seasonalMultiplier
+            };
+
+            // Calculate inter-region transport
+            const numRegions = regions.length || 1;
+            const interRegionMoves = Math.max(0, numRegions - 1);
+            const interRegionCostPerMove = INTER_REGION_TRANSPORT[formData.accommodationLevel];
+            const interRegionTotal = interRegionMoves * interRegionCostPerMove * travelerCount;
+
+            setBudgetContext({
+                breakdown,
+                formData,
+                calculations: {
+                    dailyCosts,
+                    interRegionTransport: {
+                        moves: interRegionMoves,
+                        costPerMove: interRegionCostPerMove,
+                        total: interRegionTotal
+                    },
+                    multipliers: {
+                        regional: avgRegionalMultiplier,
+                        seasonal: seasonalMultiplier
+                    },
+                    baseCosts
+                }
+            });
+        }
+        toggleChat();
+    };
+
+    const handleConsultationBooking = async () => {
+        if (!user || !formData) return;
+        setIsBooking(true);
+        try {
+            // Save consultation request
+            await firestoreService.saveConsultationRequest(user.uid, {
+                budgetSummary: breakdown,
+                formData: formData
+            });
+
+            // Open Calendly
+            window.open('https://calendly.com/weareitv98/30min', '_blank');
+        } catch (error) {
+            console.error("Error saving consultation:", error);
+            // Still open calendly even if save fails
+            window.open('https://calendly.com/weareitv98/30min', '_blank');
+        } finally {
+            setIsBooking(false);
+        }
+    };
+
+    const handlePdfDownload = async () => {
+        if (!user || !formData || !breakdown) return;
+        setIsGeneratingPdf(true);
+        try {
+            // Generate PDF
+            const doc = generateBudgetPDF(breakdown, formData, selectedCurrency);
+
+            // Save trip to dashboard (if not already saved - logic could be refined to avoid dupes)
+            // For now, we'll save a new trip record to ensure the PDF corresponds to a saved trip
+            await firestoreService.saveTrip(user.uid, {
+                name: `Ghana Trip - ${new Date().toLocaleDateString()}`,
+                description: `Budget estimate for ${formData.duration} days`,
+                formData,
+                breakdown
+            });
+
+            // Download PDF
+            doc.save('GoGhana-Budget-Estimate.pdf');
+        } catch (error) {
+            console.error("Error generating PDF:", error);
+        } finally {
+            setIsGeneratingPdf(false);
+        }
+    };
 
     return (
         <div className="w-full max-w-4xl mx-auto mt-8 space-y-8">
@@ -279,119 +438,62 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                     month={formData.month}
                     embedded={true}
                     onSelectTour={(tour) => {
-                        // Handle tour selection - maybe scroll to top or open modal?
-                        // For now, we'll just log it or pass it up if onContinue handles it
                         console.log('Selected tour:', tour);
-                        // If we had a prop for this, we'd call it.
-                        // Since onContinue is for "Continue to Tours" in the old flow,
-                        // we might want to repurpose it or add a new prop.
                     }}
                 />
             )}
 
-            {/* Action Buttons */}
-            {onContinue && (
-                <div className="flex flex-col gap-4 pt-6 animate-[fadeSlideUp_0.8s_ease-out_0.3s]">
-                    {/* Chat with Adepa Button */}
-                    <div className="flex justify-center">
-                        <Button
-                            size="lg"
-                            variant="outline"
-                            onClick={() => {
-                                if (breakdown && formData) {
-                                    // Calculate detailed context for Adepa
-                                    const travelerCount = TRAVELER_COUNTS[formData.travelerType];
-
-                                    // Calculate multipliers
-                                    const regions = formData.regions || [];
-                                    const regionalMultipliers = regions.map(r => REGIONAL_MULTIPLIERS[r] || 1.0);
-                                    const avgRegionalMultiplier = regionalMultipliers.length > 0
-                                        ? regionalMultipliers.reduce((sum, m) => sum + m, 0) / regionalMultipliers.length
-                                        : 1.0;
-                                    const seasonalMultiplier = formData.month ? (SEASONAL_MULTIPLIERS[formData.month] || 1.0) : 1.0;
-
-                                    // Get base costs with new factors
-                                    let accommodationBase = BASE_COSTS.accommodation[formData.accommodationLevel];
-                                    if (formData.roomSharing && ROOM_SHARING_MULTIPLIERS[formData.roomSharing]) {
-                                        accommodationBase *= ROOM_SHARING_MULTIPLIERS[formData.roomSharing];
-                                    }
-
-                                    let transportBase = 0;
-                                    if (formData.transportMode && TRANSPORT_MODE_COSTS[formData.transportMode] !== undefined) {
-                                        const modeCost = TRANSPORT_MODE_COSTS[formData.transportMode];
-                                        if (['private_driver', 'rental'].includes(formData.transportMode)) {
-                                            transportBase = modeCost / travelerCount;
-                                        } else {
-                                            transportBase = modeCost;
-                                        }
-                                    } else {
-                                        transportBase = BASE_COSTS.transport[formData.accommodationLevel];
-                                    }
-
-                                    const baseCosts = {
-                                        accommodation: accommodationBase,
-                                        food: BASE_COSTS.food[formData.accommodationLevel],
-                                        transport: transportBase,
-                                        activities: BASE_COSTS.activities[formData.intensity?.toLowerCase() as 'relaxed' | 'moderate' | 'packed' || 'moderate']
-                                    };
-
-                                    // Calculate daily costs per person
-                                    const dailyCosts = {
-                                        accommodation: baseCosts.accommodation * avgRegionalMultiplier * seasonalMultiplier,
-                                        food: baseCosts.food * avgRegionalMultiplier * seasonalMultiplier,
-                                        transport: baseCosts.transport * avgRegionalMultiplier * seasonalMultiplier,
-                                        activities: baseCosts.activities * avgRegionalMultiplier * seasonalMultiplier
-                                    };
-
-                                    // Calculate inter-region transport
-                                    const numRegions = regions.length || 1;
-                                    const interRegionMoves = Math.max(0, numRegions - 1);
-                                    const interRegionCostPerMove = INTER_REGION_TRANSPORT[formData.accommodationLevel];
-                                    const interRegionTotal = interRegionMoves * interRegionCostPerMove * travelerCount;
-
-                                    setBudgetContext({
-                                        breakdown,
-                                        formData,
-                                        calculations: {
-                                            dailyCosts,
-                                            interRegionTransport: {
-                                                moves: interRegionMoves,
-                                                costPerMove: interRegionCostPerMove,
-                                                total: interRegionTotal
-                                            },
-                                            multipliers: {
-                                                regional: avgRegionalMultiplier,
-                                                seasonal: seasonalMultiplier
-                                            },
-                                            baseCosts
-                                        }
-                                    });
-                                }
-                                toggleChat();
-                            }}
-                            className="px-8 py-6 border-2 border-[#FCD116] hover:bg-[#FCD116] hover:text-black transition-all duration-300 group w-full sm:w-auto"
-                        >
-                            <MessageCircle className="mr-2 h-5 w-5 group-hover:animate-pulse" />
-                            Chat with Adepa about this Budget
-                        </Button>
-                    </div>
-
-                    {/* Book Free Consultation Button */}
-                    <div className="flex justify-center">
-                        <Button
-                            size="lg"
-                            variant="outline"
-                            onClick={() => {
-                                window.open('https://calendly.com/weareitv98/30min', '_blank');
-                            }}
-                            className="px-8 py-6 border-2 border-[#006B3F] hover:bg-[#006B3F] hover:text-white transition-all duration-300 group w-full sm:w-auto"
-                        >
-                            <Phone className="mr-2 h-5 w-5 group-hover:animate-bounce" />
-                            Book a Free 30-Min Consultation
-                        </Button>
-                    </div>
+            {/* CTA Buttons */}
+            <div className="flex flex-col gap-4 pt-6 animate-[fadeSlideUp_0.8s_ease-out_0.3s]">
+                {/* 1. Plan This Trip With an Expert */}
+                <div className="flex justify-center">
+                    <Button
+                        size="lg"
+                        variant="outline"
+                        onClick={() => handleAction('chat')}
+                        className="px-8 py-6 border-2 border-[#FCD116] hover:bg-[#FCD116] hover:text-black transition-all duration-300 group w-full sm:w-auto"
+                    >
+                        <MessageCircle className="mr-2 h-5 w-5 group-hover:animate-pulse" />
+                        Plan This Trip With an Expert
+                    </Button>
                 </div>
-            )}
+
+                {/* 2. Book a Free 30-Min Consultation */}
+                <div className="flex justify-center">
+                    <Button
+                        size="lg"
+                        variant="outline"
+                        onClick={() => handleAction('consultation')}
+                        disabled={isBooking}
+                        className="px-8 py-6 border-2 border-[#006B3F] hover:bg-[#006B3F] hover:text-white transition-all duration-300 group w-full sm:w-auto"
+                    >
+                        {isBooking ? (
+                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        ) : (
+                            <Phone className="mr-2 h-5 w-5 group-hover:animate-bounce" />
+                        )}
+                        Book a Free 30-Min Consultation
+                    </Button>
+                </div>
+
+                {/* 3. Download This Budget as PDF */}
+                <div className="flex justify-center">
+                    <Button
+                        size="lg"
+                        variant="outline"
+                        onClick={() => handleAction('pdf')}
+                        disabled={isGeneratingPdf}
+                        className="px-8 py-6 border-2 border-[#CE1126] hover:bg-[#CE1126] hover:text-white transition-all duration-300 group w-full sm:w-auto"
+                    >
+                        {isGeneratingPdf ? (
+                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        ) : (
+                            <Download className="mr-2 h-5 w-5 group-hover:animate-bounce" />
+                        )}
+                        Download This Budget as PDF
+                    </Button>
+                </div>
+            </div>
 
             <style>{`
                 @keyframes expandWidth {
@@ -403,6 +505,14 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                     }
                 }
             `}</style>
+
+            {/* Auth Modal */}
+            <AuthModal
+                isOpen={showAuthModal}
+                onClose={() => setShowAuthModal(false)}
+                onSuccess={handleAuthSuccess}
+                initialView="login"
+            />
         </div>
     );
 }

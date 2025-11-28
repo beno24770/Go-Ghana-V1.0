@@ -198,3 +198,48 @@ export async function getFavoriteTrips(userId: string): Promise<SavedTrip[]> {
         ...doc.data(),
     })) as SavedTrip[];
 }
+
+// Collection reference for consultations
+const CONSULTATIONS_COLLECTION = 'consultations';
+
+/**
+ * Save a consultation request
+ */
+export async function saveConsultationRequest(
+    userId: string,
+    data: {
+        tripId?: string;
+        budgetSummary?: any;
+        formData?: any;
+    }
+): Promise<string> {
+    const consultationsRef = collection(db, USERS_COLLECTION, userId, CONSULTATIONS_COLLECTION);
+    const newRef = doc(consultationsRef);
+
+    const consultation = {
+        userId,
+        tripId: data.tripId || null,
+        status: 'requested',
+        budgetSummary: data.budgetSummary || null,
+        formData: data.formData || null,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+    };
+
+    await setDoc(newRef, consultation);
+    return newRef.id;
+}
+
+/**
+ * Get user consultations
+ */
+export async function getUserConsultations(userId: string): Promise<any[]> {
+    const consultationsRef = collection(db, USERS_COLLECTION, userId, CONSULTATIONS_COLLECTION);
+    const q = query(consultationsRef, orderBy('createdAt', 'desc'));
+    const querySnapshot = await getDocs(q);
+
+    return querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+    }));
+}

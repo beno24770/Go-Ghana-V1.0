@@ -1,58 +1,79 @@
 import { useState } from 'react';
-import { X } from 'lucide-react';
 import { LoginForm } from './LoginForm';
 import { SignupForm } from './SignupForm';
-import { ForgotPasswordForm } from './ForgotPasswordForm';
+import { X } from 'lucide-react';
 
 interface AuthModalProps {
     isOpen: boolean;
     onClose: () => void;
+    onSuccess: () => void;
     initialView?: 'login' | 'signup';
 }
 
-type View = 'login' | 'signup' | 'forgot-password';
-
-export function AuthModal({ isOpen, onClose, initialView = 'login' }: AuthModalProps) {
-    const [view, setView] = useState<View>(initialView);
+export function AuthModal({ isOpen, onClose, onSuccess, initialView = 'login' }: AuthModalProps) {
+    const [view, setView] = useState<'login' | 'signup'>(initialView);
 
     if (!isOpen) return null;
 
-    const handleSuccess = () => {
-        onClose();
-        setView('login'); // Reset to login for next time
-    };
-
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-            <div className="relative w-full max-w-md bg-background rounded-lg shadow-2xl max-h-[90vh] overflow-y-auto">
-                {/* Close button */}
-                <button
-                    onClick={onClose}
-                    className="absolute top-4 right-4 p-2 rounded-full hover:bg-muted transition-colors z-10"
-                    aria-label="Close"
-                >
-                    <X className="h-5 w-5" />
-                </button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+            <div className="relative w-full max-w-md bg-background rounded-xl shadow-2xl border border-border overflow-hidden animate-in zoom-in-95 duration-200">
+                {/* Header */}
+                <div className="flex items-center justify-between p-4 border-b">
+                    <h2 className="text-xl font-bold">
+                        {view === 'login' ? 'Welcome Back' : 'Create Account'}
+                    </h2>
+                    <button
+                        onClick={onClose}
+                        className="p-2 hover:bg-muted rounded-full transition-colors"
+                    >
+                        <X className="h-5 w-5" />
+                    </button>
+                </div>
 
                 {/* Content */}
-                {view === 'login' && (
-                    <LoginForm
-                        onSuccess={handleSuccess}
-                        onSwitchToSignup={() => setView('signup')}
-                        onForgotPassword={() => setView('forgot-password')}
-                    />
-                )}
-
-                {view === 'signup' && (
-                    <SignupForm
-                        onSuccess={handleSuccess}
-                        onSwitchToLogin={() => setView('login')}
-                    />
-                )}
-
-                {view === 'forgot-password' && (
-                    <ForgotPasswordForm onBack={() => setView('login')} />
-                )}
+                <div className="p-6 max-h-[80vh] overflow-y-auto">
+                    {view === 'login' ? (
+                        <>
+                            <p className="text-sm text-muted-foreground mb-6">
+                                Sign in to save your trip, book consultations, and access your dashboard.
+                            </p>
+                            <LoginForm
+                                onSuccess={() => {
+                                    onSuccess();
+                                    onClose();
+                                }}
+                                onSwitchToSignup={() => setView('signup')}
+                                onForgotPassword={() => {
+                                    // Handle forgot password - maybe switch to a different view or just close and navigate
+                                    console.log('Forgot password clicked');
+                                }}
+                            />
+                        </>
+                    ) : (
+                        <>
+                            <p className="text-sm text-muted-foreground mb-6">
+                                Create an account to save your itineraries and get personalized recommendations.
+                            </p>
+                            <SignupForm
+                                onSuccess={() => {
+                                    onSuccess();
+                                    onClose();
+                                }}
+                                onSwitchToLogin={() => setView('login')}
+                            />
+                            <p className="text-center text-sm text-muted-foreground mt-6">
+                                Already have an account?
+                                <button
+                                    onClick={() => setView('login')}
+                                    className="underline hover:text-primary font-medium ml-1"
+                                >
+                                    Login
+                                </button>
+                            </p>
+                        </>
+                    )}
+                </div>
             </div>
         </div>
     );
