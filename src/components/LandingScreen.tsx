@@ -28,7 +28,7 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                         <div className="relative">
                             <div className="absolute inset-0 bg-[#FCD116] rounded-xl rotate-3 opacity-50"></div>
                             <img
-                                src="/goghana-logo.jpg"
+                                src={`${import.meta.env.BASE_URL}goghana-logo.jpg`}
                                 alt="GoGhana Logo"
                                 className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-xl shadow-sm object-cover"
                             />
@@ -219,7 +219,7 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                                                 <div className="flex gap-3 overflow-hidden">
                                                     <div className="w-28 flex-shrink-0">
                                                         <div className="h-20 bg-gray-200 rounded-xl mb-2 overflow-hidden relative">
-                                                            <img src="/cape-coast.jpg" alt="Cape Coast" className="w-full h-full object-cover" />
+                                                            <img src={`${import.meta.env.BASE_URL}cape-coast.jpg`} alt="Cape Coast" className="w-full h-full object-cover" />
                                                             <div className="absolute bottom-1 right-1 bg-white/90 px-1.5 py-0.5 rounded text-[10px] font-bold text-[#006B3F]">$45</div>
                                                         </div>
                                                         <div className="text-[10px] font-bold leading-tight">Cape Coast Castle</div>
