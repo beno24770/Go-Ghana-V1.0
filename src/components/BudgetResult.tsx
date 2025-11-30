@@ -3,6 +3,7 @@ import { Wallet, Utensils, Car, Map as MapIcon, Plane, TrendingUp, Users, Calend
 import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
 import { Button } from './ui/Button';
 import { SplitButton } from './ui/SplitButton';
+import { ItineraryBuilder } from './ItineraryBuilder';
 import { CurrencySelector } from './ui/CurrencySelector';
 import { useCurrency } from '../contexts/CurrencyContext';
 import { useChat } from '../contexts/ChatContext';
@@ -37,6 +38,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData }: BudgetR
     const [pendingAction, setPendingAction] = useState<'chat' | 'consultation' | 'pdf' | 'itinerary' | null>(null);
     const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
     const [isBooking, setIsBooking] = useState(false);
+    const [showItinerary, setShowItinerary] = useState(false);
 
     if (isLoading) {
         return (
@@ -58,6 +60,17 @@ export function BudgetResult({ breakdown, isLoading = false, formData }: BudgetR
     }
 
     if (!breakdown) return null;
+
+    // Show itinerary builder if requested
+    if (showItinerary && formData) {
+        return (
+            <ItineraryBuilder
+                budget={breakdown}
+                formData={formData}
+                onBack={() => setShowItinerary(false)}
+            />
+        );
+    }
 
     // All amounts in breakdown are in GHS (base currency)
     // convertAndFormat will convert to selected currency
@@ -87,7 +100,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData }: BudgetR
 
     // --- ACTION HANDLERS ---
 
-    const handleAction = (action: 'chat' | 'consultation' | 'pdf') => {
+    const handleAction = (action: 'chat' | 'consultation' | 'pdf' | 'itinerary') => {
         if (action === 'pdf' && !user) {
             setPendingAction(action);
             setShowAuthModal(true);
@@ -101,9 +114,8 @@ export function BudgetResult({ breakdown, isLoading = false, formData }: BudgetR
 
         switch (action) {
             case 'itinerary':
-                // TODO: Navigate to itinerary builder feature
-                // For now, we'll show a placeholder alert
-                alert('Itinerary builder feature coming soon! This will show you exactly what your budget buys: vetted accommodations, transport options, and restaurant recommendations.');
+                // Show itinerary builder
+                setShowItinerary(true);
                 break;
             case 'chat':
                 prepareAndOpenChat();
