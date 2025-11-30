@@ -1,6 +1,7 @@
 import { Button } from './ui/Button';
 import { ArrowRight, Check, Play, Star, Calculator, Calendar } from 'lucide-react';
 import { AnimatedSection } from './ui/AnimatedSection';
+import { CountUp } from './ui/CountUp';
 
 interface LandingScreenProps {
     onStart: () => void;
@@ -168,13 +169,15 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                                     </div>
                                     <div>
                                         <div className="text-xs text-gray-500 font-medium">Budget Saved</div>
-                                        <div className="text-sm font-bold text-gray-900">$450.00</div>
+                                        <div className="text-sm font-bold text-gray-900">
+                                            <CountUp end={450} prefix="$" suffix=".00" duration={2000} />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Main Phone Mockup */}
-                            <div className="relative z-10 bg-gray-900 rounded-[2rem] sm:rounded-[3rem] p-2 sm:p-3 shadow-2xl border-4 sm:border-[6px] border-gray-800 rotate-[-6deg] hover:rotate-0 transition-transform duration-500 ease-out">
+                            {/* Main Phone Mockup with Floating Animation */}
+                            <div className="relative z-10 bg-gray-900 rounded-[2rem] sm:rounded-[3rem] p-2 sm:p-3 shadow-2xl border-4 sm:border-[6px] border-gray-800 rotate-[-6deg] hover:rotate-0 transition-transform duration-500 ease-out animate-float">
                                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 sm:w-32 h-5 sm:h-6 bg-gray-900 rounded-b-2xl z-20"></div>
                                 <div className="relative bg-white rounded-[1.75rem] sm:rounded-[2.5rem] overflow-hidden h-[480px] sm:h-[580px] w-[240px] sm:w-[280px] mx-auto">
                                     {/* App UI Mockup */}
@@ -191,7 +194,9 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                                         <div className="flex-1 px-4 -mt-6 space-y-4 overflow-hidden">
                                             <div className="bg-white p-4 rounded-2xl shadow-sm">
                                                 <div className="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-2">Total Budget</div>
-                                                <div className="text-3xl font-bold text-gray-900">$2,450</div>
+                                                <div className="text-3xl font-bold text-gray-900">
+                                                    <CountUp end={2450} prefix="$" duration={2500} />
+                                                </div>
                                                 <div className="w-full bg-gray-100 h-2 rounded-full mt-3 overflow-hidden">
                                                     <div className="bg-ghana-green h-full w-[70%] rounded-full"></div>
                                                 </div>
@@ -203,14 +208,18 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                                                         <div className="w-4 h-4 bg-ghana-red rounded-full"></div>
                                                     </div>
                                                     <div className="text-xs text-gray-500">Hotel</div>
-                                                    <div className="font-bold">$850</div>
+                                                    <div className="font-bold">
+                                                        <CountUp end={850} prefix="$" duration={2200} />
+                                                    </div>
                                                 </div>
                                                 <div className="bg-white p-3 rounded-2xl shadow-sm">
                                                     <div className="w-8 h-8 bg-yellow-50 rounded-full flex items-center justify-center mb-2">
                                                         <div className="w-4 h-4 bg-ghana-yellow rounded-full"></div>
                                                     </div>
                                                     <div className="text-xs text-gray-500">Food</div>
-                                                    <div className="font-bold">$420</div>
+                                                    <div className="font-bold">
+                                                        <CountUp end={420} prefix="$" duration={2300} />
+                                                    </div>
                                                 </div>
                                             </div>
 
