@@ -151,6 +151,187 @@ Remember: You are the PRIMARY intelligence. The context data is your source of t
             throw error;
         }
     }
+
+    /**
+     * Generate a complete trip itinerary using AI
+     */
+    async generateItinerary(
+        context: {
+            budget: unknown;
+            formData: unknown;
+            options: unknown;
+            availableAccommodations: unknown;
+            availableRestaurants: unknown;
+            availableActivities: unknown;
+        }
+    ): Promise<unknown> {
+        if (!this.config.apiKey) {
+            throw new Error("API Key is missing. Please configure the LLM settings.");
+        }
+
+        const itineraryPrompt = `You are an expert Ghana travel planner. Generate a detailed day-by-day itinerary based on the following information:
+
+BUDGET BREAKDOWN:
+${JSON.stringify(context.budget, null, 2)}
+
+TRIP DETAILS:
+${JSON.stringify(context.formData, null, 2)}
+
+AVAILABLE ACCOMMODATIONS:
+${JSON.stringify(context.availableAccommodations, null, 2)}
+
+AVAILABLE RESTAURANTS:
+${JSON.stringify(context.availableRestaurants, null, 2)}
+
+AVAILABLE ACTIVITIES:
+${JSON.stringify(context.availableActivities, null, 2)}
+
+INSTRUCTIONS:
+1. Create a day-by-day itinerary matching the trip duration
+2. Select accommodations, restaurants, and activities from the provided lists that match the budget tier
+3. Ensure daily costs align with the budget breakdown
+4. Include morning, afternoon, and evening activities for each day
+5. Add breakfast, lunch, and dinner recommendations for each day
+6. Provide realistic timing and descriptions
+7. Return ONLY valid JSON in this exact format:
+
+{
+  "days": [
+    {
+      "day": 1,
+      "location": "Greater Accra",
+      "region": "Greater Accra",
+      "dailyBudget": 350,
+      "actualCost": 340,
+      "morning": [
+        {
+          "time": "9:00 AM - 11:00 AM",
+          "activity": "Visit Kwame Nkrumah Memorial Park",
+          "location": "High Street, Accra",
+          "cost": 10,
+          "duration": "2 hours",
+          "description": "Explore Ghana's independence history",
+          "type": "culture"
+        }
+      ],
+      "afternoon": [...],
+      "evening": [...],
+      "meals": {
+        "breakfast": { "id": "rest-accra-breakfast-1", "name": "...", ... },
+        "lunch": { "id": "...", ... },
+        "dinner": { "id": "...", ... }
+      },
+      "accommodation": { "id": "acc-accra-mid-1", "name": "...", ... },
+      "transport": [],
+      "highlights": ["Kwame Nkrumah Memorial Park", "..."]
+    }
+  ]
+}
+
+IMPORTANT: Return ONLY the JSON object, no additional text or markdown formatting.`;
+
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${this.config.model}:generateContent?key=${this.config.apiKey}`;
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    contents: [
+                        {
+                            role: 'user',
+                            parts: [{ text: itineraryPrompt }]
+                        }
+                    ],
+                    generationConfig: {
+                        temperature: 0.8,
+                        maxOutputTokens: 4096,
+                    }
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`Gemini API Error: ${errorData.error?.message || response.statusText}`);
+            }
+
+            const data = await response.json();
+            const content = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+
+            // Parse the JSON response
+            try {
+                // Remove markdown code blocks if present
+                const cleanContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+                const itineraryData = JSON.parse(cleanContent);
+
+                return {
+                    id: `itinerary-ai-${Date.now()}`,
+                    budget: context.budget,
+                    formData: context.formData,
+                    days: itineraryData.days || [],
+                    summary: this.calculateSummary(itineraryData.days || []),
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                    generatedBy: 'ai',
+                    aiModel: this.config.model,
+                };
+            } catch (parseError) {
+                console.error("Failed to parse AI response:", content);
+                throw new Error("AI generated invalid itinerary format");
+            }
+
+        } catch (error) {
+            console.error("AI Itinerary Generation Error:", error);
+            throw error;
+        }
+    }
+
+    /**
+     * Calculate summary from days array
+     */
+    private calculateSummary(days: any[]): any {
+        let totalAccommodationCost = 0;
+        let totalFoodCost = 0;
+        let totalTransportCost = 0;
+        let totalActivitiesCost = 0;
+
+        for (const day of days) {
+            if (day.accommodation?.pricePerNight) {
+                totalAccommodationCost += day.accommodation.pricePerNight;
+            }
+            if (day.meals) {
+                totalFoodCost += (day.meals.breakfast?.averageCost || 0) +
+                    (day.meals.lunch?.averageCost || 0) +
+                    (day.meals.dinner?.averageCost || 0);
+            }
+            if (day.transport) {
+                totalTransportCost += day.transport.reduce((sum: number, t: any) => sum + (t.estimatedCost || 0), 0);
+            }
+
+            const dayActivities = [...(day.morning || []), ...(day.afternoon || []), ...(day.evening || [])];
+            totalActivitiesCost += dayActivities.reduce((sum: number, act: any) => sum + (act.cost || 0), 0);
+        }
+
+        const totalCost = totalAccommodationCost + totalFoodCost + totalTransportCost + totalActivitiesCost;
+
+        return {
+            totalAccommodationCost,
+            totalFoodCost,
+            totalTransportCost,
+            totalActivitiesCost,
+            totalCost,
+            budgetUtilization: 0,
+        };
+    }
 }
 
 export const llmService = new LLMService();
+
+/**
+ * Convenience function to generate itinerary with AI
+ */
+export async function generateItineraryWithAI(context: any): Promise<any> {
+    return await llmService.generateItinerary(context);
+}
