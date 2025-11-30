@@ -8,7 +8,7 @@ export const ChatWidget: React.FC = () => {
     const { isOpen, toggleChat, unreadCount } = useChat();
 
     return (
-        <div className="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-50 flex flex-col items-end">
+        <div className="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-[100] flex flex-col items-end">
             {/* Chat Window */}
             <div className={cn(
                 "transition-all duration-300 ease-in-out origin-bottom-right mb-4 shadow-2xl rounded-xl overflow-hidden border border-gray-200",

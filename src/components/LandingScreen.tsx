@@ -33,7 +33,7 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                                 className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-xl shadow-sm object-cover"
                             />
                         </div>
-                        <span className="text-lg sm:text-xl font-bold tracking-tight text-gray-900">GoGhana</span>
+                        <span className="text-lg sm:text-xl font-bold tracking-tight text-gray-900">Go Ghana AI</span>
                     </div>
                     <div className="hidden md:flex items-center gap-8 text-sm font-medium">
                         <a href="#features" className="text-gray-600 hover:text-[#006B3F] transition-colors">Features</a>

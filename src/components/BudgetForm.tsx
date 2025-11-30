@@ -532,7 +532,7 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                         className={cn(
                             "cursor-pointer flex flex-col items-center justify-center p-4 rounded-xl border transition-all hover:shadow-sm text-center gap-2 h-24",
                             watchedValues.interests.includes(interest.id)
-                                ? "bg-primary text-primary-foreground border-primary scale-105"
+                                ? "bg-primary text-primary-foreground border-primary scale-105 font-semibold"
                                 : "bg-background hover:bg-secondary"
                         )}
                     >
@@ -592,23 +592,23 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                     {step === 6 && renderStep6()}
                 </CardContent>
 
-                <CardFooter className="flex justify-between p-6 bg-secondary/5 border-t">
+                <CardFooter className="flex flex-col-reverse sm:flex-row justify-between p-6 bg-secondary/5 border-t gap-3 sm:gap-0">
                     <Button
                         type="button"
                         variant="ghost"
                         onClick={handleBack}
                         disabled={step === 1}
-                        className={cn("gap-2", step === 1 && "invisible")}
+                        className={cn("gap-2 w-full sm:w-auto", step === 1 && "invisible")}
                     >
                         <ArrowLeft className="h-4 w-4" /> Back
                     </Button>
 
                     {step < totalSteps ? (
-                        <Button type="button" onClick={handleNext} className="gap-2 px-8">
+                        <Button type="button" onClick={handleNext} className="gap-2 px-8 w-full sm:w-auto">
                             Next <ArrowRight className="h-4 w-4" />
                         </Button>
                     ) : (
-                        <Button type="submit" className="gap-2 px-8 bg-[#006B3F] hover:bg-[#00502F]" disabled={isLoading}>
+                        <Button type="submit" className="gap-2 px-8 bg-[#006B3F] hover:bg-[#00502F] w-full sm:w-auto" disabled={isLoading}>
                             {isLoading ? 'Calculating...' : 'See My Budget Summary'} <Check className="h-4 w-4" />
                         </Button>
                     )}
