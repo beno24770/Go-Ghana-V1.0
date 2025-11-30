@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Wallet, Utensils, Car, Map as MapIcon, Plane, TrendingUp, Users, Calendar as CalendarIcon, MapPin, Shield, MessageCircle, Phone, Download, Loader2 } from 'lucide-react';
+import { Wallet, Utensils, Car, Map as MapIcon, Plane, TrendingUp, Users, Calendar as CalendarIcon, MapPin, Shield, MessageCircle, Phone, Download, Loader2, Sparkles } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
 import { Button } from './ui/Button';
+import { SplitButton } from './ui/SplitButton';
 import { CurrencySelector } from './ui/CurrencySelector';
 import { useCurrency } from '../contexts/CurrencyContext';
 import { useChat } from '../contexts/ChatContext';
@@ -33,7 +34,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData }: BudgetR
     const { user } = useAuth();
 
     const [showAuthModal, setShowAuthModal] = useState(false);
-    const [pendingAction, setPendingAction] = useState<'chat' | 'consultation' | 'pdf' | null>(null);
+    const [pendingAction, setPendingAction] = useState<'chat' | 'consultation' | 'pdf' | 'itinerary' | null>(null);
     const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
     const [isBooking, setIsBooking] = useState(false);
 
@@ -95,10 +96,15 @@ export function BudgetResult({ breakdown, isLoading = false, formData }: BudgetR
         }
     };
 
-    const executeAction = async (action: 'chat' | 'consultation' | 'pdf') => {
+    const executeAction = async (action: 'chat' | 'consultation' | 'pdf' | 'itinerary') => {
         if (!formData || !breakdown) return;
 
         switch (action) {
+            case 'itinerary':
+                // TODO: Navigate to itinerary builder feature
+                // For now, we'll show a placeholder alert
+                alert('Itinerary builder feature coming soon! This will show you exactly what your budget buys: vetted accommodations, transport options, and restaurant recommendations.');
+                break;
             case 'chat':
                 prepareAndOpenChat();
                 break;
@@ -446,17 +452,22 @@ export function BudgetResult({ breakdown, isLoading = false, formData }: BudgetR
 
             {/* CTA Buttons */}
             <div className="flex flex-col gap-4 pt-6 animate-[fadeSlideUp_0.8s_ease-out_0.3s]">
-                {/* 1. Plan This Trip With an Expert */}
+                {/* 1. Split Button: See What My Budget Buys Me / Chat with Expert */}
                 <div className="flex justify-center">
-                    <Button
+                    <SplitButton
+                        primaryLabel="See What My Budget Buys Me"
+                        primaryIcon={<Sparkles className="h-5 w-5" />}
+                        onPrimaryClick={() => handleAction('itinerary')}
+                        options={[
+                            {
+                                label: 'Chat with Travel Expert',
+                                icon: <MessageCircle className="h-5 w-5" />,
+                                onClick: () => handleAction('chat'),
+                            },
+                        ]}
                         size="lg"
-                        variant="outline"
-                        onClick={() => handleAction('chat')}
-                        className="px-8 py-6 border-2 border-[#FCD116] hover:bg-[#FCD116] hover:text-black transition-all duration-300 group w-full sm:w-auto"
-                    >
-                        <MessageCircle className="mr-2 h-5 w-5 group-hover:animate-pulse" />
-                        Plan This Trip With an Expert
-                    </Button>
+                        className="bg-gradient-to-r from-[#FCD116] to-[#D97706] hover:from-[#D97706] hover:to-[#FCD116] text-gray-900 font-bold border-0 hover:shadow-2xl hover:shadow-[#FCD116]/30"
+                    />
                 </div>
 
                 {/* 2. Book a Free 30-Min Consultation */}
