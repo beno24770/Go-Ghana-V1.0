@@ -228,6 +228,13 @@ INSTRUCTIONS:
   ]
 }
 
+8. CRITICAL SAFETY CHECK:
+   - If recommending from general knowledge (not in provided lists), YOU MUST VERIFY THE REAL-WORLD PRICE.
+   - DO NOT recommend luxury hotels (e.g., Kempinski, Alisa, Movenpick) for 'budget' or 'backpacker' tiers.
+   - DO NOT recommend budget guesthouses for 'luxury' tiers.
+   - If the user's budget is low (e.g., < 500 GHS/night), ONLY recommend hostels or budget guesthouses.
+   - If you are unsure of a price, default to a generic recommendation like "Local Budget Guesthouse" with the correct estimated price.
+
 IMPORTANT: Return ONLY the JSON object, no additional text or markdown formatting.`;
 
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${this.config.model}:generateContent?key=${this.config.apiKey}`;
