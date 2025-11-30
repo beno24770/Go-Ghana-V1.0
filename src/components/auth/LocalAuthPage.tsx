@@ -46,9 +46,10 @@ export function LocalAuthPage({ onSuccess, onCancel }: LocalAuthPageProps) {
                 await signUp(email, password, name, phone);
             }
             onSuccess();
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error(err);
-            setError(err.message || 'Failed to authenticate');
+            const error = err as { message?: string };
+            setError(error.message || 'Failed to authenticate');
         } finally {
             setLoading(false);
         }

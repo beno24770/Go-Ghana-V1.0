@@ -1,43 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  /* Ghana Color Palette */
-  --color-ghana-red: #CE1126;
-  --color-ghana-yellow: #FCD116;
-  --color-ghana-green: #006B3F;
-  --color-ghana-black: #000000;
-  --color-soft-ivory: #FFF8E6;
+  /* Ghana Color Palette - Premium */
+  --color-ghana-red: #B91C1C;
+  --color-ghana-yellow: #D97706;
+  --color-ghana-green: #15803D;
+  --color-ghana-black: #111827;
+  --color-soft-ivory: #F9FAFB;
 
   /* Theme Colors mapped to Ghana palette */
-  --color-primary: #CE1126;
+  --color-primary: #15803D;
   --color-primary-foreground: #ffffff;
 
-  --color-secondary: #f8f8f8;
-  --color-secondary-foreground: #000000;
+  --color-secondary: #F3F4F6;
+  --color-secondary-foreground: #111827;
 
-  --color-accent: #FCD116;
-  --color-accent-foreground: #000000;
+  --color-accent: #D97706;
+  --color-accent-foreground: #ffffff;
 
-  --color-muted: #f8f8f8;
-  --color-muted-foreground: #6b7280;
+  --color-muted: #F3F4F6;
+  --color-muted-foreground: #6B7280;
 
-  --color-destructive: #ef4444;
+  --color-destructive: #B91C1C;
   --color-destructive-foreground: #ffffff;
 
-  --color-border: #e5e7eb;
-  --color-input: #e5e7eb;
-  --color-ring: #CE1126;
+  --color-border: #E5E7EB;
+  --color-input: #E5E7EB;
+  --color-ring: #15803D;
 
   --color-background: #ffffff;
-  --color-foreground: #000000;
+  --color-foreground: #111827;
 
   --color-card: #ffffff;
-  --color-card-foreground: #000000;
+  --color-card-foreground: #111827;
 
   --color-popover: #ffffff;
-  --color-popover-foreground: #000000;
+  --color-popover-foreground: #111827;
 
   --radius: 0.5rem;
 }
@@ -49,6 +51,7 @@
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-feature-settings: "rlig" 1, "calt" 1;
   position: relative;
   overflow-x: hidden;
@@ -124,11 +127,11 @@ body::before {
 
   0%,
   100% {
-    box-shadow: 0 0 5px rgba(252, 209, 22, 0.3);
+    box-shadow: 0 0 5px rgba(217, 119, 6, 0.3);
   }
 
   50% {
-    box-shadow: 0 0 20px rgba(252, 209, 22, 0.6);
+    box-shadow: 0 0 20px rgba(217, 119, 6, 0.6);
   }
 }
 
@@ -167,15 +170,15 @@ input:focus,
 select:focus,
 textarea:focus {
   outline: none;
-  border-color: #CE1126;
-  box-shadow: 0 0 0 2px rgba(206, 17, 38, 0.1);
+  border-color: #15803D;
+  box-shadow: 0 0 0 2px rgba(21, 128, 61, 0.1);
   transition: all 0.2s ease;
 }
 
 /* Range slider animations */
 input[type="range"]::-webkit-slider-thumb {
   transition: transform 0.2s ease;
-  background-color: #CE1126;
+  background-color: #15803D;
 }
 
 input[type="range"]:active::-webkit-slider-thumb {
@@ -185,7 +188,7 @@ input[type="range"]:active::-webkit-slider-thumb {
 
 input[type="range"]::-moz-range-thumb {
   transition: transform 0.2s ease;
-  background-color: #CE1126;
+  background-color: #15803D;
 }
 
 input[type="range"]:active::-moz-range-thumb {
@@ -201,14 +204,14 @@ label:has(input[type="radio"]) {
 
 label:has(input[type="checkbox"]):hover,
 label:has(input[type="radio"]):hover {
-  border-color: #FCD116;
-  box-shadow: 0 0 0 2px rgba(252, 209, 22, 0.2);
+  border-color: #D97706;
+  box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.2);
 }
 
 label:has(input[type="checkbox"]:checked),
 label:has(input[type="radio"]:checked) {
-  border-color: #CE1126;
-  background-color: rgba(252, 209, 22, 0.05);
+  border-color: #15803D;
+  background-color: rgba(21, 128, 61, 0.05);
 }
 
 /* Region checkbox tap effect */

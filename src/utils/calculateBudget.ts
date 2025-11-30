@@ -29,7 +29,7 @@ export function calculateBudget(data: BudgetFormData): BudgetBreakdown {
     // --- STEP 2: BASE COSTS & ROOM SHARING ---
     // Get base daily costs based on Travel Style (accommodationLevel)
     const style = data.accommodationLevel; // backpacker, budget, mid, comfort, luxury
-    let baseAccom = BASE_COSTS.accommodation[style];
+    const baseAccom = BASE_COSTS.accommodation[style];
     const baseFood = BASE_COSTS.food[style];
     let baseTransport = BASE_COSTS.transport[style];
 
@@ -109,7 +109,7 @@ export function calculateBudget(data: BudgetFormData): BudgetBreakdown {
     let totalFood = 0;
     let totalTransport = 0;
     let totalActivities = 0;
-    let regionalBreakdown: RegionalBudget[] = [];
+    const regionalBreakdown: RegionalBudget[] = [];
 
     regions.forEach(region => {
         const adjustments = REGIONAL_ADJUSTMENTS[region] || { transport: 1.0, food: 1.0 };
@@ -174,7 +174,7 @@ export function calculateBudget(data: BudgetFormData): BudgetBreakdown {
 
     let flightsTotal = 0;
     if (data.includeFlights) {
-        let flightCostUSD = data.flightCost || FLIGHT_ESTIMATES.defaultFlightEstimate;
+        const flightCostUSD = data.flightCost || FLIGHT_ESTIMATES.defaultFlightEstimate;
         flightsTotal = Math.round(flightCostUSD * USD_TO_GHS_RATE * travelerCount);
     }
 

@@ -6,12 +6,26 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
 import { Button } from './ui/Button';
 import { MapPin, DollarSign, Loader2, Calendar, CheckCircle } from 'lucide-react';
 import { useCurrency } from '../contexts/CurrencyContext';
+import type { BudgetBreakdown, BudgetFormData } from '../types';
+
+interface Consultation {
+    id: string;
+    userId: string;
+    tripId: string | null;
+    status: string;
+    budgetSummary: BudgetBreakdown | null;
+    formData: BudgetFormData | null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    createdAt: any; // Firestore timestamp - using any to avoid complex Firestore type imports
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    updatedAt: any; // Firestore timestamp - using any to avoid complex Firestore type imports
+}
 
 export function Dashboard() {
     const { currentUser } = useAuth();
     const { convertAndFormat } = useCurrency();
     const [trips, setTrips] = useState<SavedTrip[]>([]);
-    const [consultations, setConsultations] = useState<any[]>([]);
+    const [consultations, setConsultations] = useState<Consultation[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
@@ -152,9 +166,9 @@ export function Dashboard() {
                                             Consultation
                                         </span>
                                         <span className={`text-xs px-2 py-1 rounded-full ${consultation.status === 'requested' ? 'bg-yellow-100 text-yellow-800' :
-                                                consultation.status === 'scheduled' ? 'bg-blue-100 text-blue-800' :
-                                                    consultation.status === 'completed' ? 'bg-green-100 text-green-800' :
-                                                        'bg-gray-100 text-gray-800'
+                                            consultation.status === 'scheduled' ? 'bg-blue-100 text-blue-800' :
+                                                consultation.status === 'completed' ? 'bg-green-100 text-green-800' :
+                                                    'bg-gray-100 text-gray-800'
                                             }`}>
                                             {consultation.status}
                                         </span>

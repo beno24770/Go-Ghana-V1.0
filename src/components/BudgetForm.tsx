@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import {
-    Calculator, Calendar, Users, MapPin, Plane,
+    Calculator, Calendar, MapPin, Plane,
     Briefcase, Heart, ArrowRight, ArrowLeft, Check, Info
 } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Label } from './ui/Label';
-import { Checkbox } from './ui/Checkbox';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/Card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './ui/Card';
 import { cn } from '../lib/utils';
 import type { BudgetFormData, ActivityInterest, TravelerType, AccommodationLevel } from '../types';
 
@@ -96,9 +95,7 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
         register,
         handleSubmit,
         setValue,
-        control,
         watch,
-        formState: { errors },
     } = useForm<FormSchema>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -171,7 +168,7 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
             roomSharing: data.roomSharing,
             arrivalCity: data.arrivalCity,
             transportMode: data.transportMode,
-            accommodationType: data.accommodationType as any,
+            accommodationType: data.accommodationType.toLowerCase() as 'hotel' | 'guesthouse' | 'airbnb',
             isNewToGhana: data.isNewToGhana,
         });
     };
@@ -187,7 +184,7 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                     type="range"
                     min="1"
                     max="30"
-                    className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer accent-primary"
+                    className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer accent-ghana-green"
                     {...register('duration', { valueAsNumber: true })}
                 />
                 <div className="flex gap-2 flex-wrap">
@@ -215,7 +212,7 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                     type="range"
                     min="1"
                     max="10"
-                    className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer accent-primary"
+                    className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer accent-ghana-green"
                     {...register('travelers', { valueAsNumber: true })}
                 />
             </div>
@@ -285,20 +282,20 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                             className={cn(
                                 "flex items-start space-x-4 p-4 rounded-xl border cursor-pointer transition-all hover:shadow-md",
                                 watchedValues.travelStyle === style.id
-                                    ? "border-primary bg-primary/5 ring-1 ring-primary"
-                                    : "border-input hover:border-primary/50"
+                                    ? "border-ghana-green bg-ghana-green/5 ring-1 ring-ghana-green"
+                                    : "border-input hover:border-ghana-green/50"
                             )}
                         >
                             <input
                                 type="radio"
                                 value={style.id}
-                                className="mt-1.5 accent-primary"
+                                className="mt-1.5 accent-ghana-green"
                                 {...register('travelStyle')}
                             />
                             <div className="flex-1">
                                 <div className="flex justify-between items-center mb-1">
                                     <span className="font-bold text-lg">{style.label}</span>
-                                    <span className="text-sm font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                                    <span className="text-sm font-medium text-ghana-green bg-ghana-green/10 px-2 py-0.5 rounded-full">
                                         {style.cost}
                                     </span>
                                 </div>
@@ -315,7 +312,7 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                     {['Hotels', 'Guesthouses', 'Airbnb'].map((type) => (
                         <label key={type} className={cn(
                             "flex items-center space-x-2 px-4 py-2 rounded-full border cursor-pointer transition-colors",
-                            watchedValues.accommodationType === type ? "bg-primary text-primary-foreground border-primary" : "hover:bg-secondary"
+                            watchedValues.accommodationType === type ? "bg-ghana-green text-white border-ghana-green" : "hover:bg-secondary"
                         )}>
                             <input
                                 type="radio"
@@ -336,7 +333,7 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
             <div className="space-y-4">
                 <label className={cn(
                     "flex items-start space-x-3 p-4 rounded-xl border cursor-pointer transition-all",
-                    watchedValues.isNewToGhana ? "border-primary bg-primary/5" : "border-input"
+                    watchedValues.isNewToGhana ? "border-ghana-green bg-ghana-green/5" : "border-input"
                 )}>
                     <input
                         type="checkbox"
@@ -345,7 +342,8 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                             setValue('isNewToGhana', e.target.checked);
                             if (e.target.checked) setValue('regions', []); // Clear manual selection
                         }}
-                        className="mt-1 accent-primary h-5 w-5"
+
+                        className="mt-1 accent-ghana-green h-5 w-5"
                     />
                     <div>
                         <span className="font-bold block">I’m new to Ghana — recommend for me</span>
@@ -373,7 +371,7 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                                 className={cn(
                                     "flex items-center space-x-2 p-2 rounded-md border cursor-pointer text-sm transition-colors",
                                     watchedValues.regions?.includes(region)
-                                        ? "bg-primary text-primary-foreground border-primary"
+                                        ? "bg-ghana-green text-white border-ghana-green"
                                         : "hover:bg-secondary"
                                 )}
                             >
@@ -410,14 +408,14 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                         className={cn(
                             "flex items-start space-x-4 p-4 rounded-xl border cursor-pointer transition-all hover:shadow-md",
                             watchedValues.transportMode === option.id
-                                ? "border-primary bg-primary/5 ring-1 ring-primary"
-                                : "border-input hover:border-primary/50"
+                                ? "border-ghana-green bg-ghana-green/5 ring-1 ring-ghana-green"
+                                : "border-input hover:border-ghana-green/50"
                         )}
                     >
                         <input
                             type="radio"
                             value={option.id}
-                            className="mt-1.5 accent-primary"
+                            className="mt-1.5 accent-ghana-green"
                             {...register('transportMode')}
                         />
                         <div className="flex-1">
@@ -455,9 +453,9 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                                 onChange={(e) => setValue('includeFlights', e.target.checked)}
                                 aria-label="Include International Flights"
                             />
-                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-ghana-green/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-ghana-green"></div>
                         </label>
-                        <span className={cn("text-sm font-medium", watchedValues.includeFlights && "text-primary")}>Yes</span>
+                        <span className={cn("text-sm font-medium", watchedValues.includeFlights && "text-ghana-green")}>Yes</span>
                     </div>
                 </div>
 
@@ -511,9 +509,9 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                                 onChange={(e) => setValue('includeInsurance', e.target.checked)}
                                 aria-label="Include Travel Insurance"
                             />
-                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-ghana-green/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-ghana-green"></div>
                         </label>
-                        <span className={cn("text-sm font-medium", watchedValues.includeInsurance && "text-primary")}>Yes</span>
+                        <span className={cn("text-sm font-medium", watchedValues.includeInsurance && "text-ghana-green")}>Yes</span>
                     </div>
                 </div>
             </div>
@@ -532,7 +530,7 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                         className={cn(
                             "cursor-pointer flex flex-col items-center justify-center p-4 rounded-xl border transition-all hover:shadow-sm text-center gap-2 h-24",
                             watchedValues.interests.includes(interest.id)
-                                ? "bg-primary text-primary-foreground border-primary scale-105 font-semibold"
+                                ? "bg-ghana-green text-white border-ghana-green scale-105 font-semibold"
                                 : "bg-background hover:bg-secondary"
                         )}
                     >
@@ -559,7 +557,7 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
     ];
 
     return (
-        <Card className="w-full max-w-3xl mx-auto shadow-xl border-t-4 border-t-[#FCD116] overflow-hidden">
+        <Card className="w-full max-w-3xl mx-auto shadow-2xl border-t-4 border-t-ghana-yellow overflow-hidden bg-white/95 backdrop-blur-sm">
             <CardHeader className="bg-secondary/5 pb-8">
                 <div className="flex justify-between items-center mb-6">
                     <CardTitle className="flex items-center gap-2 text-2xl">
@@ -576,7 +574,7 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                 {/* Progress Bar */}
                 <div className="w-full bg-secondary h-2 rounded-full overflow-hidden">
                     <div
-                        className="bg-primary h-full transition-all duration-500 ease-out"
+                        className="bg-ghana-green h-full transition-all duration-500 ease-out"
                         style={{ width: `${(step / totalSteps) * 100}%` }}
                     />
                 </div>
@@ -604,11 +602,11 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                     </Button>
 
                     {step < totalSteps ? (
-                        <Button type="button" onClick={handleNext} className="gap-2 px-8 w-full sm:w-auto">
+                        <Button type="button" onClick={handleNext} className="gap-2 px-8 w-full sm:w-auto bg-ghana-green hover:bg-green-800 text-white">
                             Next <ArrowRight className="h-4 w-4" />
                         </Button>
                     ) : (
-                        <Button type="submit" className="gap-2 px-8 bg-[#006B3F] hover:bg-[#00502F] w-full sm:w-auto" disabled={isLoading}>
+                        <Button type="submit" className="gap-2 px-8 bg-ghana-green hover:bg-green-800 w-full sm:w-auto text-white shadow-lg hover:shadow-ghana-green/20" disabled={isLoading}>
                             {isLoading ? 'Calculating...' : 'See My Budget Summary'} <Check className="h-4 w-4" />
                         </Button>
                     )}

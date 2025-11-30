@@ -18,7 +18,6 @@ interface BudgetResultProps {
     breakdown: BudgetBreakdown | null;
     isLoading?: boolean;
     formData?: BudgetFormData;
-    onContinue?: () => void;
 }
 
 const TRAVELER_COUNTS = {
@@ -28,7 +27,7 @@ const TRAVELER_COUNTS = {
     group: 4,
 };
 
-export function BudgetResult({ breakdown, isLoading = false, formData, onContinue }: BudgetResultProps) {
+export function BudgetResult({ breakdown, isLoading = false, formData }: BudgetResultProps) {
     const { convertAndFormat, selectedCurrency } = useCurrency();
     const { toggleChat, setBudgetContext } = useChat();
     const { user } = useAuth();
@@ -88,7 +87,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
     // --- ACTION HANDLERS ---
 
     const handleAction = (action: 'chat' | 'consultation' | 'pdf') => {
-        if (!user) {
+        if (action === 'pdf' && !user) {
             setPendingAction(action);
             setShowAuthModal(true);
         } else {
@@ -194,14 +193,16 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
     };
 
     const handleConsultationBooking = async () => {
-        if (!user || !formData) return;
+        if (!formData) return;
         setIsBooking(true);
         try {
-            // Save consultation request
-            await firestoreService.saveConsultationRequest(user.uid, {
-                budgetSummary: breakdown,
-                formData: formData
-            });
+            // Save consultation request if user is logged in
+            if (user) {
+                await firestoreService.saveConsultationRequest(user.uid, {
+                    budgetSummary: breakdown,
+                    formData: formData
+                });
+            }
 
             // Open Calendly
             window.open('https://calendly.com/weareitv98/30min', '_blank');

@@ -52,10 +52,10 @@ export const generateBudgetPDF = (breakdown: BudgetBreakdown, formData: BudgetFo
             `${currencyCode} ${r.totalCost.toLocaleString()}`
         ]);
 
-        doc.text('Regional Breakdown', 14, (doc as any).lastAutoTable.finalY + 15);
+        doc.text('Regional Breakdown', 14, (doc as jsPDF & { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 15);
 
         autoTable(doc, {
-            startY: (doc as any).lastAutoTable.finalY + 20,
+            startY: (doc as jsPDF & { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 20,
             head: [['Region', 'Daily Est.', 'Total Est.']],
             body: regionalData,
             theme: 'grid',
@@ -64,7 +64,7 @@ export const generateBudgetPDF = (breakdown: BudgetBreakdown, formData: BudgetFo
     }
 
     // Footer
-    const pageCount = (doc as any).internal.getNumberOfPages();
+    const pageCount = doc.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
         doc.setPage(i);
         doc.setFontSize(10);

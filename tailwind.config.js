@@ -7,43 +7,43 @@ export default {
   theme: {
     extend: {
       colors: {
-        'ghana-red': '#CE1126',
-        'ghana-yellow': '#FCD116',
-        'ghana-green': '#006B3F',
-        'ghana-black': '#000000',
-        'soft-ivory': '#FFF8E6',
-        border: '#e5e7eb',
-        input: '#e5e7eb',
-        ring: '#CE1126',
-        background: '#ffffff',
-        foreground: '#000000',
+        'ghana-red': '#B91C1C', // Deeper, rich red
+        'ghana-yellow': '#D97706', // Amber/Gold instead of bright yellow
+        'ghana-green': '#15803D', // Deep forest green
+        'ghana-black': '#111827', // Soft black
+        'soft-ivory': '#F9FAFB', // Cool gray/white
+        border: '#E5E7EB',
+        input: '#E5E7EB',
+        ring: '#15803D', // Green ring for positive action
+        background: '#FFFFFF',
+        foreground: '#111827',
         primary: {
-          DEFAULT: '#CE1126',
-          foreground: '#ffffff',
+          DEFAULT: '#15803D', // Green as primary
+          foreground: '#FFFFFF',
         },
         secondary: {
-          DEFAULT: '#f8f8f8',
-          foreground: '#000000',
+          DEFAULT: '#F3F4F6',
+          foreground: '#111827',
         },
         destructive: {
-          DEFAULT: '#ef4444',
-          foreground: '#ffffff',
+          DEFAULT: '#B91C1C',
+          foreground: '#FFFFFF',
         },
         muted: {
-          DEFAULT: '#f8f8f8',
-          foreground: '#6b7280',
+          DEFAULT: '#F3F4F6',
+          foreground: '#6B7280',
         },
         accent: {
-          DEFAULT: '#FCD116',
-          foreground: '#000000',
+          DEFAULT: '#D97706',
+          foreground: '#FFFFFF',
         },
         popover: {
-          DEFAULT: '#ffffff',
-          foreground: '#000000',
+          DEFAULT: '#FFFFFF',
+          foreground: '#111827',
         },
         card: {
-          DEFAULT: '#ffffff',
-          foreground: '#000000',
+          DEFAULT: '#FFFFFF',
+          foreground: '#111827',
         },
       },
       borderRadius: {

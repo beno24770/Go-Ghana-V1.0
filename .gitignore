@@ -36,3 +36,6 @@ workbox-*.js
 
 # OS
 Thumbs.db
+
+.vercel
+.env*.local

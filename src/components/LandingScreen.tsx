@@ -14,8 +14,8 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
             {/* Premium Background Elements */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 {/* Organic Shapes */}
-                <div className="absolute -top-[20%] -right-[10%] w-[70vw] h-[70vw] bg-gradient-to-br from-[#006B3F]/10 to-[#FCD116]/10 rounded-full blur-3xl opacity-60 animate-pulse duration-[4s]"></div>
-                <div className="absolute top-[20%] -left-[10%] w-[50vw] h-[50vw] bg-gradient-to-tr from-[#CE1126]/5 to-[#FCD116]/5 rounded-full blur-3xl opacity-60"></div>
+                <div className="absolute -top-[20%] -right-[10%] w-[70vw] h-[70vw] bg-gradient-to-br from-ghana-green/10 to-ghana-yellow/10 rounded-full blur-3xl opacity-60 animate-pulse duration-[4s]"></div>
+                <div className="absolute top-[20%] -left-[10%] w-[50vw] h-[50vw] bg-gradient-to-tr from-ghana-red/5 to-ghana-yellow/5 rounded-full blur-3xl opacity-60"></div>
 
                 {/* Grid Pattern Overlay */}
                 <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMCwgMCwgMCwgMC4wNSkiLz48L3N2Zz4=')] opacity-40"></div>
@@ -26,7 +26,7 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                 <div className="flex items-center justify-between bg-white/80 backdrop-blur-md p-3 sm:p-4 rounded-2xl border border-white/20 shadow-sm">
                     <div className="flex items-center gap-2 sm:gap-3">
                         <div className="relative">
-                            <div className="absolute inset-0 bg-[#FCD116] rounded-xl rotate-3 opacity-50"></div>
+                            <div className="absolute inset-0 bg-ghana-yellow rounded-xl rotate-3 opacity-50"></div>
                             <img
                                 src={`${import.meta.env.BASE_URL}goghana-logo.jpg`}
                                 alt="GoGhana Logo"
@@ -36,12 +36,12 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                         <span className="text-lg sm:text-xl font-bold tracking-tight text-gray-900">Go Ghana AI</span>
                     </div>
                     <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-                        <a href="#features" className="text-gray-600 hover:text-[#006B3F] transition-colors">Features</a>
-                        <a href="#how-it-works" className="text-gray-600 hover:text-[#006B3F] transition-colors">How It Works</a>
-                        <a href="#about" className="text-gray-600 hover:text-[#006B3F] transition-colors">About</a>
+                        <a href="#features" className="text-gray-600 hover:text-ghana-green transition-colors">Features</a>
+                        <a href="#how-it-works" className="text-gray-600 hover:text-ghana-green transition-colors">How It Works</a>
+                        <a href="#about" className="text-gray-600 hover:text-ghana-green transition-colors">About</a>
                         <button
                             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                            className="text-gray-600 hover:text-[#006B3F] transition-colors flex items-center gap-1"
+                            className="text-gray-600 hover:text-ghana-green transition-colors flex items-center gap-1"
                         >
                             <span>🏠</span> Home
                         </button>
@@ -53,7 +53,7 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                                 <span className="text-xs font-medium text-gray-600 hidden lg:inline">Local Mode</span>
                                 <button
                                     onClick={() => onLocalModeToggle(!isLocalMode)}
-                                    className={`relative inline-flex h-5 sm:h-6 w-9 sm:w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#006B3F] focus:ring-offset-2 ${isLocalMode ? 'bg-[#006B3F]' : 'bg-gray-300'}`}
+                                    className={`relative inline-flex h-5 sm:h-6 w-9 sm:w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-ghana-green focus:ring-offset-2 ${isLocalMode ? 'bg-ghana-green' : 'bg-gray-300'}`}
                                     role="switch"
                                     aria-checked={isLocalMode}
                                     aria-label="Toggle Local Mode"
@@ -68,7 +68,7 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                         <Button
                             onClick={onStart}
                             size="sm"
-                            className="bg-[#006B3F] hover:bg-[#005a35] text-white rounded-full px-4 sm:px-6 text-xs sm:text-sm"
+                            className="bg-ghana-green hover:bg-green-800 text-white rounded-full px-4 sm:px-6 text-xs sm:text-sm"
                         >
                             <span className="hidden sm:inline">Get Started</span>
                             <span className="sm:hidden">Start</span>
@@ -85,8 +85,8 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                         <AnimatedSection animation="fade-in-up" delay={100} immediate={true}>
                             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-100 rounded-full shadow-sm mb-6">
                                 <span className="flex h-2 w-2 relative">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#CE1126] opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#CE1126]"></span>
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-ghana-red opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-ghana-red"></span>
                                 </span>
                                 <span className="text-xs font-semibold tracking-wide uppercase text-gray-600">
                                     AI-Powered Travel Planner
@@ -95,7 +95,7 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
 
                             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-gray-900 leading-[1.1] tracking-tight mb-4 sm:mb-6">
                                 Experience Ghana, <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#006B3F] via-[#FCD116] to-[#CE1126]">
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-ghana-green via-ghana-yellow to-ghana-red">
                                     Your Way.
                                 </span>
                             </h1>
@@ -110,7 +110,7 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                                 <Button
                                     size="lg"
                                     onClick={onStart}
-                                    className="w-full sm:w-auto bg-[#006B3F] hover:bg-[#005a35] text-white h-12 sm:h-14 px-6 sm:px-8 rounded-full text-base sm:text-lg font-semibold shadow-lg hover:shadow-[#006B3F]/20 hover:-translate-y-1 transition-all duration-300"
+                                    className="w-full sm:w-auto bg-ghana-green hover:bg-green-800 text-white h-12 sm:h-14 px-6 sm:px-8 rounded-full text-base sm:text-lg font-semibold shadow-lg hover:shadow-ghana-green/20 hover:-translate-y-1 transition-all duration-300"
                                 >
                                     Start Planning Free
                                     <ArrowRight className="ml-2 w-4 sm:w-5 h-4 sm:h-5" />
@@ -119,7 +119,7 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                                     size="lg"
                                     variant="outline"
                                     onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
-                                    className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-8 rounded-full text-base sm:text-lg font-medium border-2 border-gray-200 hover:border-[#006B3F] hover:text-[#006B3F] bg-white/50 backdrop-blur-sm"
+                                    className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-8 rounded-full text-base sm:text-lg font-medium border-2 border-gray-200 hover:border-ghana-green hover:text-ghana-green bg-white/50 backdrop-blur-sm"
                                 >
                                     <Play className="mr-2 w-4 h-4 fill-current" />
                                     See How It Works
@@ -130,15 +130,15 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                         <AnimatedSection animation="fade-in-up" delay={500} immediate={true}>
                             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 sm:gap-6 lg:gap-8 pt-6 sm:pt-8 text-xs sm:text-sm font-medium text-gray-500">
                                 <div className="flex items-center gap-2">
-                                    <Check className="w-4 sm:w-5 h-4 sm:h-5 text-[#006B3F]" />
+                                    <Check className="w-4 sm:w-5 h-4 sm:h-5 text-ghana-green" />
                                     <span>Free Forever</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <Check className="w-4 sm:w-5 h-4 sm:h-5 text-[#006B3F]" />
+                                    <Check className="w-4 sm:w-5 h-4 sm:h-5 text-ghana-green" />
                                     <span>Instant Results</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <Check className="w-4 sm:w-5 h-4 sm:h-5 text-[#006B3F]" />
+                                    <Check className="w-4 sm:w-5 h-4 sm:h-5 text-ghana-green" />
                                     <span>No Signup</span>
                                 </div>
                             </div>
@@ -151,7 +151,7 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                             {/* Floating Elements */}
                             <div className="absolute top-10 -left-4 sm:-left-10 z-20 animate-[fade-in-up_1s_ease-out_1s_forwards] opacity-0">
                                 <div className="bg-white p-3 sm:p-4 rounded-2xl shadow-xl border border-gray-100 flex items-center gap-2 sm:gap-3">
-                                    <div className="w-10 h-10 bg-[#FCD116]/20 rounded-full flex items-center justify-center">
+                                    <div className="w-10 h-10 bg-ghana-yellow/20 rounded-full flex items-center justify-center">
                                         <Star className="w-5 h-5 text-amber-600 fill-current" />
                                     </div>
                                     <div>
@@ -163,8 +163,8 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
 
                             <div className="absolute bottom-20 -right-2 sm:-right-5 z-20 animate-[fade-in-up_1s_ease-out_1.2s_forwards] opacity-0">
                                 <div className="bg-white p-3 sm:p-4 rounded-2xl shadow-xl border border-gray-100 flex items-center gap-2 sm:gap-3">
-                                    <div className="w-10 h-10 bg-[#006B3F]/20 rounded-full flex items-center justify-center">
-                                        <span className="text-[#006B3F] font-bold text-xs">GH₵</span>
+                                    <div className="w-10 h-10 bg-ghana-green/20 rounded-full flex items-center justify-center">
+                                        <span className="text-ghana-green font-bold text-xs">GH₵</span>
                                     </div>
                                     <div>
                                         <div className="text-xs text-gray-500 font-medium">Budget Saved</div>
@@ -179,7 +179,7 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                                 <div className="relative bg-white rounded-[1.75rem] sm:rounded-[2.5rem] overflow-hidden h-[480px] sm:h-[580px] w-[240px] sm:w-[280px] mx-auto">
                                     {/* App UI Mockup */}
                                     <div className="h-full bg-gray-50 flex flex-col">
-                                        <div className="bg-[#006B3F] p-6 pb-10 text-white">
+                                        <div className="bg-ghana-green p-6 pb-10 text-white">
                                             <div className="flex justify-between items-center mb-6">
                                                 <div className="w-8 h-8 bg-white/20 rounded-full"></div>
                                                 <div className="w-8 h-8 bg-white/20 rounded-full"></div>
@@ -193,21 +193,21 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                                                 <div className="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-2">Total Budget</div>
                                                 <div className="text-3xl font-bold text-gray-900">$2,450</div>
                                                 <div className="w-full bg-gray-100 h-2 rounded-full mt-3 overflow-hidden">
-                                                    <div className="bg-[#006B3F] h-full w-[70%] rounded-full"></div>
+                                                    <div className="bg-ghana-green h-full w-[70%] rounded-full"></div>
                                                 </div>
                                             </div>
 
                                             <div className="grid grid-cols-2 gap-3">
                                                 <div className="bg-white p-3 rounded-2xl shadow-sm">
                                                     <div className="w-8 h-8 bg-red-50 rounded-full flex items-center justify-center mb-2">
-                                                        <div className="w-4 h-4 bg-[#CE1126] rounded-full"></div>
+                                                        <div className="w-4 h-4 bg-ghana-red rounded-full"></div>
                                                     </div>
                                                     <div className="text-xs text-gray-500">Hotel</div>
                                                     <div className="font-bold">$850</div>
                                                 </div>
                                                 <div className="bg-white p-3 rounded-2xl shadow-sm">
                                                     <div className="w-8 h-8 bg-yellow-50 rounded-full flex items-center justify-center mb-2">
-                                                        <div className="w-4 h-4 bg-[#FCD116] rounded-full"></div>
+                                                        <div className="w-4 h-4 bg-ghana-yellow rounded-full"></div>
                                                     </div>
                                                     <div className="text-xs text-gray-500">Food</div>
                                                     <div className="font-bold">$420</div>
@@ -220,7 +220,7 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                                                     <div className="w-28 flex-shrink-0">
                                                         <div className="h-20 bg-gray-200 rounded-xl mb-2 overflow-hidden relative">
                                                             <img src={`${import.meta.env.BASE_URL}cape-coast.jpg`} alt="Cape Coast" className="w-full h-full object-cover" />
-                                                            <div className="absolute bottom-1 right-1 bg-white/90 px-1.5 py-0.5 rounded text-[10px] font-bold text-[#006B3F]">$45</div>
+                                                            <div className="absolute bottom-1 right-1 bg-white/90 px-1.5 py-0.5 rounded text-[10px] font-bold text-ghana-green">$45</div>
                                                         </div>
                                                         <div className="text-[10px] font-bold leading-tight">Cape Coast Castle</div>
                                                         <div className="text-[9px] text-gray-500">Historical Tour</div>
@@ -228,7 +228,7 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                                                     <div className="w-28 flex-shrink-0">
                                                         <div className="h-20 bg-gray-200 rounded-xl mb-2 overflow-hidden relative">
                                                             <img src="https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?auto=format&fit=crop&w=300&q=80" alt="Kakum" className="w-full h-full object-cover" />
-                                                            <div className="absolute bottom-1 right-1 bg-white/90 px-1.5 py-0.5 rounded text-[10px] font-bold text-[#006B3F]">$35</div>
+                                                            <div className="absolute bottom-1 right-1 bg-white/90 px-1.5 py-0.5 rounded text-[10px] font-bold text-ghana-green">$35</div>
                                                         </div>
                                                         <div className="text-[10px] font-bold leading-tight">Kakum Canopy</div>
                                                         <div className="text-[9px] text-gray-500">Nature Walk</div>
@@ -236,7 +236,7 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                                                     <div className="w-28 flex-shrink-0">
                                                         <div className="h-20 bg-gray-200 rounded-xl mb-2 overflow-hidden relative">
                                                             <img src="https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=300&q=80" alt="Mole" className="w-full h-full object-cover" />
-                                                            <div className="absolute bottom-1 right-1 bg-white/90 px-1.5 py-0.5 rounded text-[10px] font-bold text-[#006B3F]">$120</div>
+                                                            <div className="absolute bottom-1 right-1 bg-white/90 px-1.5 py-0.5 rounded text-[10px] font-bold text-ghana-green">$120</div>
                                                         </div>
                                                         <div className="text-[10px] font-bold leading-tight">Mole Safari</div>
                                                         <div className="text-[9px] text-gray-500">Wildlife</div>
@@ -249,7 +249,7 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                             </div>
 
                             {/* Background Glow */}
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-[#006B3F]/20 to-[#FCD116]/20 rounded-full blur-3xl -z-10"></div>
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-ghana-green/20 to-ghana-yellow/20 rounded-full blur-3xl -z-10"></div>
                         </AnimatedSection>
                     </div>
                 </div>
@@ -260,19 +260,19 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                 <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 text-center md:divide-x divide-gray-100">
                         <div className="p-2 sm:p-4">
-                            <div className="text-3xl sm:text-4xl font-extrabold text-[#006B3F] mb-1">16</div>
+                            <div className="text-3xl sm:text-4xl font-extrabold text-ghana-green mb-1">16</div>
                             <div className="text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wide">Regions</div>
                         </div>
                         <div className="p-2 sm:p-4">
-                            <div className="text-3xl sm:text-4xl font-extrabold text-[#006B3F] mb-1">50+</div>
+                            <div className="text-3xl sm:text-4xl font-extrabold text-ghana-green mb-1">50+</div>
                             <div className="text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wide">Destinations</div>
                         </div>
                         <div className="p-2 sm:p-4">
-                            <div className="text-3xl sm:text-4xl font-extrabold text-[#006B3F] mb-1">10k+</div>
+                            <div className="text-3xl sm:text-4xl font-extrabold text-ghana-green mb-1">10k+</div>
                             <div className="text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wide">Estimates</div>
                         </div>
                         <div className="p-2 sm:p-4">
-                            <div className="text-3xl sm:text-4xl font-extrabold text-[#006B3F] mb-1">4.9</div>
+                            <div className="text-3xl sm:text-4xl font-extrabold text-ghana-green mb-1">4.9</div>
                             <div className="text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wide">User Rating</div>
                         </div>
                     </div>
@@ -297,19 +297,19 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                                 title: "Smart Budgeting",
                                 desc: "Get detailed cost breakdowns for accommodation, food, transport, and activities based on your travel style.",
                                 icon: <Calculator className="w-6 h-6" />,
-                                color: "bg-[#006B3F]/20 text-[#006B3F]"
+                                color: "bg-ghana-green/20 text-ghana-green"
                             },
                             {
                                 title: "Curated Tours",
                                 desc: "Discover hand-picked tours and experiences that match your budget and interests perfectly.",
                                 icon: <Star className="w-6 h-6" />,
-                                color: "bg-[#FCD116]/30 text-amber-600"
+                                color: "bg-ghana-yellow/30 text-amber-600"
                             },
                             {
                                 title: "Itinerary Planning",
                                 desc: "Build a day-by-day plan that makes the most of your time in Ghana without breaking the bank.",
                                 icon: <Calendar className="w-6 h-6" />,
-                                color: "bg-[#CE1126]/20 text-[#CE1126]"
+                                color: "bg-ghana-red/20 text-ghana-red"
                             }
                         ].map((feature, idx) => (
                             <AnimatedSection key={idx} delay={idx * 100} className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
@@ -343,9 +343,9 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                         <div className="hidden md:block absolute top-12 left-1/6 right-1/6 h-0.5 bg-gray-100 -z-10"></div>
 
                         {[
-                            { step: "1", title: "Enter Details", desc: "Tell us about your travel style, duration, and interests.", color: "border-[#006B3F] text-[#006B3F]" },
-                            { step: "2", title: "Get Estimate", desc: "Receive an instant, detailed budget breakdown for your trip.", color: "border-[#FCD116] text-amber-500" },
-                            { step: "3", title: "Start Planning", desc: "Explore recommended tours and finalize your itinerary.", color: "border-[#CE1126] text-[#CE1126]" }
+                            { step: "1", title: "Enter Details", desc: "Tell us about your travel style, duration, and interests.", color: "border-ghana-green text-ghana-green" },
+                            { step: "2", title: "Get Estimate", desc: "Receive an instant, detailed budget breakdown for your trip.", color: "border-ghana-yellow text-amber-500" },
+                            { step: "3", title: "Start Planning", desc: "Explore recommended tours and finalize your itinerary.", color: "border-ghana-red text-ghana-red" }
                         ].map((item, idx) => (
                             <AnimatedSection key={idx} delay={idx * 200} className="text-center bg-white p-6">
                                 <div className={`w-24 h-24 bg-white border-4 ${item.color} rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-8 shadow-sm`}>
@@ -362,7 +362,7 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
             </div>
 
             {/* About Section */}
-            <div id="about" className="py-24 bg-[#006B3F] text-white relative overflow-hidden">
+            <div id="about" className="py-24 bg-ghana-green text-white relative overflow-hidden">
                 <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIvPjwvc3ZnPg==')] opacity-20"></div>
                 <div className="container mx-auto px-6 text-center relative z-10">
                     <AnimatedSection>
@@ -375,7 +375,7 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                         <Button
                             size="lg"
                             onClick={onStart}
-                            className="bg-[#FCD116] text-black hover:bg-white hover:text-[#006B3F] text-lg px-12 py-8 rounded-full font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                            className="bg-ghana-yellow text-black hover:bg-white hover:text-ghana-green text-lg px-12 py-8 rounded-full font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
                         >
                             Start Your Journey
                         </Button>

@@ -14,6 +14,26 @@ import {
 import { db } from './firebase';
 import type { UserProfile, SavedTrip, CreateTripData } from '../types/user';
 import type { SupportedCurrency } from './currencyService';
+import type { BudgetBreakdown, BudgetFormData } from '../types';
+
+interface ConsultationData {
+    tripId?: string;
+    budgetSummary?: BudgetBreakdown;
+    formData?: BudgetFormData;
+}
+
+interface ConsultationDocument {
+    id: string;
+    userId: string;
+    tripId: string | null;
+    status: string;
+    budgetSummary: BudgetBreakdown | null;
+    formData: BudgetFormData | null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    createdAt: any; // Firestore timestamp - using any to avoid complex Firestore type imports
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    updatedAt: any; // Firestore timestamp - using any to avoid complex Firestore type imports
+}
 
 /**
  * Firestore Service
@@ -207,11 +227,7 @@ const CONSULTATIONS_COLLECTION = 'consultations';
  */
 export async function saveConsultationRequest(
     userId: string,
-    data: {
-        tripId?: string;
-        budgetSummary?: any;
-        formData?: any;
-    }
+    data: ConsultationData
 ): Promise<string> {
     const consultationsRef = collection(db, USERS_COLLECTION, userId, CONSULTATIONS_COLLECTION);
     const newRef = doc(consultationsRef);
@@ -233,7 +249,7 @@ export async function saveConsultationRequest(
 /**
  * Get user consultations
  */
-export async function getUserConsultations(userId: string): Promise<any[]> {
+export async function getUserConsultations(userId: string): Promise<ConsultationDocument[]> {
     const consultationsRef = collection(db, USERS_COLLECTION, userId, CONSULTATIONS_COLLECTION);
     const q = query(consultationsRef, orderBy('createdAt', 'desc'));
     const querySnapshot = await getDocs(q);
@@ -241,5 +257,5 @@ export async function getUserConsultations(userId: string): Promise<any[]> {
     return querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-    }));
+    })) as ConsultationDocument[];
 }

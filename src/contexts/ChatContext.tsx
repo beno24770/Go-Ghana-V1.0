@@ -111,13 +111,18 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         }, 1000);
     }, [isOpen, budgetContext]);
 
-    const handleAction = useCallback((actionType: string) => {
-        // Handle specific actions here (e.g., navigation, form filling)
-        // For now, we'll just send a message representing the action
+    const handleAction = useCallback((actionType: string, payload?: unknown) => {
+        // Handle specific actions by converting them to user messages
         if (actionType === 'NAVIGATE') {
-            // specific logic can go here
+            if (payload === 'safety') {
+                sendMessage("Is it safe to visit Ghana?");
+            } else if (payload === 'weather') {
+                sendMessage("When is the best time to visit?");
+            }
+        } else if (actionType === 'CALCULATE_BUDGET') {
+            sendMessage("I want to start planning my budget.");
         }
-    }, []);
+    }, [sendMessage]);
 
     return (
         <ChatContext.Provider value={{

@@ -4,6 +4,7 @@ import { LiveBudgetBreakdown } from './LiveBudgetBreakdown';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import type { LocalInputData, LocalTransportMode } from '../../types/local';
+import { getNextGhanaHoliday } from '../../data/ghanaHolidays';
 
 const CITIES = ['Accra', 'Kumasi', 'Takoradi', 'Ho', 'Sunyani', 'Tamale'];
 const TRANSPORT_MODES: LocalTransportMode[] = ['Trotro', 'VIP Bus', 'Fuel car', 'Bolt/Uber', 'Taxi'];
@@ -40,7 +41,6 @@ export function LocalInputForm({ onSubmit }: LocalInputFormProps) {
             setEndDate(nextSunday.toISOString().split('T')[0]);
         } else if (type === 'Holiday') {
             // Get actual next Ghana public holiday
-            const { getNextGhanaHoliday } = require('../../data/ghanaHolidays');
             const nextHoliday = getNextGhanaHoliday();
             if (nextHoliday) {
                 const holidayDate = new Date(nextHoliday.date);
