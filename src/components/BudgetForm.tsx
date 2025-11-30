@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -430,6 +430,13 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
         </div>
     );
 
+    // Clear flight cost when toggle is turned off
+    useEffect(() => {
+        if (!watchedValues.includeFlights) {
+            setValue('flightCost', undefined);
+        }
+    }, [watchedValues.includeFlights, setValue]);
+
     const renderStep5 = () => (
         <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
             <div className="p-6 border rounded-xl bg-secondary/10 space-y-6">
@@ -446,6 +453,7 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                                 className="sr-only peer"
                                 checked={watchedValues.includeFlights}
                                 onChange={(e) => setValue('includeFlights', e.target.checked)}
+                                aria-label="Include International Flights"
                             />
                             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                         </label>
@@ -501,6 +509,7 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                                 className="sr-only peer"
                                 checked={watchedValues.includeInsurance}
                                 onChange={(e) => setValue('includeInsurance', e.target.checked)}
+                                aria-label="Include Travel Insurance"
                             />
                             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                         </label>
