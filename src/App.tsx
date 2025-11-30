@@ -38,24 +38,22 @@ function AppContent() {
   }, []);
 
   // Load state from localStorage on mount
+  // Note: We intentionally do NOT restore currentStep to ensure all visitors
+  // start at the Landing Screen for a consistent user experience
   useEffect(() => {
-    const savedStep = localStorage.getItem('currentStep');
     const savedFormData = localStorage.getItem('formData');
     const savedBudgetResult = localStorage.getItem('budgetResult');
     const savedSelectedTour = localStorage.getItem('selectedTour');
     const savedIsLocalMode = localStorage.getItem('isLocalMode');
 
-    if (savedStep) setCurrentStep(parseInt(savedStep));
     if (savedFormData) setFormData(JSON.parse(savedFormData));
     if (savedBudgetResult) setBudgetResult(JSON.parse(savedBudgetResult));
     if (savedSelectedTour) setSelectedTour(JSON.parse(savedSelectedTour));
     if (savedIsLocalMode) setIsLocalMode(savedIsLocalMode === 'true');
   }, []);
 
-  // Save state to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem('currentStep', currentStep.toString());
-  }, [currentStep]);
+  // Note: We intentionally do NOT save currentStep to localStorage
+  // to ensure all visitors start at the Landing Screen
 
   useEffect(() => {
     if (formData) {
@@ -149,7 +147,6 @@ function AppContent() {
     setBudgetResult(null);
     setSelectedTour(null);
     // Clear localStorage
-    localStorage.removeItem('currentStep');
     localStorage.removeItem('formData');
     localStorage.removeItem('budgetResult');
     localStorage.removeItem('selectedTour');
