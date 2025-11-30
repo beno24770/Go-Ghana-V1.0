@@ -29,8 +29,14 @@ export async function generateItinerary(
 ): Promise<TripItinerary> {
 
     if (options.useAI) {
-        // Use AI to generate personalized itinerary
-        return await generateAIItinerary(budget, formData, options);
+        try {
+            // Use AI to generate personalized itinerary
+            return await generateAIItinerary(budget, formData, options);
+        } catch (error) {
+            console.warn('AI Itinerary Generation failed, falling back to template:', error);
+            // Fallback to template-based generation
+            return generateTemplateItinerary(budget, formData);
+        }
     } else {
         // Use template-based generation
         return generateTemplateItinerary(budget, formData);
