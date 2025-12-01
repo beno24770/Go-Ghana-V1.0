@@ -168,11 +168,9 @@ function AppContent() {
   const handleLocalModeToggle = (enabled: boolean) => {
     setIsLocalMode(enabled);
     if (enabled) {
-      if (user) {
-        setCurrentStep(12); // Go to Local Estimator
-      } else {
-        setCurrentStep(13); // Go to Local Auth Page
-      }
+      // Skip authentication for Local Mode (temporary fix for Firebase issue)
+      // TODO: Re-enable authentication once Firebase is properly configured
+      setCurrentStep(12); // Go directly to Local Estimator
     } else {
       setCurrentStep(1);
     }
