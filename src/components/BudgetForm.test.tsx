@@ -7,15 +7,10 @@ describe('BudgetForm', () => {
     it('renders all form fields', () => {
         render(<BudgetForm onSubmit={vi.fn()} isLoading={false} />);
 
+        // Step 1 fields
         expect(screen.getByText(/Trip Duration/i)).toBeInTheDocument();
-        expect(screen.getByText(/Number of Travelers/i)).toBeInTheDocument();
+        expect(screen.getByText(/^Travelers$/i)).toBeInTheDocument();
         expect(screen.getByText(/Travel Month/i)).toBeInTheDocument();
-        expect(screen.getByText(/Regions to Visit/i)).toBeInTheDocument();
-        expect(screen.getByText(/Travel Style/i)).toBeInTheDocument();
-        expect(screen.getByText(/Accommodation Type/i)).toBeInTheDocument();
-        expect(screen.getByText(/Activity Intensity/i)).toBeInTheDocument();
-        expect(screen.getByText(/Interests/i)).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /Calculate Budget/i })).toBeInTheDocument();
     });
 
     it('validates duration input', async () => {
@@ -31,6 +26,7 @@ describe('BudgetForm', () => {
         const mockSubmit = vi.fn();
         render(<BudgetForm onSubmit={mockSubmit} isLoading={false} />);
 
+        // Step 1
         // Set Duration to 14
         const durationInput = screen.getByRole('slider', { name: /duration/i });
         fireEvent.change(durationInput, { target: { value: '14' } });
@@ -39,15 +35,35 @@ describe('BudgetForm', () => {
         const travelersInput = screen.getByRole('slider', { name: /travelers/i });
         fireEvent.change(travelersInput, { target: { value: '2' } });
 
+        // Go to Step 2
+        await user.click(screen.getByRole('button', { name: /next/i }));
+
+        // Step 2
         // Select Travel Style: Luxury
         const luxuryRadio = screen.getByDisplayValue('luxury');
         await user.click(luxuryRadio);
 
+        // Go to Step 3
+        await user.click(screen.getByRole('button', { name: /next/i }));
+
+        // Step 3 (New to Ghana is default checked, so we just continue)
+        // Go to Step 4
+        await user.click(screen.getByRole('button', { name: /next/i }));
+
+        // Step 4 (Transport default Bolt)
+        // Go to Step 5
+        await user.click(screen.getByRole('button', { name: /next/i }));
+
+        // Step 5 (Flights default No)
+        // Go to Step 6
+        await user.click(screen.getByRole('button', { name: /next/i }));
+
+        // Step 6
         // Select Interest: Adventure
         const adventureInterest = screen.getByText(/Adventure/i);
         await user.click(adventureInterest);
 
-        const submitButton = screen.getByRole('button', { name: /Calculate Budget/i });
+        const submitButton = screen.getByRole('button', { name: /See My Budget Summary/i });
         await user.click(submitButton);
 
         await waitFor(() => {

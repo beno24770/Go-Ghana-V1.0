@@ -40,6 +40,18 @@ vi.mock('../contexts/ChatContext', async () => {
     };
 });
 
+vi.mock('../contexts/AuthContext', () => ({
+    useAuth: () => ({
+        user: null,
+        loading: false
+    }),
+    AuthProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>
+}));
+
+vi.mock('./TourRecommendations', () => ({
+    TourRecommendations: () => <div data-testid="tour-recommendations">Tour Recommendations</div>
+}));
+
 describe('BudgetResult', () => {
     const mockBreakdown = {
         accommodation: 500,
@@ -54,6 +66,7 @@ describe('BudgetResult', () => {
 
     const mockFormData = {
         duration: 7, // Changed from 'days'
+        travelers: 2, // Added travelers field
         travelerType: 'couple' as const, // Changed from 'travelers'
         accommodationLevel: 'budget' as const, // Changed from 'budgetLevel' and 'accommodationType'
         activities: [],
@@ -74,7 +87,7 @@ describe('BudgetResult', () => {
         expect(screen.getByText(/\$1,100/i)).toBeInTheDocument();
         expect(screen.getByText(/Accommodation/i)).toBeInTheDocument();
         expect(screen.getByText(/\$500/i)).toBeInTheDocument();
-        expect(screen.getByText(/Food & Dining/i)).toBeInTheDocument();
+        expect(screen.getByText(/^Food$/i)).toBeInTheDocument();
         expect(screen.getByText(/\$300/i)).toBeInTheDocument();
     });
 

@@ -185,6 +185,7 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                     min="1"
                     max="30"
                     className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer accent-ghana-green"
+                    aria-label="Trip Duration"
                     {...register('duration', { valueAsNumber: true })}
                 />
                 <div className="flex gap-2 flex-wrap">
@@ -213,6 +214,7 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                     min="1"
                     max="10"
                     className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer accent-ghana-green"
+                    aria-label="Travelers"
                     {...register('travelers', { valueAsNumber: true })}
                 />
             </div>
