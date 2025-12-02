@@ -11,13 +11,11 @@ interface LandingScreenProps {
 }
 
 export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle }: LandingScreenProps) {
-    // Slider images - Replace these with your own optimized Ghana images
-    // Place images in public/slider/ directory
+    // Optimized Ghana images for slider
     const sliderImages = [
-        // Placeholder URLs - replace with your own images
-        'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=1920&h=1080&fit=crop&q=80', // Nature/Rainforest
-        'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=1920&h=1080&fit=crop&q=80', // Historic Architecture
-        'https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=1920&h=1080&fit=crop&q=80', // Urban Skyline
+        '/slider/ghana-culture.png',    // Cape Coast Castle - Historic/Culture
+        '/slider/ghana-nature.jpg',     // Waterfall/Canopy - Nature/Adventure
+        '/slider/ghana-heritage.jpg',   // Cultural Performers - Heritage/People
     ];
 
     return (
