@@ -547,6 +547,166 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                 ))}
             </div>
         </div>
+    );
+
+    const renderStep7 = () => {
+        const travelStyleLabel = travelStyles.find(s => s.id === watchedValues.travelStyle)?.label || watchedValues.travelStyle;
+        const transportLabel = transportOptions.find(t => t.id === watchedValues.transportMode)?.label || watchedValues.transportMode;
+        const regions = watchedValues.isNewToGhana
+            ? "AI-Selected (Accra, Central, Ashanti)"
+            : watchedValues.regions.length > 0 ? watchedValues.regions.join(', ') : "None selected";
+
+        return (
+            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                <div className="bg-gradient-to-br from-ghana-green/5 to-ghana-yellow/5 rounded-xl p-6 space-y-4 border border-ghana-green/20">
+
+                    {/* Budget & Duration */}
+                    <div className="flex items-center justify-between py-3 border-b border-gray-200 group">
+                        <div className="flex items-center gap-3 flex-1">
+                            <Calendar className="h-5 w-5 text-ghana-green" />
+                            <div>
+                                <span className="font-semibold text-gray-700 block">Trip Duration</span>
+                                <span className="text-lg font-bold text-ghana-green">{watchedValues.duration} days • {watchedValues.travelers} {watchedValues.travelers === 1 ? 'traveler' : 'travelers'}</span>
+                            </div>
+                        </div>
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setStep(1)}
+                            className="text-xs text-ghana-green hover:text-green-800 hover:bg-ghana-green/10"
+                        >
+                            Edit
+                        </Button>
+                    </div>
+
+                    {/* Travel Style */}
+                    <div className="flex items-center justify-between py-3 border-b border-gray-200 group">
+                        <div className="flex items-center gap-3 flex-1">
+                            <Heart className="h-5 w-5 text-ghana-green" />
+                            <div>
+                                <span className="font-semibold text-gray-700 block">Travel Style</span>
+                                <span className="text-lg font-bold text-ghana-green">{travelStyleLabel}</span>
+                            </div>
+                        </div>
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setStep(2)}
+                            className="text-xs text-ghana-green hover:text-green-800 hover:bg-ghana-green/10"
+                        >
+                            Edit
+                        </Button>
+                    </div>
+
+                    {/* Destinations */}
+                    <div className="flex items-start justify-between py-3 border-b border-gray-200 group">
+                        <div className="flex items-start gap-3 flex-1">
+                            <MapPin className="h-5 w-5 text-ghana-green mt-1" />
+                            <div>
+                                <span className="font-semibold text-gray-700 block">Destinations</span>
+                                <span className="text-sm font-medium text-ghana-green">{regions}</span>
+                            </div>
+                        </div>
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setStep(3)}
+                            className="text-xs text-ghana-green hover:text-green-800 hover:bg-ghana-green/10"
+                        >
+                            Edit
+                        </Button>
+                    </div>
+
+                    {/* Transport */}
+                    <div className="flex items-center justify-between py-3 border-b border-gray-200 group">
+                        <div className="flex items-center gap-3 flex-1">
+                            <Calculator className="h-5 w-5 text-ghana-green" />
+                            <div>
+                                <span className="font-semibold text-gray-700 block">Transport</span>
+                                <span className="text-lg font-bold text-ghana-green">{transportLabel}</span>
+                            </div>
+                        </div>
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setStep(4)}
+                            className="text-xs text-ghana-green hover:text-green-800 hover:bg-ghana-green/10"
+                        >
+                            Edit
+                        </Button>
+                    </div>
+
+                    {/* Flights & Insurance */}
+                    <div className="flex items-start justify-between py-3 group">
+                        <div className="flex items-start gap-3 flex-1">
+                            <Plane className="h-5 w-5 text-ghana-green mt-1" />
+                            <div>
+                                <span className="font-semibold text-gray-700 block">Flights & Insurance</span>
+                                <div className="text-sm space-y-1">
+                                    <div className="text-ghana-green font-medium">
+                                        International Flights: {watchedValues.includeFlights ? `Yes${watchedValues.flightCost ? ` ($${watchedValues.flightCost})` : ''}` : 'No'}
+                                    </div>
+                                    <div className="text-ghana-green font-medium">
+                                        Travel Insurance: {watchedValues.includeInsurance ? 'Yes' : 'No'}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setStep(5)}
+                            className="text-xs text-ghana-green hover:text-green-800 hover:bg-ghana-green/10"
+                        >
+                            Edit
+                        </Button>
+                    </div>
+
+                    {/* Interests */}
+                    {watchedValues.interests.length > 0 && (
+                        <div className="flex items-start justify-between py-3 border-t border-gray-200 group">
+                            <div className="flex items-start gap-3 flex-1">
+                                <Heart className="h-5 w-5 text-ghana-green mt-1" />
+                                <div>
+                                    <span className="font-semibold text-gray-700 block">Interests</span>
+                                    <div className="flex flex-wrap gap-2 mt-1">
+                                        {watchedValues.interests.map(interest => (
+                                            <span key={interest} className="text-xs bg-ghana-green/10 text-ghana-green px-2 py-1 rounded-full font-medium">
+                                                {interest}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setStep(6)}
+                                className="text-xs text-ghana-green hover:text-green-800 hover:bg-ghana-green/10"
+                            >
+                                Edit
+                            </Button>
+                        </div>
+                    )}
+                </div>
+
+                {/* Call to Action */}
+                <div className="text-center p-6 bg-white rounded-xl border-2 border-ghana-green/20 shadow-sm">
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">Everything Look Good?</h3>
+                    <p className="text-sm text-gray-600 mb-4">
+                        Review your selections above. You can edit any section by clicking the "Edit" button, or proceed to generate your personalized budget.
+                    </p>
+                </div>
+            </div>
+        );
+    };
+
     const stepTitles = [
         {
             title: "What's Your Budget & How Long Will You Stay?",
