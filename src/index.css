@@ -5,6 +5,10 @@
 @tailwind utilities;
 @import './styles/animations.css';
 
+body {
+  @apply bg-black;
+}
+
 :root {
   /* Ghana Color Palette - Premium */
   --color-ghana-red: #B91C1C;
