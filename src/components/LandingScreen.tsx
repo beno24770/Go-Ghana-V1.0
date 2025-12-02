@@ -1,7 +1,7 @@
 import { Button } from './ui/Button';
 import { ArrowRight, Check, Play, Star, MapPin, Calendar, DollarSign } from 'lucide-react';
 import { AnimatedSection } from './ui/AnimatedSection';
-import { BackgroundSlider } from './BackgroundSlider';
+
 
 
 interface LandingScreenProps {
@@ -20,8 +20,18 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
 
     return (
         <div className="min-h-screen relative font-sans text-white overflow-x-hidden">
-            {/* Animated Background Slider */}
-            <BackgroundSlider images={sliderImages} interval={5000} />
+            {/* Static Background Image */}
+            <div className="fixed inset-0 -z-10 bg-black">
+                <img
+                    src="/slider/ghana-nature.jpg"
+                    alt="Ghana Nature - Canopy Walk"
+                    className="w-full h-full object-cover opacity-80"
+                    loading="eager"
+                    decoding="async"
+                />
+                {/* Dark Overlay for text readability */}
+                <div className="absolute inset-0 bg-black/50" />
+            </div>
 
             {/* Navigation */}
             <nav className="relative z-50 container mx-auto px-6 py-6">
