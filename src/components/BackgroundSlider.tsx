@@ -22,7 +22,7 @@ export function BackgroundSlider({
 
     return (
         <div
-            className={`fixed inset-0 -z-10 ${className}`}
+            className={`fixed inset-0 -z-10 bg-black ${className}`}
             onMouseEnter={pause}
             onMouseLeave={resume}
             aria-label="Background image slider"
@@ -59,8 +59,8 @@ export function BackgroundSlider({
                         key={index}
                         onClick={() => goTo(index)}
                         className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentIndex
-                                ? 'bg-white w-8'
-                                : 'bg-white/50 hover:bg-white/75'
+                            ? 'bg-white w-8'
+                            : 'bg-white/50 hover:bg-white/75'
                             }`}
                         aria-label={`Go to slide ${index + 1}`}
                         aria-current={index === currentIndex}
