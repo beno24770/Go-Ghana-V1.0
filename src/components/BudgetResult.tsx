@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Wallet, Utensils, Car, Map as MapIcon, Plane, TrendingUp, Users, Calendar as CalendarIcon, MapPin, Shield, MessageCircle, Phone, Download, Loader2, Sparkles } from 'lucide-react';
+import { Wallet, Utensils, Car, Map as MapIcon, Plane, TrendingUp, Users, Calendar as CalendarIcon, MapPin, Shield, MessageCircle, Phone, Download, Loader2, Sparkles, ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
 import { Button } from './ui/Button';
 import { SplitButton } from './ui/SplitButton';
@@ -20,6 +20,7 @@ interface BudgetResultProps {
     breakdown: BudgetBreakdown | null;
     isLoading?: boolean;
     formData?: BudgetFormData;
+    onContinue?: () => void;
 }
 
 const TRAVELER_COUNTS = {
@@ -29,7 +30,7 @@ const TRAVELER_COUNTS = {
     group: 4,
 };
 
-export function BudgetResult({ breakdown, isLoading = false, formData }: BudgetResultProps) {
+export function BudgetResult({ breakdown, isLoading = false, formData, onContinue }: BudgetResultProps) {
     const { convertAndFormat, selectedCurrency } = useCurrency();
     const { toggleChat, setBudgetContext } = useChat();
     const { user } = useAuth();
@@ -144,33 +145,33 @@ export function BudgetResult({ breakdown, isLoading = false, formData }: BudgetR
 
             // Calculate multipliers
             const regions = formData.regions || [];
-            const regionalMultipliers = regions.map(r => REGIONAL_MULTIPLIERS[r] || 1.0);
+            const regionalMultipliers = regions.map((r: string) => REGIONAL_MULTIPLIERS[r] || 1.0);
             const avgRegionalMultiplier = regionalMultipliers.length > 0
-                ? regionalMultipliers.reduce((sum, m) => sum + m, 0) / regionalMultipliers.length
+                ? regionalMultipliers.reduce((sum: number, m: number) => sum + m, 0) / regionalMultipliers.length
                 : 1.0;
             const seasonalMultiplier = formData.month ? (SEASONAL_MULTIPLIERS[formData.month] || 1.0) : 1.0;
 
             // Get base costs with new factors
-            let accommodationBase = BASE_COSTS.accommodation[formData.accommodationLevel];
-            if (formData.roomSharing && ROOM_SHARING_MULTIPLIERS[formData.roomSharing]) {
-                accommodationBase *= ROOM_SHARING_MULTIPLIERS[formData.roomSharing];
+            let accommodationBase = BASE_COSTS.accommodation[formData.accommodationLevel as keyof typeof BASE_COSTS.accommodation];
+            if (formData.roomSharing && ROOM_SHARING_MULTIPLIERS[formData.roomSharing as keyof typeof ROOM_SHARING_MULTIPLIERS]) {
+                accommodationBase *= ROOM_SHARING_MULTIPLIERS[formData.roomSharing as keyof typeof ROOM_SHARING_MULTIPLIERS];
             }
 
             let transportBase = 0;
-            if (formData.transportMode && TRANSPORT_MODE_COSTS[formData.transportMode] !== undefined) {
-                const modeCost = TRANSPORT_MODE_COSTS[formData.transportMode];
+            if (formData.transportMode && TRANSPORT_MODE_COSTS[formData.transportMode as keyof typeof TRANSPORT_MODE_COSTS] !== undefined) {
+                const modeCost = TRANSPORT_MODE_COSTS[formData.transportMode as keyof typeof TRANSPORT_MODE_COSTS];
                 if (['private_driver', 'rental'].includes(formData.transportMode)) {
                     transportBase = modeCost / travelerCount;
                 } else {
                     transportBase = modeCost;
                 }
             } else {
-                transportBase = BASE_COSTS.transport[formData.accommodationLevel];
+                transportBase = BASE_COSTS.transport[formData.accommodationLevel as keyof typeof BASE_COSTS.transport];
             }
 
             const baseCosts = {
                 accommodation: accommodationBase,
-                food: BASE_COSTS.food[formData.accommodationLevel],
+                food: BASE_COSTS.food[formData.accommodationLevel as keyof typeof BASE_COSTS.food],
                 transport: transportBase,
                 activities: BASE_COSTS.activities[formData.intensity?.toLowerCase() as 'relaxed' | 'moderate' | 'packed' || 'moderate']
             };
@@ -186,7 +187,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData }: BudgetR
             // Calculate inter-region transport
             const numRegions = regions.length || 1;
             const interRegionMoves = Math.max(0, numRegions - 1);
-            const interRegionCostPerMove = INTER_REGION_TRANSPORT[formData.accommodationLevel];
+            const interRegionCostPerMove = INTER_REGION_TRANSPORT[formData.accommodationLevel as keyof typeof INTER_REGION_TRANSPORT];
             const interRegionTotal = interRegionMoves * interRegionCostPerMove * travelerCount;
 
             setBudgetContext({
@@ -410,7 +411,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData }: BudgetR
                         Regional Cost Breakdown
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {breakdown.regionalBreakdown.map((region) => (
+                        {breakdown.regionalBreakdown.map((region: any) => (
                             <Card key={region.region} className="border-l-4 border-l-[#006B3F]">
                                 <CardHeader className="pb-2">
                                     <CardTitle className="text-lg flex justify-between">
@@ -456,7 +457,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData }: BudgetR
                     regions={formData.regions}
                     month={formData.month}
                     embedded={true}
-                    onSelectTour={(tour) => {
+                    onSelectTour={(tour: any) => {
                         console.log('Selected tour:', tour);
                     }}
                 />
@@ -518,6 +519,18 @@ export function BudgetResult({ breakdown, isLoading = false, formData }: BudgetR
                     </Button>
                 </div>
             </div>
+
+            {/* Continue Button */}
+            {onContinue && (
+                <div className="flex justify-center pt-4 pb-8 animate-[fadeSlideUp_0.9s_ease-out_0.4s]">
+                    <Button
+                        onClick={onContinue}
+                        className="gap-2 px-8 py-6 text-lg bg-ghana-green hover:bg-green-800 text-white shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1"
+                    >
+                        Continue to Tour Recommendations <ArrowRight className="h-5 w-5" />
+                    </Button>
+                </div>
+            )}
 
             <style>{`
                 @keyframes expandWidth {

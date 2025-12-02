@@ -25,7 +25,7 @@ import { knowledgeService } from './services/knowledgeService';
 import type { BudgetFormData, BudgetBreakdown, Tour } from './types';
 
 function AppContent() {
-  const { user } = useAuth();
+  const { } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<BudgetFormData | null>(null);
   const [budgetResult, setBudgetResult] = useState<BudgetBreakdown | null>(null);

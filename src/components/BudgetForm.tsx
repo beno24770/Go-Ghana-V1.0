@@ -90,6 +90,7 @@ export interface BudgetFormProps {
 export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
     const [step, setStep] = useState(1);
     const totalSteps = 7; // Now includes Review & Confirm step
+    console.log("BudgetForm loaded - v7.0 (Review Step Added)");
 
     const {
         register,
