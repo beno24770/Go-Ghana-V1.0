@@ -1,6 +1,7 @@
 import { Button } from './ui/Button';
 import { ArrowRight, Check, Play, Star, MapPin, Calendar, DollarSign } from 'lucide-react';
 import { AnimatedSection } from './ui/AnimatedSection';
+import { BackgroundSlider } from './BackgroundSlider';
 
 
 interface LandingScreenProps {
@@ -10,19 +11,19 @@ interface LandingScreenProps {
 }
 
 export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle }: LandingScreenProps) {
+    // Slider images - Replace these with your own optimized Ghana images
+    // Place images in public/slider/ directory
+    const sliderImages = [
+        // Placeholder URLs - replace with your own images
+        'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=1920&h=1080&fit=crop&q=80', // Nature/Rainforest
+        'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=1920&h=1080&fit=crop&q=80', // Historic Architecture
+        'https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=1920&h=1080&fit=crop&q=80', // Urban Skyline
+    ];
+
     return (
         <div className="min-h-screen relative font-sans text-white overflow-x-hidden">
-            {/* Full Screen Background with Overlay */}
-            <div className="absolute inset-0 z-0">
-                <img
-                    src={new URL('../assets/hero_bg.png', import.meta.url).href}
-                    alt="Ghana Landscape"
-                    className="w-full h-full object-cover"
-                    loading="eager"
-                    fetchpriority="high"
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/60"></div>
-            </div>
+            {/* Animated Background Slider */}
+            <BackgroundSlider images={sliderImages} interval={5000} />
 
             {/* Navigation */}
             <nav className="relative z-50 container mx-auto px-6 py-6">
@@ -77,26 +78,26 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
 
             {/* Hero Section */}
             <div className="relative z-10 container mx-auto px-6 pt-12 pb-24 md:pt-20 md:pb-32 flex flex-col items-center justify-center min-h-[85vh] text-center">
-                <AnimatedSection animation="fade-in-up" delay={100} immediate={true} className="max-w-5xl mx-auto space-y-8">
+                <div className="max-w-5xl mx-auto space-y-8">
 
-                    {/* Badge */}
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-full shadow-lg mb-4">
+                    {/* Badge - Animated */}
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-full shadow-lg mb-4 animate-fade-in-up opacity-0 delay-100">
                         <Star className="w-4 h-4 text-ghana-yellow fill-current animate-pulse" />
                         <span className="text-sm font-medium tracking-wide text-white/90">
-                            Ghana’s First Budget-First AI Travel Planner
+                            Ghana's First Budget-First AI Travel Planner
                         </span>
                     </div>
 
-                    {/* Main Headline */}
-                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.1] tracking-tight drop-shadow-xl">
+                    {/* Main Headline - Animated */}
+                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.1] tracking-tight drop-shadow-xl animate-fade-in-up opacity-0 delay-200">
                         PLAN YOUR GHANA TRIP <br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-ghana-yellow via-white to-ghana-green">
                             ON ANY BUDGET
                         </span>
                     </h1>
 
-                    {/* Subheadline with Handwritten Accent */}
-                    <div className="relative inline-block">
+                    {/* Subheadline with Handwritten Accent - Animated */}
+                    <div className="relative inline-block animate-fade-in-up opacity-0 delay-300">
                         <p className="text-xl md:text-2xl text-white/90 font-light tracking-wide max-w-2xl mx-auto">
                             AI that creates a realistic budget, recommends tours, and builds your full itinerary — all based on what you can afford.
                         </p>
@@ -105,12 +106,12 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                         </span>
                     </div>
 
-                    {/* CTA Buttons */}
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-12">
+                    {/* CTA Buttons - Animated */}
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-12 animate-fade-in-up opacity-0 delay-400">
                         <Button
                             size="lg"
                             onClick={onStart}
-                            className="w-full sm:w-auto bg-ghana-green hover:bg-green-700 text-white h-16 px-10 rounded-full text-xl font-bold shadow-xl hover:shadow-ghana-green/40 hover:-translate-y-1 transition-all duration-300 border-2 border-transparent"
+                            className="w-full sm:w-auto bg-ghana-green hover:bg-green-700 text-white h-16 px-10 rounded-full text-xl font-bold shadow-xl hover:shadow-ghana-green/40 hover:-translate-y-1 transition-all duration-300 border-2 border-transparent hover-lift"
                         >
                             Start With Your Budget
                             <ArrowRight className="ml-2 w-6 h-6" />
@@ -159,7 +160,7 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                             </span>
                         </div>
                     </div>
-                </AnimatedSection>
+                </div>
 
                 {/* Floating Glass Cards (Decorative) - Moved inside Hero for better positioning */}
                 <div className="absolute top-1/3 left-4 lg:left-10 hidden xl:block animate-float" style={{ animationDelay: '0s' }}>
