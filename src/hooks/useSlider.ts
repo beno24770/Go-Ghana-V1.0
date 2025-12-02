@@ -50,8 +50,13 @@ export function useSlider({
     useEffect(() => {
         if (!isPlaying || imageCount <= 1) return;
 
-        const timer = setInterval(next, interval);
-        return () => clearInterval(timer);
+        // Delay start slightly to ensure initial render is stable
+        const startTimer = setTimeout(() => {
+            const timer = setInterval(next, interval);
+            return () => clearInterval(timer);
+        }, 100);
+
+        return () => clearTimeout(startTimer);
     }, [isPlaying, interval, next, imageCount]);
 
     // Keyboard navigation
