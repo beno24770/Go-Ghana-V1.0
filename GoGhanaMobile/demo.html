@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoGhana Mobile App - Interactive Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #15803D 0%, #0f5a2a 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .phone-container {
+            width: 375px;
+            height: 812px;
+            background: #000;
+            border-radius: 40px;
+            padding: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 100;
+        }
+
+        .screen-content {
+            height: 100%;
+            overflow-y: auto;
+            padding-top: 40px;
+        }
+
+        .tab-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-bottom: 20px;
+        }
+
+        .tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #15803D;
+        }
+
+        .tab:not(.active) {
+            color: #6B7280;
+        }
+
+        .tab-icon {
+            font-size: 24px;
+        }
+
+        .tab-label {
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        /* Home Screen */
+        .home-screen {
+            display: none;
+        }
+
+        .home-screen.active {
+            display: block;
+        }
+
+        .hero {
+            background: #15803D;
+            padding: 40px 24px;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            font-size: 1rem;
+            margin-bottom: 24px;
+            opacity: 0.95;
+        }
+
+        .btn-primary {
+            background: #D97706;
+            color: white;
+            padding: 16px 32px;
+            border-radius: 12px;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.02);
+        }
+
+        .features {
+            padding: 32px 24px;
+        }
+
+        .features h2 {
+            font-size: 1.5rem;
+            color: #111827;
+            margin-bottom: 24px;
+        }
+
+        .feature-card {
+            display: flex;
+            gap: 16px;
+            background: #F9FAFB;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: #15803D;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .feature-content h3 {
+            font-size: 1.1rem;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+
+        .feature-content p {
+            font-size: 0.9rem;
+            color: #6B7280;
+        }
+
+        /* Budget Form */
+        .budget-form {
+            display: none;
+            padding: 24px;
+            padding-bottom: 100px;
+        }
+
+        .budget-form.active {
+            display: block;
+        }
+
+        .progress-bar {
+            margin-bottom: 24px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #6B7280;
+        }
+
+        .progress-track {
+            height: 8px;
+            background: #E5E7EB;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #15803D;
+            transition: width 0.3s;
+        }
+
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        .form-step h2 {
+            font-size: 1.5rem;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .form-step p {
+            color: #6B7280;
+            margin-bottom: 32px;
+        }
+
+        .counter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            margin: 48px 0;
+        }
+
+        .counter-btn {
+            width: 56px;
+            height: 56px;
+            background: #15803D;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .counter-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .counter-value {
+            background: rgba(21, 128, 61, 0.1);
+            padding: 24px 48px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .counter-value .number {
+            font-size: 3rem;
+            color: #15803D;
+            font-weight: bold;
+        }
+
+        .counter-value .label {
+            color: #15803D;
+            margin-top: 4px;
+        }
+
+        .option-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 16px;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .option:hover {
+            border-color: #15803D;
+        }
+
+        .option.selected {
+            border-color: #15803D;
+            background: rgba(21, 128, 61, 0.1);
+        }
+
+        .option h3 {
+            color: #111827;
+            margin-bottom: 4px;
+        }
+
+        .option.selected h3 {
+            color: #15803D;
+            font-weight: 600;
+        }
+
+        .option p {
+            color: #6B7280;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .form-nav {
+            position: fixed;
+            bottom: 80px;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 16px 24px;
+            border-top: 1px solid #E5E7EB;
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 16px;
+            background: #E5E7EB;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-next {
+            flex: 1;
+            padding: 16px;
+            background: #15803D;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Budget Summary */
+        .budget-summary {
+            display: none;
+        }
+
+        .budget-summary.active {
+            display: block;
+        }
+
+        .summary-header {
+            background: #15803D;
+            padding: 32px 24px;
+            color: white;
+        }
+
+        .summary-header h2 {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .summary-header .total {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .summary-header .daily {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .breakdown {
+            padding: 24px;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .breakdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .breakdown-label {
+            color: #6B7280;
+        }
+
+        .breakdown-amount {
+            color: #111827;
+            font-weight: 600;
+        }
+
+        .generate-btn {
+            margin: 24px;
+            padding: 16px;
+            background: #D97706;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: calc(100% - 48px);
+        }
+
+        @media (max-width: 500px) {
+            .phone-container {
+                width: 100%;
+                max-width: 375px;
+                height: 100vh;
+                max-height: 812px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>🇬🇭 GoGhana Mobile</h1>
+        <p>Interactive App Demo</p>
+    </div>
+
+    <div class="phone-container">
+        <div class="phone-screen">
+            <div class="notch"></div>
+
+            <div class="screen-content">
+                <!-- Home Screen -->
+                <div class="home-screen active" id="homeScreen">
+                    <div class="hero">
+                        <h1>Akwaaba! 🇬🇭</h1>
+                        <p>Plan your perfect Ghana adventure with AI-powered insights</p>
+                        <button class="btn-primary" onclick="startPlanning()">Start Planning</button>
+                    </div>
+                    <div class="features">
+                        <h2>Why GoGhana AI?</h2>
+                        <div class="feature-card">
+                            <div class="feature-icon">📊</div>
+                            <div class="feature-content">
+                                <h3>Smart Budget Planning</h3>
+                                <p>Get accurate cost estimates based on your travel style</p>
+                            </div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">✨</div>
+                            <div class="feature-content">
+                                <h3>AI-Powered Itineraries</h3>
+                                <p>Adepa creates personalized day-by-day plans</p>
+                            </div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">📱</div>
+                            <div class="feature-content">
+                                <h3>Offline Access</h3>
+                                <p>Save trips and access them without internet</p>
+                            </div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">❤️</div>
+                            <div class="feature-content">
+                                <h3>Local Experiences</h3>
+                                <p>Discover authentic Ghanaian culture and hidden gems</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Budget Form -->
+                <div class="budget-form" id="budgetForm">
+                    <div class="progress-bar">
+                        <div class="progress-info">
+                            <span>Step <span id="currentStep">1</span> of 5</span>
+                            <span id="progressPercent">20%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill" id="progressFill" style="width: 20%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Step 1: Duration -->
+                    <div class="form-step active" id="step1">
+                        <h2>How long is your trip?</h2>
+                        <p>Choose the number of days you'll be in Ghana</p>
+                        <div class="counter">
+                            <button class="counter-btn" onclick="changeDuration(-1)">−</button>
+                            <div class="counter-value">
+                                <div class="number" id="duration">7</div>
+                                <div class="label">days</div>
+                            </div>
+                            <button class="counter-btn" onclick="changeDuration(1)">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Travelers -->
+                    <div class="form-step" id="step2">
+                        <h2>Who's traveling?</h2>
+                        <p>Tell us about your travel group</p>
+                        <div class="counter">
+                            <button class="counter-btn" onclick="changeTravelers(-1)">−</button>
+                            <div class="counter-value">
+                                <div class="number" id="travelers">2</div>
+                                <div class="label">travelers</div>
+                            </div>
+                            <button class="counter-btn" onclick="changeTravelers(1)">+</button>
+                        </div>
+                        <div class="option-list" style="margin-top: 32px;">
+                            <div class="option" onclick="selectTravelerType(this)">
+                                <h3>👤 Solo Traveler</h3>
+                            </div>
+                            <div class="option selected" onclick="selectTravelerType(this)">
+                                <h3>❤️ Couple</h3>
+                            </div>
+                            <div class="option" onclick="selectTravelerType(this)">
+                                <h3>👨‍👩‍👧‍👦 Family</h3>
+                            </div>
+                            <div class="option" onclick="selectTravelerType(this)">
+                                <h3>👥 Group</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Accommodation -->
+                    <div class="form-step" id="step3">
+                        <h2>Accommodation Style</h2>
+                        <p>Choose your preferred accommodation level</p>
+                        <div class="option-list">
+                            <div class="option" onclick="selectOption(this)">
+                                <h3>Backpacker</h3>
+                                <p>Hostels & budget stays</p>
+                            </div>
+                            <div class="option" onclick="selectOption(this)">
+                                <h3>Budget</h3>
+                                <p>Simple hotels</p>
+                            </div>
+                            <div class="option selected" onclick="selectOption(this)">
+                                <h3>Mid-Range</h3>
+                                <p>Comfortable hotels</p>
+                            </div>
+                            <div class="option" onclick="selectOption(this)">
+                                <h3>Comfort</h3>
+                                <p>Quality hotels</p>
+                            </div>
+                            <div class="option" onclick="selectOption(this)">
+                                <h3>Luxury</h3>
+                                <p>Premium resorts</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-nav">
+                        <button class="btn-secondary" onclick="previousStep()">Back</button>
+                        <button class="btn-next" onclick="nextStep()">Next</button>
+                    </div>
+                </div>
+
+                <!-- Budget Summary -->
+                <div class="budget-summary" id="budgetSummary">
+                    <div class="summary-header">
+                        <h2>Estimated Total Budget</h2>
+                        <div class="total">GH₵ 17,700</div>
+                        <div class="daily">≈ GH₵ 1,264 per person/day</div>
+                    </div>
+                    <div class="breakdown">
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Accommodation</span>
+                            <span class="breakdown-amount">GH₵ 4,900</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Food & Dining</span>
+                            <span class="breakdown-amount">GH₵ 1,960</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Transportation</span>
+                            <span class="breakdown-amount">GH₵ 4,900</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Activities</span>
+                            <span class="breakdown-amount">GH₵ 630</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Essentials (Visa, SIM, etc.)</span>
+                            <span class="breakdown-amount">GH₵ 3,700</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Contingency (10%)</span>
+                            <span class="breakdown-amount">GH₵ 1,610</span>
+                        </div>
+                    </div>
+                    <button class="generate-btn"
+                        onclick="alert('✨ In the real app, this would generate your personalized itinerary using AI!')">
+                        ✨ Generate AI Itinerary with Adepa
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab Bar -->
+            <div class="tab-bar">
+                <div class="tab active" onclick="switchTab('home', this)">
+                    <div class="tab-icon">🏠</div>
+                    <div class="tab-label">Home</div>
+                </div>
+                <div class="tab" onclick="switchTab('planner', this)">
+                    <div class="tab-icon">📊</div>
+                    <div class="tab-label">Planner</div>
+                </div>
+                <div class="tab" onclick="switchTab('saved', this)">
+                    <div class="tab-icon">📑</div>
+                    <div class="tab-label">Saved</div>
+                </div>
+                <div class="tab" onclick="switchTab('profile', this)">
+                    <div class="tab-icon">👤</div>
+                    <div class="tab-label">Profile</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentFormStep = 1;
+        let duration = 7;
+        let travelers = 2;
+
+        function switchTab(tab, element) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+
+            document.getElementById('homeScreen').classList.remove('active');
+            document.getElementById('budgetForm').classList.remove('active');
+            document.getElementById('budgetSummary').classList.remove('active');
+
+            if (tab === 'home') {
+                document.getElementById('homeScreen').classList.add('active');
+            } else if (tab === 'planner') {
+                document.getElementById('budgetForm').classList.add('active');
+            }
+        }
+
+        function startPlanning() {
+            document.querySelectorAll('.tab')[1].click();
+        }
+
+        function changeDuration(delta) {
+            duration = Math.max(1, duration + delta);
+            document.getElementById('duration').textContent = duration;
+        }
+
+        function changeTravelers(delta) {
+            travelers = Math.max(1, travelers + delta);
+            document.getElementById('travelers').textContent = travelers;
+        }
+
+        function selectOption(element) {
+            element.parentElement.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            element.classList.add('selected');
+        }
+
+        function selectTravelerType(element) {
+            selectOption(element);
+        }
+
+        function nextStep() {
+            if (currentFormStep < 3) {
+                document.getElementById(`step${currentFormStep}`).classList.remove('active');
+                currentFormStep++;
+                document.getElementById(`step${currentFormStep}`).classList.add('active');
+                updateProgress();
+            } else {
+                // Show summary
+                document.getElementById('budgetForm').classList.remove('active');
+                document.getElementById('budgetSummary').classList.add('active');
+            }
+        }
+
+        function previousStep() {
+            if (currentFormStep > 1) {
+                document.getElementById(`step${currentFormStep}`).classList.remove('active');
+                currentFormStep--;
+                document.getElementById(`step${currentFormStep}`).classList.add('active');
+                updateProgress();
+            } else {
+                switchTab('home', document.querySelectorAll('.tab')[0]);
+            }
+        }
+
+        function updateProgress() {
+            const percent = (currentFormStep / 5) * 100;
+            document.getElementById('currentStep').textContent = currentFormStep;
+            document.getElementById('progressPercent').textContent = Math.round(percent) + '%';
+            document.getElementById('progressFill').style.width = percent + '%';
+        }
+    </script>
+</body>
+
+</html>

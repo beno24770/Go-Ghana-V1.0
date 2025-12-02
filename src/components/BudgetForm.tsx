@@ -89,7 +89,7 @@ export interface BudgetFormProps {
 
 export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
     const [step, setStep] = useState(1);
-    const totalSteps = 6; // Step 7 is result
+    const totalSteps = 7; // Now includes Review & Confirm step
 
     const {
         register,
@@ -549,26 +549,152 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
         </div>
     );
 
+    const renderStep7 = () => {
+        const travelStyleLabel = travelStyles.find(s => s.id === watchedValues.travelStyle)?.label || watchedValues.travelStyle;
+        const transportLabel = transportOptions.find(t => t.id === watchedValues.transportMode)?.label || watchedValues.transportMode;
+        const regions = watchedValues.isNewToGhana
+            ? "AI-Selected (Accra, Central, Ashanti)"
+            : watchedValues.regions.length > 0 ? watchedValues.regions.join(', ') : "None selected";
+
+        return (
+            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                <div className="bg-gradient-to-br from-ghana-green/5 to-ghana-yellow/5 rounded-xl p-6 space-y-4 border border-ghana-green/20">
+
+                    {/* Budget & Duration */}
+                    <div className="flex items-center justify-between py-3 border-b border-gray-200">
+                        <div className="flex items-center gap-3">
+                            <Calendar className="h-5 w-5 text-ghana-green" />
+                            <span className="font-semibold text-gray-700">Trip Duration</span>
+                        </div>
+                        <span className="text-lg font-bold text-ghana-green">{watchedValues.duration} days</span>
+                    </div>
+
+                    {/* Travelers */}
+                    <div className="flex items-center justify-between py-3 border-b border-gray-200">
+                        <div className="flex items-center gap-3">
+                            <Briefcase className="h-5 w-5 text-ghana-green" />
+                            <span className="font-semibold text-gray-700">Travelers</span>
+                        </div>
+                        <span className="text-lg font-bold text-ghana-green">{watchedValues.travelers} {watchedValues.travelers === 1 ? 'person' : 'people'}</span>
+                    </div>
+
+                    {/* Travel Style */}
+                    <div className="flex items-center justify-between py-3 border-b border-gray-200">
+                        <div className="flex items-center gap-3">
+                            <Heart className="h-5 w-5 text-ghana-green" />
+                            <span className="font-semibold text-gray-700">Travel Style</span>
+                        </div>
+                        <span className="text-lg font-bold text-ghana-green">{travelStyleLabel}</span>
+                    </div>
+
+                    {/* Destinations */}
+                    <div className="flex items-start justify-between py-3 border-b border-gray-200">
+                        <div className="flex items-center gap-3">
+                            <MapPin className="h-5 w-5 text-ghana-green" />
+                            <span className="font-semibold text-gray-700">Destinations</span>
+                        </div>
+                        <span className="text-right text-sm font-medium text-ghana-green max-w-xs">{regions}</span>
+                    </div>
+
+                    {/* Transport */}
+                    <div className="flex items-center justify-between py-3 border-b border-gray-200">
+                        <div className="flex items-center gap-3">
+                            <Calculator className="h-5 w-5 text-ghana-green" />
+                            <span className="font-semibold text-gray-700">Transport</span>
+                        </div>
+                        <span className="text-lg font-bold text-ghana-green">{transportLabel}</span>
+                    </div>
+
+                    {/* Flights */}
+                    <div className="flex items-center justify-between py-3 border-b border-gray-200">
+                        <div className="flex items-center gap-3">
+                            <Plane className="h-5 w-5 text-ghana-green" />
+                            <span className="font-semibold text-gray-700">International Flights</span>
+                        </div>
+                        <span className="text-lg font-bold text-ghana-green">
+                            {watchedValues.includeFlights ? `Yes${watchedValues.flightCost ? ` ($${watchedValues.flightCost})` : ''}` : 'No'}
+                        </span>
+                    </div>
+
+                    {/* Insurance */}
+                    <div className="flex items-center justify-between py-3">
+                        <div className="flex items-center gap-3">
+                            <Check className="h-5 w-5 text-ghana-green" />
+                            <span className="font-semibold text-gray-700">Travel Insurance</span>
+                        </div>
+                        <span className="text-lg font-bold text-ghana-green">
+                            {watchedValues.includeInsurance ? 'Yes' : 'No'}
+                        </span>
+                    </div>
+                </div>
+
+                {/* Call to Action */}
+                <div className="text-center p-6 bg-ghana-green/5 rounded-xl border border-ghana-green/20">
+                    <p className="text-sm text-gray-600 mb-2">
+                        Hit the button below and we'll generate your personalized trip budget in seconds.
+                    </p>
+                    <p className="text-xs text-gray-500">
+                        Want to change something? Use the "Back" button to edit any step.
+                    </p>
+                </div>
+            </div>
+        );
+    };
+
     const stepTitles = [
-        { title: "Trip Basics", icon: Calendar },
-        { title: "Travel Style", icon: Briefcase },
-        { title: "Destinations", icon: MapPin },
-        { title: "Transport", icon: Calculator }, // Using Calculator as generic icon for now
-        { title: "Flights", icon: Plane },
-        { title: "Interests", icon: Heart },
+        {
+            title: "What's Your Budget & How Long Will You Stay?",
+            subtitle: "Set your spending limit and trip duration. We'll build everything around what you can afford.",
+            icon: Calendar
+        },
+        {
+            title: "How Do You Like to Travel?",
+            subtitle: "Choose your comfort level—from backpacker to luxury. This helps us match you with the right accommodations.",
+            icon: Briefcase
+        },
+        {
+            title: "Where in Ghana Do You Want to Explore?",
+            subtitle: "New to Ghana? Let us suggest the best regions. Already know where you're going? Pick your destinations manually.",
+            icon: MapPin
+        },
+        {
+            title: "How Will You Get Around?",
+            subtitle: "Choose your preferred mode of transport—this affects your daily costs.",
+            icon: Calculator
+        },
+        {
+            title: "Flying In? Need Travel Insurance?",
+            subtitle: "Tell us if you need international flights and travel insurance included in your budget estimate.",
+            icon: Plane
+        },
+        {
+            title: "What Are You Into?",
+            subtitle: "Select your interests to help us refine your itinerary.",
+            icon: Heart
+        },
+        {
+            title: "Ready to See Your Budget?",
+            subtitle: "Review your selections below. Everything look good? Hit the button and we'll generate your personalized trip budget in seconds.",
+            icon: Check
+        },
     ];
 
     return (
         <Card className="w-full max-w-3xl mx-auto shadow-2xl border-t-4 border-t-ghana-yellow overflow-hidden bg-white/95 backdrop-blur-sm">
             <CardHeader className="bg-secondary/5 pb-8">
-                <div className="flex justify-between items-center mb-6">
-                    <CardTitle className="flex items-center gap-2 text-2xl">
-                        {(() => {
-                            const Icon = stepTitles[step - 1].icon;
-                            return Icon && <span className="p-2 bg-primary/10 rounded-full text-primary"><Icon className="h-6 w-6" /></span>;
-                        })()}
-                        Step {step}: {stepTitles[step - 1].title}
-                    </CardTitle>
+                <div className="flex justify-between items-start mb-6">
+                    <div className="flex-1">
+                        <CardTitle className="flex items-center gap-2 text-2xl mb-2">
+                            {(() => {
+                                const Icon = stepTitles[step - 1].icon;
+                                return Icon && <span className="p-2 bg-primary/10 rounded-full text-primary"><Icon className="h-6 w-6" /></span>;
+                            })()}
+                            {stepTitles[step - 1].title}
+                        </CardTitle>
+                        <p className="text-sm text-muted-foreground pl-14">
+                            {stepTitles[step - 1].subtitle}
+                        </p>
+                    </div>
                     <span className="text-sm font-medium text-muted-foreground">
                         {step} / {totalSteps}
                     </span>
@@ -590,6 +716,7 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                     {step === 4 && renderStep4()}
                     {step === 5 && renderStep5()}
                     {step === 6 && renderStep6()}
+                    {step === 7 && renderStep7()}
                 </CardContent>
 
                 <CardFooter className="flex flex-col-reverse sm:flex-row justify-between p-6 bg-secondary/5 border-t gap-3 sm:gap-0">
@@ -609,7 +736,7 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                         </Button>
                     ) : (
                         <Button type="submit" className="gap-2 px-8 bg-ghana-green hover:bg-green-800 w-full sm:w-auto text-white shadow-lg hover:shadow-ghana-green/20" disabled={isLoading}>
-                            {isLoading ? 'Calculating...' : 'See My Budget Summary'} <Check className="h-4 w-4" />
+                            {isLoading ? 'Calculating...' : 'Generate My Budget →'} <Check className="h-4 w-4" />
                         </Button>
                     )}
                 </CardFooter>
