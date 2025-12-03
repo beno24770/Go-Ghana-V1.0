@@ -14,11 +14,11 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
     return (
         <div className="min-h-screen relative font-sans text-white overflow-x-hidden">
             {/* Static Background Image */}
-            <div className="fixed inset-0 -z-10 bg-black">
+            <div className="absolute md:fixed inset-0 -z-10 bg-black h-full w-full">
                 <img
-                    src="/cape-coast.jpg"
-                    alt="Cape Coast Castle - Ghana"
-                    className="w-full h-full object-cover opacity-80"
+                    src="/hero-bg.jpg"
+                    alt="Ghana Waterfall Landscape"
+                    className="w-full h-full object-cover object-center opacity-80"
                     loading="eager"
                     decoding="async"
                 />
@@ -90,8 +90,7 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                     </div>
 
                     {/* Main Headline */}
-                    {/* Main Headline */}
-                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight drop-shadow-2xl animate-fade-in-up opacity-0 delay-200">
+                    <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight drop-shadow-2xl animate-fade-in-up opacity-0 delay-200">
                         PLAN YOUR GHANA TRIP<br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-ghana-yellow via-yellow-300 to-ghana-green">
                             ON ANY BUDGET
