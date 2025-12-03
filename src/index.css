@@ -156,6 +156,18 @@ body {
   animation: float 6s ease-in-out infinite;
 }
 
+.animate-fade-in-up {
+  animation: fadeSlideUp 0.8s ease-out forwards;
+}
+
+.animate-fade-in-down {
+  animation: fadeSlideDown 0.8s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.5s ease-out forwards;
+}
+
 /* Apply animations to main content */
 main>div {
   animation: fadeSlideUp 0.6s ease-out;
