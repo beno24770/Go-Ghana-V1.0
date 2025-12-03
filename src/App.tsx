@@ -189,7 +189,7 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-background font-sans text-foreground">
+    <div className="min-h-screen font-sans text-foreground">
       {/* Progress Indicator - Show from step 2 onwards */}
       {currentStep > 1 && currentStep < 8 && (
         <ProgressIndicator

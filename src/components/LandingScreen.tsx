@@ -78,50 +78,55 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
             </nav>
 
             {/* Hero Section */}
-            <div className="relative z-10 container mx-auto px-6 pt-12 pb-24 md:pt-20 md:pb-32 flex flex-col items-center justify-center min-h-[85vh] text-center">
-                <div className="max-w-5xl mx-auto space-y-8">
+            <div className="relative z-10 container mx-auto px-6 pt-12 pb-32 md:pt-20 md:pb-40 flex flex-col items-center justify-center min-h-[90vh] text-center">
+                <div className="max-w-6xl mx-auto space-y-6">
 
-                    {/* Badge - Animated */}
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-full shadow-lg mb-4 animate-fade-in-up opacity-0 delay-100">
-                        <Star className="w-4 h-4 text-ghana-yellow fill-current animate-pulse" />
-                        <span className="text-sm font-medium tracking-wide text-white/90">
+                    {/* Badge */}
+                    <div className="inline-flex items-center gap-2 px-5 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full shadow-lg mb-2 animate-fade-in-up opacity-0 delay-100">
+                        <Star className="w-4 h-4 text-ghana-yellow fill-current" />
+                        <span className="text-sm font-semibold tracking-wide text-white">
                             Ghana's First Budget-First AI Travel Planner
                         </span>
                     </div>
 
-                    {/* Main Headline - Animated */}
-                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.1] tracking-tight drop-shadow-xl animate-fade-in-up opacity-0 delay-200">
-                        PLAN YOUR GHANA TRIP <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-ghana-yellow via-white to-ghana-green">
+                    {/* Main Headline */}
+                    {/* Main Headline */}
+                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight drop-shadow-2xl animate-fade-in-up opacity-0 delay-200">
+                        PLAN YOUR GHANA TRIP<br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-ghana-yellow via-yellow-300 to-ghana-green">
                             ON ANY BUDGET
                         </span>
                     </h1>
 
-                    {/* Subheadline with Handwritten Accent - Animated */}
-                    <div className="relative inline-block animate-fade-in-up opacity-0 delay-300">
-                        <p className="text-xl md:text-2xl text-white/90 font-light tracking-wide max-w-2xl mx-auto">
+                    {/* Subheadline */}
+                    <div className="relative pt-2 pb-2 animate-fade-in-up opacity-0 delay-300">
+                        <p className="text-base sm:text-lg lg:text-xl text-white/95 font-normal leading-relaxed max-w-3xl mx-auto">
                             AI that creates a realistic budget, recommends tours, and builds your full itinerary — all based on what you can afford.
                         </p>
-                        <span className="absolute -bottom-8 -right-4 md:-right-12 text-ghana-yellow font-hand text-3xl md:text-4xl -rotate-6 animate-pulse">
+                    </div>
+
+                    {/* Handwritten Accent */}
+                    <div className="relative animate-fade-in-up opacity-0 delay-350 pb-4">
+                        <span className="text-ghana-yellow font-hand text-4xl md:text-5xl drop-shadow-lg">
                             in just 3 answers!
                         </span>
                     </div>
 
-                    {/* CTA Buttons - Animated */}
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-12 animate-fade-in-up opacity-0 delay-400">
+                    {/* CTA Buttons */}
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6 animate-fade-in-up opacity-0 delay-400">
                         <Button
                             size="lg"
                             onClick={onStart}
-                            className="w-full sm:w-auto bg-ghana-green hover:bg-green-700 text-white h-16 px-10 rounded-full text-xl font-bold shadow-xl hover:shadow-ghana-green/40 hover:-translate-y-1 transition-all duration-300 border-2 border-transparent hover-lift"
+                            className="w-full sm:w-auto bg-ghana-green hover:bg-green-600 text-white h-14 px-8 rounded-full text-lg font-bold shadow-2xl hover:shadow-ghana-green/50 hover:scale-105 transition-all duration-300"
                         >
                             Start With Your Budget
-                            <ArrowRight className="ml-2 w-6 h-6" />
+                            <ArrowRight className="ml-2 w-5 h-5" />
                         </Button>
                         <Button
                             size="lg"
                             variant="outline"
                             onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
-                            className="w-full sm:w-auto h-16 px-10 rounded-full text-xl font-medium border-2 border-white bg-white text-ghana-green hover:bg-gray-100 transition-all"
+                            className="w-full sm:w-auto h-14 px-8 rounded-full text-lg font-semibold border-2 border-white/90 bg-white/95 text-ghana-green hover:bg-white hover:scale-105 transition-all duration-300 shadow-xl"
                         >
                             <Play className="mr-2 w-5 h-5 fill-current" />
                             How It Works
@@ -129,151 +134,141 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                     </div>
 
                     {/* Positioning Statement */}
-                    <div className="pt-12 pb-6 space-y-4">
-                        <h3 className="text-xl md:text-2xl font-bold text-white tracking-wide">
-                            Not just AI — it’s Ghana’s first budget-first trip planner.
-                        </h3>
-                        <p className="text-lg text-white/80 max-w-2xl mx-auto">
-                            Most tools tell you where to go. <br className="hidden sm:block" />
+                    <div className="pt-16 pb-6 space-y-3 animate-fade-in-up opacity-0 delay-500">
+                        <p className="text-base md:text-lg font-bold text-white/95 tracking-wide">
+                            Not just AI — it's Ghana's first budget-first trip planner.
+                        </p>
+                        <p className="text-base md:text-lg text-white/80 max-w-2xl mx-auto leading-relaxed">
+                            Most tools tell you where to go.<br />
                             We help you travel the way your money makes sense.
                         </p>
                     </div>
 
                     {/* Trust Section */}
-                    <div className="border-t border-white/10 pt-8 pb-4">
-                        <p className="text-sm font-semibold text-ghana-yellow uppercase tracking-wider mb-3">
+                    <div className="border-t border-white/20 pt-8 mt-8 animate-fade-in-up opacity-0 delay-600">
+                        <p className="text-xs md:text-sm font-bold text-ghana-yellow uppercase tracking-widest mb-4">
                             Trusted by travelers from the US, UK, Germany & Ghana
                         </p>
-                        <div className="flex flex-wrap items-center justify-center gap-4 text-sm font-medium text-white/70">
-                            <span className="flex items-center gap-2">
-                                <Check className="w-4 h-4 text-ghana-green" />
-                                Real local pricing
-                            </span>
-                            <span className="hidden sm:inline text-white/20">•</span>
-                            <span className="flex items-center gap-2">
-                                <Check className="w-4 h-4 text-ghana-green" />
-                                Real-time recommendations
-                            </span>
-                            <span className="hidden sm:inline text-white/20">•</span>
-                            <span className="flex items-center gap-2">
-                                <Check className="w-4 h-4 text-ghana-green" />
-                                Built for Ghana travel
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Floating Glass Cards (Decorative) - Moved inside Hero for better positioning */}
-                <div className="absolute top-1/3 left-4 lg:left-10 hidden xl:block animate-float" style={{ animationDelay: '0s' }}>
-                    <div className="glass-card p-4 rounded-2xl flex items-center gap-3 w-64 transform -rotate-6 hover:rotate-0 transition-transform duration-500">
-                        <div className="w-12 h-12 rounded-xl bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?auto=format&fit=crop&w=100&q=80)' }}></div>
-                        <div>
-                            <div className="text-xs font-bold text-ghana-green uppercase tracking-wider">Must Visit</div>
-                            <div className="text-sm font-bold text-gray-900">Kakum Canopy Walk</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="absolute bottom-1/3 right-4 lg:right-10 hidden xl:block animate-float" style={{ animationDelay: '2s' }}>
-                    <div className="glass-card p-4 rounded-2xl flex items-center gap-3 w-64 transform rotate-6 hover:rotate-0 transition-transform duration-500">
-                        <div className="w-12 h-12 rounded-full bg-ghana-yellow/20 flex items-center justify-center text-ghana-yellow">
-                            <DollarSign className="w-6 h-6" />
-                        </div>
-                        <div>
-                            <div className="text-xs font-bold text-gray-500 uppercase tracking-wider">Total Budget</div>
-                            <div className="text-lg font-bold text-gray-900">$1,250.00</div>
-                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* How It Works / Features Section Overlay */}
-            <div id="how-it-works" className="relative z-20 -mt-24 pb-24">
-                <div className="container mx-auto px-6">
-                    <div className="grid md:grid-cols-3 gap-6">
+            {/* How It Works Section - Glassmorphism Cards */}
+            <div id="how-it-works" className="relative z-20 pb-20 md:pb-32 -mt-16">
+                <div className="container mx-auto px-4 md:px-6">
+                    {/* Section Title */}
+                    <div className="text-center mb-12 md:mb-16">
+                        <h2 className="text-3xl md:text-5xl font-black text-white mb-4">How It Works</h2>
+                        <p className="text-base md:text-lg text-white/80 max-w-2xl mx-auto px-4">Three simple steps to plan your perfect Ghana adventure</p>
+                    </div>
+
+                    {/* 3-Step Cards */}
+                    <div className="grid md:grid-cols-3 gap-6 md:gap-8 max-w-7xl mx-auto">
                         {[
                             {
                                 step: "01",
                                 title: "Set Your Budget",
-                                desc: (
-                                    <div className="space-y-2">
-                                        <p>Tell the system how much you want to spend. You’ll instantly get a detailed breakdown of:</p>
-                                        <ul className="list-disc list-inside space-y-1 text-white/90">
-                                            <li>Accommodation cost</li>
-                                            <li>Feeding cost</li>
-                                            <li>Transport cost</li>
-                                            <li>Activity cost</li>
-                                            <li>Hidden fees & local prices</li>
-                                        </ul>
-                                        <p className="font-medium text-ghana-yellow">Everything is calculated using real Ghana data.</p>
-                                    </div>
-                                ),
-                                icon: <Star className="w-6 h-6 text-white" />,
-                                image: new URL('../assets/pick_your_vibe.png', import.meta.url).href
+                                desc: "Tell the system how much you want to spend. You'll instantly get a detailed breakdown of:",
+                                items: [
+                                    "Accommodation cost",
+                                    "Feeding cost",
+                                    "Transport cost",
+                                    "Activity cost",
+                                    "Hidden fees & local prices"
+                                ],
+                                footer: "Everything is calculated using real Ghana data.",
+                                icon: <DollarSign className="w-6 h-6 md:w-8 md:h-8 text-ghana-yellow" />,
+                                image: "/steps/step-1.png"
                             },
                             {
                                 step: "02",
                                 title: "Get Your Plan",
-                                desc: (
-                                    <div className="space-y-2">
-                                        <p>Based on your budget, the system automatically:</p>
-                                        <ul className="list-disc list-inside space-y-1 text-white/90">
-                                            <li>Recommends tours you can afford</li>
-                                            <li>Suggests activities by category</li>
-                                            <li>Builds a complete custom itinerary</li>
-                                            <li>Lets you edit it to your taste</li>
-                                        </ul>
-                                        <p className="font-medium text-ghana-yellow">You’re always in control.</p>
-                                    </div>
-                                ),
-                                icon: <MapPin className="w-6 h-6 text-white" />,
-                                image: new URL('../assets/get_your_plan.png', import.meta.url).href
+                                desc: "Based on your budget, the system automatically:",
+                                items: [
+                                    "Recommends tours you can afford",
+                                    "Suggests activities by category",
+                                    "Builds a complete custom itinerary",
+                                    "Lets you edit it to your taste"
+                                ],
+                                footer: "You're always in control.",
+                                icon: <MapPin className="w-6 h-6 md:w-8 md:h-8 text-ghana-yellow" />,
+                                image: "/steps/step-2.png"
                             },
                             {
                                 step: "03",
                                 title: "Book Trusted Drivers & Guides",
-                                desc: (
-                                    <div className="space-y-2">
-                                        <p>Once you're happy with your itinerary, the system connects you to:</p>
-                                        <ul className="list-disc list-inside space-y-1 text-white/90">
-                                            <li>Verified drivers</li>
-                                            <li>Experienced tour guides</li>
-                                            <li>Local experts</li>
-                                        </ul>
-                                        <p className="font-medium text-ghana-yellow">All vetted for safety and reliability.</p>
-                                    </div>
-                                ),
-                                icon: <Calendar className="w-6 h-6 text-white" />,
-                                image: new URL('../assets/hit_the_road.png', import.meta.url).href
+                                desc: "Once you're happy with your itinerary, the system connects you to:",
+                                items: [
+                                    "Verified drivers",
+                                    "Experienced tour guides",
+                                    "Local experts"
+                                ],
+                                footer: "All vetted for safety and reliability.",
+                                icon: <Check className="w-6 h-6 md:w-8 md:h-8 text-ghana-yellow" />,
+                                image: "/steps/step-3.png"
                             }
                         ].map((item, idx) => (
-                            <AnimatedSection key={idx} delay={idx * 150} className="group relative h-[32rem] rounded-3xl overflow-hidden cursor-pointer shadow-2xl">
-                                {/* Background Image */}
-                                <div className="absolute inset-0">
-                                    <img src={item.image} alt={item.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent"></div>
-                                </div>
+                            <AnimatedSection
+                                key={idx}
+                                delay={idx * 150}
+                                className="group relative rounded-3xl overflow-hidden shadow-2xl hover:shadow-ghana-yellow/20 transition-all duration-500 hover:-translate-y-2"
+                            >
+                                {/* Glassmorphism Card */}
+                                <div className="glass-card-premium h-full backdrop-blur-lg md:backdrop-blur-xl bg-white/10 border border-white/20 flex flex-col">
 
-                                {/* Content */}
-                                <div className="absolute inset-0 p-8 flex flex-col justify-end">
-                                    <div className="absolute top-6 left-6 w-12 h-12 rounded-full glass-panel flex items-center justify-center border border-white/30">
-                                        {item.icon}
+                                    {/* Step Image */}
+                                    <div className="relative h-48 md:h-56 w-full overflow-hidden">
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
+                                        <img
+                                            src={item.image}
+                                            alt={item.title}
+                                            loading="lazy"
+                                            className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                                        />
+                                        {/* Step Number Badge Overlay */}
+                                        <div className="absolute bottom-4 left-6 z-20 flex items-center gap-3">
+                                            <div className="text-ghana-yellow font-hand text-4xl md:text-5xl font-bold drop-shadow-md">
+                                                STEP {item.step}
+                                            </div>
+                                        </div>
+                                        {/* Icon Badge Overlay */}
+                                        <div className="absolute top-4 right-4 z-20 w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-lg">
+                                            {item.icon}
+                                        </div>
                                     </div>
 
-                                    <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                                        <div className="text-ghana-yellow font-hand text-2xl mb-1">Step {item.step}</div>
-                                        <h3 className="text-2xl font-bold text-white mb-2">{item.title}</h3>
-                                        <div className="text-white/80 text-sm leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
+                                    {/* Card Content */}
+                                    <div className="p-6 md:p-8 flex-1 flex flex-col">
+                                        {/* Title */}
+                                        <h3 className="text-xl md:text-2xl font-bold text-white mb-3 leading-tight">
+                                            {item.title}
+                                        </h3>
+
+                                        {/* Description */}
+                                        <p className="text-white/90 text-sm md:text-base mb-4 leading-relaxed">
                                             {item.desc}
+                                        </p>
+
+                                        {/* Feature List */}
+                                        <ul className="space-y-2 mb-6 flex-1">
+                                            {item.items.map((feature, i) => (
+                                                <li key={i} className="flex items-start gap-2 text-white/85 text-xs md:text-sm">
+                                                    <div className="w-1.5 h-1.5 rounded-full bg-ghana-yellow mt-1.5 flex-shrink-0"></div>
+                                                    <span>{feature}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+
+                                        {/* Footer */}
+                                        <div className="pt-4 border-t border-white/20 mt-auto">
+                                            <p className="text-ghana-yellow font-semibold text-xs md:text-sm">
+                                                {item.footer}
+                                            </p>
                                         </div>
                                     </div>
 
-                                    {/* Arrow */}
-                                    <div className="absolute bottom-8 right-8 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-4 group-hover:translate-x-0">
-                                        <div className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center">
-                                            <ArrowRight className="w-5 h-5" />
-                                        </div>
-                                    </div>
+                                    {/* Decorative Gradient */}
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-ghana-yellow/10 to-transparent rounded-bl-full opacity-30 pointer-events-none"></div>
                                 </div>
                             </AnimatedSection>
                         ))}
