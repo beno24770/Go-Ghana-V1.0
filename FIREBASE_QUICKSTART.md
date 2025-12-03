@@ -10,7 +10,7 @@ I've built all the authentication infrastructure, but you need to set up your Fi
 
 1. Go to https://console.firebase.google.com/
 2. Click "Add project"
-3. Name it: `goghana-budget-estimator`
+3. Name it: `go-ghana-ai`
 4. Click through the setup (disable Analytics if you want)
 
 ### 2. Enable Authentication (2 minutes)
@@ -29,7 +29,7 @@ I've built all the authentication infrastructure, but you need to set up your Fi
 
 1. In Firebase Console → Project Settings (gear icon)
 2. Scroll to "Your apps" → Click Web icon (`</>`)
-3. Register app: `GoGhana Budget Estimator`
+3. Register app: `Go Ghana AI`
 4. **COPY the config values** - you'll need them next!
 
 ### 5. Create `.env.local` File (1 minute)

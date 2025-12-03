@@ -1,6 +1,6 @@
 # GoGhana Budget Estimator - Data Collection Specification
 **Version:** 1.0  
-**Date:** November 28, 2024  
+**Date:** November 28, 2025 
 **Purpose:** Complete data requirements for F-01 (Smart Budget Estimator)  
 **Target Audience:** Data Collection Team
 

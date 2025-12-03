@@ -1,6 +1,6 @@
-# Goghana Budget Estimator
+# Go Ghana AI
 
-A smart budget estimator and tour recommendation application for travelers planning a trip to Ghana. Built with React, TypeScript, Vite, and Tailwind CSS.
+Ghana's first budget-first AI travel planner. A smart budget estimator, itinerary builder, and tour recommendation platform for travelers planning a trip to Ghana. Built with React, TypeScript, Vite, and Tailwind CSS.
 
 ## Features
 
@@ -31,8 +31,8 @@ A smart budget estimator and tour recommendation application for travelers plann
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/goghana-budget-estimator.git
-   cd goghana-budget-estimator
+   git clone https://github.com/beno24770/Go-Ghana-V1.0.git
+   cd Go-Ghana-V1.0
    ```
 
 2. Install dependencies:

@@ -1,4 +1,4 @@
-// Accommodation Dataset for GoGhana Budget Estimator
+// Accommodation Dataset for Go Ghana AI
 // This data enables specific hotel recommendations and validates budget estimates
 
 import { ACCRA_ACCOMMODATIONS } from './accraAccommodations';

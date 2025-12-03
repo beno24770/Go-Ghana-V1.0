@@ -12,8 +12,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'adepa-avatar.jpg', 'goghana-logo.jpg', 'pwa-icon.jpg', 'robots.txt'],
       manifest: {
-        name: 'GoGhana Budget Estimator',
-        short_name: 'GoGhana',
+        name: 'Go Ghana AI',
+        short_name: 'GoGhanaAI',
         description: 'Plan your perfect Ghana trip with AI-powered budget estimates and personalized tour recommendations from Akua Adepa.',
         theme_color: '#CE1126',
         background_color: '#ffffff',

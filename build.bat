@@ -1,5 +1,5 @@
 @echo off
-echo Building GoGhana Budget Estimator...
+echo Building Go Ghana AI...
 echo.
 call npm run build
 echo.

@@ -1,19 +1,19 @@
 # Firebase Setup Guide
 
-Follow these steps to configure Firebase for the GoGhana Budget Estimator.
+Follow these steps to configure Firebase for Go Ghana AI.
 
 ## Step 1: Create Firebase Project
 
 1. Go to [Firebase Console](https://console.firebase.google.com/)
 2. Click "Add project" or "Create a project"
-3. Enter project name: `goghana-budget-estimator` (or your preferred name)
+3. Enter project name: `go-ghana-ai` (or your preferred name)
 4. Disable Google Analytics (optional, can enable later)
 5. Click "Create project"
 
 ## Step 2: Add Web App
 
 1. In your Firebase project, click the **Web icon** (`</>`) to add a web app
-2. Register app with nickname: `GoGhana Budget Estimator`
+2. Register app with nickname: `Go Ghana AI`
 3. **Do NOT** check "Also set up Firebase Hosting" (we'll use Vercel/Netlify)
 4. Click "Register app"
 5. **Copy the Firebase configuration** - you'll need these values

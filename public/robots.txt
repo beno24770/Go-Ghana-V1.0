@@ -1,4 +1,4 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
 Allow: /
-Sitemap: https://goghana-budget-estimator.vercel.app/sitemap.xml
+Sitemap: https://go-ghana-ai.vercel.app/sitemap.xml

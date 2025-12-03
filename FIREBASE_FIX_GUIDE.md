@@ -105,7 +105,7 @@ npm run dev
 #### For Vercel Deployment
 
 1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
-2. Select your project: `goghana-budget-estimator`
+2. Select your project: `go-ghana-ai`
 3. Go to **Settings** → **Environment Variables**
 4. Add each variable:
    - Variable name: `VITE_FIREBASE_API_KEY`
