@@ -3,11 +3,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import './styles/animations.css';
-
-body {
-  @apply bg-black;
-}
 
 :root {
   /* Ghana Color Palette - Premium */
@@ -54,6 +49,7 @@ body {
 }
 
 body {
+  background-color: var(--color-background);
   color: var(--color-foreground);
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-feature-settings: "rlig" 1, "calt" 1;

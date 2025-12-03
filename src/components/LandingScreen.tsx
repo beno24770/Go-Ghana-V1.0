@@ -3,7 +3,6 @@ import { ArrowRight, Check, Play, Star, MapPin, Calendar, DollarSign } from 'luc
 import { AnimatedSection } from './ui/AnimatedSection';
 
 
-
 interface LandingScreenProps {
     onStart: () => void;
     isLocalMode?: boolean;
@@ -11,20 +10,14 @@ interface LandingScreenProps {
 }
 
 export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle }: LandingScreenProps) {
-    // Optimized Ghana images for slider
-    const sliderImages = [
-        '/slider/ghana-culture.png',    // Cape Coast Castle - Historic/Culture
-        '/slider/ghana-nature.jpg',     // Waterfall/Canopy - Nature/Adventure
-        '/slider/ghana-heritage.jpg',   // Cultural Performers - Heritage/People
-    ];
 
     return (
         <div className="min-h-screen relative font-sans text-white overflow-x-hidden">
             {/* Static Background Image */}
             <div className="fixed inset-0 -z-10 bg-black">
                 <img
-                    src="/slider/ghana-nature.jpg"
-                    alt="Ghana Nature - Canopy Walk"
+                    src="/cape-coast.jpg"
+                    alt="Cape Coast Castle - Ghana"
                     className="w-full h-full object-cover opacity-80"
                     loading="eager"
                     decoding="async"
