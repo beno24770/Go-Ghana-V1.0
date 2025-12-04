@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LucideIcon, ChevronDown, ChevronUp } from 'lucide-react';
+import { LucideIcon, ChevronDown, ChevronUp, MessageCircle } from 'lucide-react';
 import { Card, CardContent } from './ui/Card';
 import { Button } from './ui/Button';
 
@@ -12,6 +12,7 @@ interface CategoryCardProps {
     formatCurrency: (amount: number) => string;
     onEdit?: () => void;
     tips?: string[];
+    onAskAdepa?: () => void;
 }
 
 export function CategoryCard({
@@ -22,7 +23,8 @@ export function CategoryCard({
     color,
     formatCurrency,
     onEdit,
-    tips
+    tips,
+    onAskAdepa
 }: CategoryCardProps) {
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -75,7 +77,7 @@ export function CategoryCard({
 
                 {/* Expandable Tips Section */}
                 {tips && isExpanded && (
-                    <div className="mt-4 pt-4 border-t border-gray-100 space-y-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="mt-4 pt-4 border-t border-gray-100 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
                         <p className="text-sm font-semibold text-gray-700 mb-2">💡 What to expect:</p>
                         <ul className="space-y-2">
                             {tips.map((tip, index) => (
@@ -85,6 +87,22 @@ export function CategoryCard({
                                 </li>
                             ))}
                         </ul>
+
+                        {/* Ask Adepa Button */}
+                        {onAskAdepa && (
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onAskAdepa();
+                                }}
+                                className="w-full mt-3 border-ghana-green text-ghana-green hover:bg-ghana-green hover:text-white transition-colors"
+                            >
+                                <MessageCircle className="mr-2 h-4 w-4" />
+                                Ask Adepa about {label}
+                            </Button>
+                        )}
                     </div>
                 )}
             </CardContent>

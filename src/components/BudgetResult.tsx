@@ -11,6 +11,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { AuthModal } from './auth/AuthModal';
 import { generateBudgetPDF } from '../utils/pdfGenerator';
 import * as firestoreService from '../services/firestoreService';
+import { CATEGORY_KNOWLEDGE } from '../data/categoryKnowledge';
 import type { BudgetBreakdown, BudgetFormData } from '../types';
 
 interface BudgetResultProps {
@@ -230,6 +231,34 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
         }
     };
 
+    const handleAskAdepa = (category: string, amount: number) => {
+        if (!formData || !breakdown) return;
+
+        const categoryKey = category.toLowerCase().replace(/ & /g, '_').replace(/ /g, '_');
+        const knowledge = CATEGORY_KNOWLEDGE[categoryKey] || CATEGORY_KNOWLEDGE[category.toLowerCase()];
+
+        if (knowledge) {
+            const context = {
+                amount,
+                formattedAmount: formatCurrency(amount),
+                duration: formData.duration,
+                travelers: travelerCount,
+                regions: formData.regions,
+                month: formData.month,
+                travelStyle: formData.travelerType
+            };
+
+            // Generate greeting (will be used when ChatContext is updated)
+            knowledge.greetingTemplate(context);
+
+            // Open chat widget
+            toggleChat();
+
+            // TODO: Pass category context to ChatContext for context-aware responses
+            // This will be implemented in the next step
+        }
+    };
+
     return (
         <div className="w-full max-w-7xl mx-auto mt-8 space-y-6">
             {/* Header */}
@@ -294,6 +323,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                 formatCurrency={formatCurrency}
                                 onEdit={onEditBudget}
                                 tips={getAccommodationTips()}
+                                onAskAdepa={() => handleAskAdepa('accommodation', breakdown.accommodation)}
                             />
                             <CategoryCard
                                 icon={Car}
@@ -304,6 +334,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                 formatCurrency={formatCurrency}
                                 onEdit={onEditBudget}
                                 tips={getTransportTips()}
+                                onAskAdepa={() => handleAskAdepa('transport', breakdown.transport)}
                             />
                             <CategoryCard
                                 icon={Utensils}
@@ -314,6 +345,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                 formatCurrency={formatCurrency}
                                 onEdit={onEditBudget}
                                 tips={getFoodTips()}
+                                onAskAdepa={() => handleAskAdepa('food', breakdown.food)}
                             />
                             <CategoryCard
                                 icon={MapIcon}
@@ -324,6 +356,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                 formatCurrency={formatCurrency}
                                 onEdit={onEditBudget}
                                 tips={getActivitiesTips()}
+                                onAskAdepa={() => handleAskAdepa('activities', breakdown.activities)}
                             />
                             <CategoryCard
                                 icon={Shield}
@@ -333,6 +366,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                 color="#FCD116"
                                 formatCurrency={formatCurrency}
                                 tips={getEssentialsTips()}
+                                onAskAdepa={() => handleAskAdepa('essentials', breakdown.essentials)}
                             />
                             {breakdown.flights > 0 && (
                                 <CategoryCard
@@ -343,6 +377,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                     color="#006B3F"
                                     formatCurrency={formatCurrency}
                                     tips={getFlightsTips()}
+                                    onAskAdepa={() => handleAskAdepa('flights', breakdown.flights)}
                                 />
                             )}
                         </CardContent>
