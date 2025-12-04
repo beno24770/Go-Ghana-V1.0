@@ -25,7 +25,8 @@ import { knowledgeService } from './services/knowledgeService';
 import type { BudgetFormData, BudgetBreakdown, Tour } from './types';
 
 function AppContent() {
-  const { } = useAuth();
+  // Auth context is available but not currently needed in this component
+  useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<BudgetFormData | null>(null);
   const [budgetResult, setBudgetResult] = useState<BudgetBreakdown | null>(null);
@@ -110,7 +111,13 @@ function AppContent() {
     }
   };
 
-  // Step 5: Budget Result
+  // Step 5: Budget Result - Edit Budget
+  const handleEditBudget = () => {
+    // Go back to Budget Form (Step 3) with existing data
+    setCurrentStep(3);
+  };
+
+  // Step 5: Budget Result - Continue to Tours
   const handleContinueToTours = () => {
     setCurrentStep(6);
   };
@@ -242,6 +249,7 @@ function AppContent() {
               breakdown={budgetResult}
               formData={formData}
               onContinue={handleContinueToTours}
+              onEditBudget={handleEditBudget}
             />
           </div>
         )}

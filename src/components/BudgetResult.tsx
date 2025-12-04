@@ -21,6 +21,7 @@ interface BudgetResultProps {
     isLoading?: boolean;
     formData?: BudgetFormData;
     onContinue?: () => void;
+    onEditBudget?: () => void;
 }
 
 const TRAVELER_COUNTS = {
@@ -30,7 +31,7 @@ const TRAVELER_COUNTS = {
     group: 4,
 };
 
-export function BudgetResult({ breakdown, isLoading = false, formData, onContinue }: BudgetResultProps) {
+export function BudgetResult({ breakdown, isLoading = false, formData, onContinue, onEditBudget }: BudgetResultProps) {
     const { convertAndFormat, selectedCurrency } = useCurrency();
     const { toggleChat, setBudgetContext } = useChat();
     const { user } = useAuth();
@@ -411,7 +412,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                         Regional Cost Breakdown
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {breakdown.regionalBreakdown.map((region: any) => (
+                        {breakdown.regionalBreakdown.map((region: { region: string; totalCost: number; dailyCost: number; note?: string }) => (
                             <Card key={region.region} className="border-l-4 border-l-[#006B3F]">
                                 <CardHeader className="pb-2">
                                     <CardTitle className="text-lg flex justify-between">
@@ -457,10 +458,27 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                     regions={formData.regions}
                     month={formData.month}
                     embedded={true}
-                    onSelectTour={(tour: any) => {
+                    onSelectTour={(tour: unknown) => {
                         console.log('Selected tour:', tour);
                     }}
                 />
+            )}
+
+            {/* Edit Budget Button */}
+            {onEditBudget && (
+                <div className="flex justify-center pt-4 animate-[fadeSlideUp_0.7s_ease-out_0.2s]">
+                    <Button
+                        size="lg"
+                        variant="outline"
+                        onClick={onEditBudget}
+                        className="px-8 py-6 border-2 border-[#FCD116] hover:bg-[#FCD116] hover:text-gray-900 transition-all duration-300 group w-full sm:w-auto"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="mr-2 h-5 w-5 group-hover:rotate-12 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                        Edit Budget Inputs
+                    </Button>
+                </div>
             )}
 
             {/* CTA Buttons */}
