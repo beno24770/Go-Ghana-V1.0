@@ -9,6 +9,7 @@ import {
 import { Button } from './ui/Button';
 import { Label } from './ui/Label';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './ui/Card';
+import { ProgressIndicator } from './ProgressIndicator';
 import { cn } from '../lib/utils';
 import type { BudgetFormData, ActivityInterest, TravelerType, AccommodationLevel } from '../types';
 
@@ -193,22 +194,22 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
     };
 
     const renderStep1 = () => (
-        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-            <div className="p-6 border rounded-xl bg-white space-y-6 shadow-sm">
+        <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="space-y-6">
                 <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                        <Label className="text-base font-semibold">Trip Duration</Label>
-                        <span className="text-primary font-bold text-lg">{watchedValues.duration} days</span>
+                    <div className="flex justify-between items-end">
+                        <Label className="text-lg font-bold text-gray-900">Trip Duration</Label>
+                        <span className="text-2xl font-bold text-ghana-green">{watchedValues.duration} <span className="text-sm font-medium text-gray-500">days</span></span>
                     </div>
                     <input
                         type="range"
                         min="1"
                         max="30"
-                        className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer accent-ghana-green"
+                        className="w-full h-3 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-ghana-green focus:outline-none focus:ring-2 focus:ring-ghana-green/20"
                         aria-label="Trip Duration"
                         {...register('duration', { valueAsNumber: true })}
                     />
-                    <div className="flex gap-2 flex-wrap">
+                    <div className="flex gap-2 flex-wrap pt-2">
                         {[3, 7, 10, 14, 21].map(d => (
                             <Button
                                 key={d}
@@ -216,7 +217,12 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                                 variant={watchedValues.duration === d ? "default" : "outline"}
                                 size="sm"
                                 onClick={() => setValue('duration', d)}
-                                className="h-8"
+                                className={cn(
+                                    "h-9 px-4 rounded-full transition-all",
+                                    watchedValues.duration === d
+                                        ? "bg-ghana-green hover:bg-green-800 text-white shadow-md transform scale-105"
+                                        : "border-gray-200 hover:border-ghana-green hover:text-ghana-green bg-white"
+                                )}
                             >
                                 {d} days
                             </Button>
@@ -224,34 +230,36 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                     </div>
                 </div>
 
-                <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                        <Label className="text-base font-semibold">Travelers</Label>
-                        <span className="text-primary font-bold text-lg">{watchedValues.travelers}</span>
+                <div className="space-y-4 pt-4 border-t border-gray-100">
+                    <div className="flex justify-between items-end">
+                        <Label className="text-lg font-bold text-gray-900">Travelers</Label>
+                        <span className="text-2xl font-bold text-ghana-green">{watchedValues.travelers} <span className="text-sm font-medium text-gray-500">{watchedValues.travelers === 1 ? 'person' : 'people'}</span></span>
                     </div>
                     <input
                         type="range"
                         min="1"
                         max="10"
-                        className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer accent-ghana-green"
+                        className="w-full h-3 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-ghana-green focus:outline-none focus:ring-2 focus:ring-ghana-green/20"
                         aria-label="Travelers"
                         {...register('travelers', { valueAsNumber: true })}
                     />
                 </div>
 
-                <div className="space-y-3">
-                    <Label className="text-base font-semibold">Room Sharing Preference</Label>
+                <div className="space-y-4 pt-4 border-t border-gray-100">
+                    <Label className="text-lg font-bold text-gray-900">Room Sharing Preference</Label>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         {[
-                            { id: 'private', label: 'One room per person' },
-                            { id: 'shared', label: 'Two people per room' },
-                            { id: 'family', label: 'Family sharing' }
+                            { id: 'private', label: 'Private Room', sub: 'One room per person' },
+                            { id: 'shared', label: 'Shared Room', sub: 'Two people per room' },
+                            { id: 'family', label: 'Family Room', sub: 'Large room for families' }
                         ].map((opt) => (
                             <label
                                 key={opt.id}
                                 className={cn(
-                                    "flex items-center justify-center p-3 rounded-lg border cursor-pointer transition-all hover:bg-accent text-center text-sm",
-                                    watchedValues.roomSharing === opt.id ? "border-primary bg-accent font-medium" : "border-input"
+                                    "relative flex flex-col items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 hover:shadow-md",
+                                    watchedValues.roomSharing === opt.id
+                                        ? "border-ghana-green bg-ghana-green/5 shadow-sm"
+                                        : "border-gray-100 hover:border-ghana-green/30 bg-white"
                                 )}
                             >
                                 <input
@@ -260,34 +268,48 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                                     className="hidden"
                                     {...register('roomSharing')}
                                 />
-                                {opt.label}
+                                <span className={cn("font-bold text-base mb-1", watchedValues.roomSharing === opt.id ? "text-ghana-green" : "text-gray-700")}>{opt.label}</span>
+                                <span className="text-xs text-gray-500 text-center">{opt.sub}</span>
+                                {watchedValues.roomSharing === opt.id && (
+                                    <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-ghana-green" />
+                                )}
                             </label>
                         ))}
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-gray-100">
                     <div className="space-y-2">
-                        <Label className="font-semibold">Travel Month</Label>
-                        <select
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
-                            {...register('month')}
-                        >
-                            {months.map(m => (
-                                <option key={m.name} value={m.name}>{m.name} ({m.season})</option>
-                            ))}
-                        </select>
+                        <Label className="font-bold text-gray-900">Travel Month</Label>
+                        <div className="relative">
+                            <select
+                                className="flex h-12 w-full rounded-xl border-2 border-gray-100 bg-white px-4 py-2 text-base ring-offset-background focus:outline-none focus:border-ghana-green focus:ring-0 transition-colors appearance-none"
+                                {...register('month')}
+                            >
+                                {months.map(m => (
+                                    <option key={m.name} value={m.name}>{m.name} ({m.season})</option>
+                                ))}
+                            </select>
+                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                                <Calendar className="h-4 w-4" />
+                            </div>
+                        </div>
                     </div>
                     <div className="space-y-2">
-                        <Label className="font-semibold">Arrival City</Label>
-                        <select
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
-                            {...register('arrivalCity')}
-                        >
-                            {['Accra', 'Kumasi', 'Takoradi', 'Tamale'].map(c => (
-                                <option key={c} value={c}>{c}</option>
-                            ))}
-                        </select>
+                        <Label className="font-bold text-gray-900">Arrival City</Label>
+                        <div className="relative">
+                            <select
+                                className="flex h-12 w-full rounded-xl border-2 border-gray-100 bg-white px-4 py-2 text-base ring-offset-background focus:outline-none focus:border-ghana-green focus:ring-0 transition-colors appearance-none"
+                                {...register('arrivalCity')}
+                            >
+                                {['Accra', 'Kumasi', 'Takoradi', 'Tamale'].map(c => (
+                                    <option key={c} value={c}>{c}</option>
+                                ))}
+                            </select>
+                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                                <MapPin className="h-4 w-4" />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -295,48 +317,52 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
     );
 
     const renderStep2 = () => (
-        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-            <div className="p-6 border rounded-xl bg-white space-y-6 shadow-sm">
-                <div className="space-y-3">
-                    <Label className="text-base font-semibold">Choose your style</Label>
-                    <div className="space-y-3">
+        <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="space-y-6">
+                <div className="space-y-4">
+                    <Label className="text-lg font-bold text-gray-900">Choose your style</Label>
+                    <div className="grid grid-cols-1 gap-4">
                         {travelStyles.map((style) => (
                             <label
                                 key={style.id}
                                 className={cn(
-                                    "flex items-start space-x-4 p-4 rounded-xl border cursor-pointer transition-all hover:shadow-md",
+                                    "relative flex items-start space-x-4 p-5 rounded-xl border-2 cursor-pointer transition-all duration-200 hover:shadow-md",
                                     watchedValues.travelStyle === style.id
-                                        ? "border-ghana-green bg-ghana-green/5 ring-1 ring-ghana-green"
-                                        : "border-input hover:border-ghana-green/50"
+                                        ? "border-ghana-green bg-ghana-green/5 shadow-sm"
+                                        : "border-gray-100 hover:border-ghana-green/30 bg-white"
                                 )}
                             >
                                 <input
                                     type="radio"
                                     value={style.id}
-                                    className="mt-1.5 accent-ghana-green"
+                                    className="mt-1.5 accent-ghana-green h-4 w-4"
                                     {...register('travelStyle')}
                                 />
                                 <div className="flex-1">
-                                    <div className="flex justify-between items-center mb-1">
-                                        <span className="font-bold text-lg">{style.label}</span>
-                                        <span className="text-sm font-medium text-ghana-green bg-ghana-green/10 px-2 py-0.5 rounded-full">
+                                    <div className="flex flex-wrap justify-between items-center mb-1 gap-2">
+                                        <span className={cn("font-bold text-lg", watchedValues.travelStyle === style.id ? "text-ghana-green" : "text-gray-900")}>
+                                            {style.label}
+                                        </span>
+                                        <span className="text-xs font-bold text-ghana-green bg-ghana-green/10 px-3 py-1 rounded-full whitespace-nowrap">
                                             {style.cost}
                                         </span>
                                     </div>
-                                    <p className="text-sm text-muted-foreground">{style.desc}</p>
+                                    <p className="text-sm text-gray-500 leading-relaxed">{style.desc}</p>
                                 </div>
                             </label>
                         ))}
                     </div>
                 </div>
 
-                <div className="space-y-3">
-                    <Label className="text-base font-semibold">Accommodation Type</Label>
+                <div className="space-y-4 pt-6 border-t border-gray-100">
+                    <Label className="text-lg font-bold text-gray-900">Accommodation Type</Label>
                     <div className="flex flex-wrap gap-3">
                         {['Hotels', 'Guesthouses', 'Airbnb'].map((type) => (
                             <label key={type} className={cn(
-                                "flex items-center space-x-2 px-4 py-2 rounded-full border cursor-pointer transition-colors",
-                                watchedValues.accommodationType === type ? "bg-ghana-green text-white border-ghana-green" : "hover:bg-secondary"
+                                "flex items-center space-x-2 px-5 py-2.5 rounded-full border-2 cursor-pointer transition-all duration-200",
+                                watchedValues.accommodationType === type
+                                    ? "bg-ghana-green text-white border-ghana-green shadow-md transform scale-105"
+                                    : "bg-white text-gray-700 border-gray-200 hover:border-ghana-green/50 hover:bg-gray-50"
                             )}>
                                 <input
                                     type="radio"
@@ -344,7 +370,7 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                                     className="hidden"
                                     {...register('accommodationType')}
                                 />
-                                <span>{type}</span>
+                                <span className="font-medium">{type}</span>
                             </label>
                         ))}
                     </div>
@@ -354,72 +380,72 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
     );
 
     const renderStep3 = () => (
-        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-            <div className="p-6 border rounded-xl bg-white space-y-6 shadow-sm">
-                <div className="space-y-4">
-                    <label className={cn(
-                        "flex items-start space-x-3 p-4 rounded-xl border cursor-pointer transition-all",
-                        watchedValues.isNewToGhana ? "border-ghana-green bg-ghana-green/5" : "border-input"
-                    )}>
-                        <input
-                            type="checkbox"
-                            checked={watchedValues.isNewToGhana}
-                            onChange={(e) => {
-                                setValue('isNewToGhana', e.target.checked);
-                                if (e.target.checked) setValue('regions', []); // Clear manual selection
-                            }}
+        <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="space-y-6">
+                <label className={cn(
+                    "flex items-start space-x-4 p-5 rounded-xl border-2 cursor-pointer transition-all duration-200 hover:shadow-md",
+                    watchedValues.isNewToGhana
+                        ? "border-ghana-green bg-ghana-green/5 shadow-sm"
+                        : "border-gray-100 hover:border-ghana-green/30 bg-white"
+                )}>
+                    <input
+                        type="checkbox"
+                        checked={watchedValues.isNewToGhana}
+                        onChange={(e) => {
+                            setValue('isNewToGhana', e.target.checked);
+                            if (e.target.checked) setValue('regions', []); // Clear manual selection
+                        }}
+                        className="mt-1 accent-ghana-green h-5 w-5 rounded border-gray-300"
+                    />
+                    <div>
+                        <span className="font-bold text-lg text-gray-900 block mb-1">I’m new to Ghana — recommend for me</span>
+                        <span className="text-sm text-gray-500 leading-relaxed">We'll suggest the best regions based on your interests and travel style.</span>
+                    </div>
+                </label>
 
-                            className="mt-1 accent-ghana-green h-5 w-5"
-                        />
-                        <div>
-                            <span className="font-bold block">I’m new to Ghana — recommend for me</span>
-                            <span className="text-sm text-muted-foreground">We'll suggest the best regions based on your interests.</span>
-                        </div>
-                    </label>
-
-                    <div className={cn(
-                        "space-y-3 transition-all duration-300",
-                        watchedValues.isNewToGhana ? "opacity-50 pointer-events-none grayscale" : "opacity-100"
-                    )}>
-                        <div className="flex items-center gap-2 mb-2">
-                            <Label className="text-base font-semibold">Or select regions manually:</Label>
-                            <div className="group relative">
-                                <Info className="h-4 w-4 text-muted-foreground cursor-help" />
-                                <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-48 p-2 bg-black text-white text-xs rounded hidden group-hover:block z-10">
-                                    We'll optimize the route for you.
-                                </div>
+                <div className={cn(
+                    "space-y-4 transition-all duration-300 pt-6 border-t border-gray-100",
+                    watchedValues.isNewToGhana ? "opacity-50 pointer-events-none grayscale" : "opacity-100"
+                )}>
+                    <div className="flex items-center gap-2 mb-2">
+                        <Label className="text-lg font-bold text-gray-900">Or select regions manually:</Label>
+                        <div className="group relative">
+                            <Info className="h-5 w-5 text-gray-400 cursor-help hover:text-ghana-green transition-colors" />
+                            <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-56 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-xl hidden group-hover:block z-10 text-center">
+                                Select the regions you want to visit. We'll optimize the route for you.
+                                <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
                             </div>
                         </div>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                            {regionsList.map((region) => (
-                                <label
-                                    key={region}
-                                    className={cn(
-                                        "flex items-center space-x-2 p-2 rounded-md border cursor-pointer text-sm transition-colors",
-                                        watchedValues.regions?.includes(region)
-                                            ? "bg-ghana-green text-white border-ghana-green"
-                                            : "hover:bg-secondary"
-                                    )}
-                                >
-                                    <input
-                                        type="checkbox"
-                                        value={region}
-                                        checked={watchedValues.regions?.includes(region)}
-                                        onChange={(e) => {
-                                            const current = watchedValues.regions || [];
-                                            if (e.target.checked) {
-                                                setValue('regions', [...current, region]);
-                                                setValue('isNewToGhana', false); // Uncheck auto-rec if manual select
-                                            } else {
-                                                setValue('regions', current.filter(r => r !== region));
-                                            }
-                                        }}
-                                        className="hidden"
-                                    />
-                                    <span>{region}</span>
-                                </label>
-                            ))}
-                        </div>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        {regionsList.map((region) => (
+                            <label
+                                key={region}
+                                className={cn(
+                                    "flex items-center space-x-3 p-3 rounded-lg border-2 cursor-pointer text-sm font-medium transition-all duration-200",
+                                    watchedValues.regions?.includes(region)
+                                        ? "bg-ghana-green text-white border-ghana-green shadow-md transform scale-105"
+                                        : "bg-white text-gray-700 border-gray-100 hover:border-ghana-green/30 hover:bg-gray-50"
+                                )}
+                            >
+                                <input
+                                    type="checkbox"
+                                    value={region}
+                                    checked={watchedValues.regions?.includes(region)}
+                                    onChange={(e) => {
+                                        const current = watchedValues.regions || [];
+                                        if (e.target.checked) {
+                                            setValue('regions', [...current, region]);
+                                            setValue('isNewToGhana', false); // Uncheck auto-rec if manual select
+                                        } else {
+                                            setValue('regions', current.filter(r => r !== region));
+                                        }
+                                    }}
+                                    className="hidden"
+                                />
+                                <span>{region}</span>
+                            </label>
+                        ))}
                     </div>
                 </div>
             </div>
@@ -427,32 +453,32 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
     );
 
     const renderStep4 = () => (
-        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-            <div className="p-6 border rounded-xl bg-white space-y-6 shadow-sm">
-                <div className="space-y-3">
-                    {transportOptions.map((option) => (
-                        <label
-                            key={option.id}
-                            className={cn(
-                                "flex items-start space-x-4 p-4 rounded-xl border cursor-pointer transition-all hover:shadow-md",
-                                watchedValues.transportMode === option.id
-                                    ? "border-ghana-green bg-ghana-green/5 ring-1 ring-ghana-green"
-                                    : "border-input hover:border-ghana-green/50"
-                            )}
-                        >
-                            <input
-                                type="radio"
-                                value={option.id}
-                                className="mt-1.5 accent-ghana-green"
-                                {...register('transportMode')}
-                            />
-                            <div className="flex-1">
-                                <span className="font-bold block text-lg">{option.label}</span>
-                                <p className="text-sm text-muted-foreground">{option.desc}</p>
-                            </div>
-                        </label>
-                    ))}
-                </div>
+        <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="space-y-4">
+                {transportOptions.map((option) => (
+                    <label
+                        key={option.id}
+                        className={cn(
+                            "flex items-start space-x-4 p-5 rounded-xl border-2 cursor-pointer transition-all duration-200 hover:shadow-md",
+                            watchedValues.transportMode === option.id
+                                ? "border-ghana-green bg-ghana-green/5 shadow-sm"
+                                : "border-gray-100 hover:border-ghana-green/30 bg-white"
+                        )}
+                    >
+                        <input
+                            type="radio"
+                            value={option.id}
+                            className="mt-1.5 accent-ghana-green h-4 w-4"
+                            {...register('transportMode')}
+                        />
+                        <div className="flex-1">
+                            <span className={cn("font-bold block text-lg mb-1", watchedValues.transportMode === option.id ? "text-ghana-green" : "text-gray-900")}>
+                                {option.label}
+                            </span>
+                            <p className="text-sm text-gray-500 leading-relaxed">{option.desc}</p>
+                        </div>
+                    </label>
+                ))}
             </div>
         </div>
     );
@@ -465,15 +491,15 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
     }, [watchedValues.includeFlights, setValue]);
 
     const renderStep5 = () => (
-        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-            <div className="p-6 border rounded-xl bg-white space-y-6 shadow-sm">
-                <div className="flex items-center justify-between">
+        <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="space-y-6">
+                <div className="flex items-center justify-between p-5 border-2 border-gray-100 rounded-xl bg-white hover:border-gray-200 transition-colors">
                     <div className="space-y-1">
-                        <Label className="text-lg font-semibold">Include International Flights?</Label>
-                        <p className="text-sm text-muted-foreground">Add flight costs to your total budget estimate.</p>
+                        <Label className="text-lg font-bold text-gray-900">Include International Flights?</Label>
+                        <p className="text-sm text-gray-500">Add flight costs to your total budget estimate.</p>
                     </div>
-                    <div className="flex items-center space-x-2">
-                        <span className={cn("text-sm font-medium", !watchedValues.includeFlights && "text-primary")}>No</span>
+                    <div className="flex items-center space-x-3">
+                        <span className={cn("text-sm font-bold", !watchedValues.includeFlights ? "text-gray-900" : "text-gray-400")}>No</span>
                         <label className="relative inline-flex items-center cursor-pointer">
                             <input
                                 type="checkbox"
@@ -482,39 +508,39 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                                 onChange={(e) => setValue('includeFlights', e.target.checked)}
                                 aria-label="Include International Flights"
                             />
-                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-ghana-green/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-ghana-green"></div>
+                            <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-ghana-green/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-ghana-green"></div>
                         </label>
-                        <span className={cn("text-sm font-medium", watchedValues.includeFlights && "text-ghana-green")}>Yes</span>
+                        <span className={cn("text-sm font-bold", watchedValues.includeFlights ? "text-ghana-green" : "text-gray-400")}>Yes</span>
                     </div>
                 </div>
 
                 {watchedValues.includeFlights && (
-                    <div className="space-y-4 pt-4 border-t animate-in fade-in slide-in-from-top-2">
+                    <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
                         <div className="space-y-2">
-                            <Label htmlFor="flightCost">Estimated Cost Per Person (USD)</Label>
+                            <Label htmlFor="flightCost" className="text-base font-bold text-gray-900">Estimated Cost Per Person (USD)</Label>
                             <div className="relative">
-                                <span className="absolute left-3 top-2.5 text-gray-500">$</span>
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">$</span>
                                 <input
                                     id="flightCost"
                                     type="number"
                                     placeholder="e.g. 1200"
-                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 pl-7 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+                                    className="flex h-12 w-full rounded-xl border-2 border-gray-100 bg-white px-4 py-2 pl-8 text-base ring-offset-background focus:outline-none focus:border-ghana-green focus:ring-0 transition-colors"
                                     {...register('flightCost', { valueAsNumber: true })}
                                 />
                             </div>
                         </div>
 
-                        <div className="p-4 bg-blue-50 border border-blue-100 rounded-lg text-sm text-blue-800 flex items-start gap-3">
-                            <Info className="h-5 w-5 shrink-0 mt-0.5" />
+                        <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl text-sm text-blue-800 flex items-start gap-3">
+                            <Info className="h-5 w-5 shrink-0 mt-0.5 text-blue-600" />
                             <div className="space-y-2">
-                                <p>Not sure? Check real-time prices on Google Flights.</p>
+                                <p className="font-medium">Not sure? Check real-time prices on Google Flights.</p>
                                 <a
                                     href={`https://www.google.com/travel/flights?q=Flights+to+Accra+Ghana+in+${watchedValues.month}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-flex items-center font-semibold hover:underline"
+                                    className="inline-flex items-center font-bold hover:underline text-blue-700"
                                 >
-                                    Open Google Flights <ArrowRight className="h-3 w-3 ml-1" />
+                                    Open Google Flights <ArrowRight className="h-4 w-4 ml-1" />
                                 </a>
                             </div>
                         </div>
@@ -522,58 +548,58 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                 )}
             </div>
 
-            <div className="p-6 border rounded-xl bg-white space-y-6 shadow-sm">
-                <div className="flex items-center justify-between">
-                    <div className="space-y-1">
-                        <Label className="text-lg font-semibold">Include Travel Insurance?</Label>
-                        <p className="text-sm text-muted-foreground">Add estimated travel insurance costs.</p>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <span className={cn("text-sm font-medium", !watchedValues.includeInsurance && "text-primary")}>No</span>
-                        <label className="relative inline-flex items-center cursor-pointer">
-                            <input
-                                type="checkbox"
-                                className="sr-only peer"
-                                checked={watchedValues.includeInsurance}
-                                onChange={(e) => setValue('includeInsurance', e.target.checked)}
-                                aria-label="Include Travel Insurance"
-                            />
-                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-ghana-green/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-ghana-green"></div>
-                        </label>
-                        <span className={cn("text-sm font-medium", watchedValues.includeInsurance && "text-ghana-green")}>Yes</span>
-                    </div>
+            <div className="flex items-center justify-between p-5 border-2 border-gray-100 rounded-xl bg-white hover:border-gray-200 transition-colors">
+                <div className="space-y-1">
+                    <Label className="text-lg font-bold text-gray-900">Include Travel Insurance?</Label>
+                    <p className="text-sm text-gray-500">Add estimated travel insurance costs.</p>
+                </div>
+                <div className="flex items-center space-x-3">
+                    <span className={cn("text-sm font-bold", !watchedValues.includeInsurance ? "text-gray-900" : "text-gray-400")}>No</span>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                            type="checkbox"
+                            className="sr-only peer"
+                            checked={watchedValues.includeInsurance}
+                            onChange={(e) => setValue('includeInsurance', e.target.checked)}
+                            aria-label="Include Travel Insurance"
+                        />
+                        <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-ghana-green/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-ghana-green"></div>
+                    </label>
+                    <span className={cn("text-sm font-bold", watchedValues.includeInsurance ? "text-ghana-green" : "text-gray-400")}>Yes</span>
                 </div>
             </div>
         </div>
     );
 
     const renderStep6 = () => (
-        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-            <div className="p-6 border rounded-xl bg-white space-y-6 shadow-sm">
-                <div className="text-center mb-4">
-                    <p className="text-muted-foreground">Select what you're into to help us refine your itinerary.</p>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {interestOptions.map((interest) => (
-                        <label
-                            key={interest.id}
-                            className={cn(
-                                "cursor-pointer flex flex-col items-center justify-center p-4 rounded-xl border transition-all hover:shadow-sm text-center gap-2 h-24",
-                                watchedValues.interests.includes(interest.id)
-                                    ? "bg-ghana-green text-white border-ghana-green scale-105 font-semibold"
-                                    : "bg-background hover:bg-secondary"
-                            )}
-                        >
-                            <input
-                                type="checkbox"
-                                value={interest.id}
-                                className="hidden"
-                                {...register('interests')}
-                            />
-                            <span className="font-medium text-sm sm:text-base">{interest.id}</span>
-                        </label>
-                    ))}
-                </div>
+        <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="text-center mb-6">
+                <p className="text-lg text-gray-600">Select what you're into to help us refine your itinerary.</p>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {interestOptions.map((interest) => (
+                    <label
+                        key={interest.id}
+                        className={cn(
+                            "cursor-pointer flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 hover:shadow-md text-center gap-3 h-32",
+                            watchedValues.interests.includes(interest.id)
+                                ? "bg-ghana-green text-white border-ghana-green shadow-lg transform scale-105"
+                                : "bg-white text-gray-700 border-gray-100 hover:border-ghana-green/30 hover:bg-gray-50"
+                        )}
+                    >
+                        <input
+                            type="checkbox"
+                            value={interest.id}
+                            className="hidden"
+                            {...register('interests')}
+                        />
+                        {/* You could add icons here based on interest.id */}
+                        <span className="font-bold text-sm sm:text-base">{interest.id}</span>
+                        {watchedValues.interests.includes(interest.id) && (
+                            <div className="w-2 h-2 bg-white rounded-full animate-bounce" />
+                        )}
+                    </label>
+                ))}
             </div>
         </div>
     );
@@ -586,138 +612,27 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
             : watchedValues.regions.length > 0 ? watchedValues.regions.join(', ') : "None selected";
 
         return (
-            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-                <div className="bg-white rounded-xl p-6 space-y-4 border border-ghana-green/20 shadow-sm">
-                    <h3 className="text-lg font-bold text-gray-900 border-b pb-2">Trip Overview</h3>
+            <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
+                <div className="bg-white rounded-2xl p-6 sm:p-8 space-y-6 border-2 border-gray-100 shadow-sm">
+                    <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+                        <h3 className="text-xl font-bold text-gray-900">Trip Overview</h3>
+                        <span className="text-sm font-medium text-gray-500">Step 7 of 7</span>
+                    </div>
 
-                    {/* Budget & Duration */}
-                    <div className="flex items-center justify-between py-2 border-b border-gray-100 group hover:bg-gray-50 transition-colors rounded px-2 -mx-2">
-                        <div className="flex items-center gap-3 flex-1">
-                            <Calendar className="h-5 w-5 text-ghana-green" />
-                            <div>
-                                <span className="font-semibold text-gray-700 block text-sm">Duration & Travelers</span>
-                                <span className="text-base font-bold text-ghana-green">
-                                    {watchedValues.duration} days • {watchedValues.travelers} {watchedValues.travelers === 1 ? 'traveler' : 'travelers'}
-                                </span>
-                                <div className="text-xs text-muted-foreground mt-0.5">
-                                    {watchedValues.month} • {watchedValues.arrivalCity} • {watchedValues.roomSharing === 'private' ? 'Private Room' : watchedValues.roomSharing === 'shared' ? 'Shared Room' : 'Family Room'}
+                    <div className="space-y-4">
+                        {/* Budget & Duration */}
+                        <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group">
+                            <div className="flex items-center gap-4 flex-1">
+                                <div className="p-2 bg-white rounded-lg shadow-sm text-ghana-green">
+                                    <Calendar className="h-6 w-6" />
                                 </div>
-                            </div>
-                        </div>
-                        <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleEdit(1)}
-                            className="text-xs text-ghana-green hover:text-green-800 hover:bg-ghana-green/10"
-                        >
-                            Edit
-                        </Button>
-                    </div>
-
-                    {/* Travel Style */}
-                    <div className="flex items-center justify-between py-2 border-b border-gray-100 group hover:bg-gray-50 transition-colors rounded px-2 -mx-2">
-                        <div className="flex items-center gap-3 flex-1">
-                            <Heart className="h-5 w-5 text-ghana-green" />
-                            <div>
-                                <span className="font-semibold text-gray-700 block text-sm">Style & Accommodation</span>
-                                <span className="text-base font-bold text-ghana-green">{travelStyleLabel}</span>
-                                <div className="text-xs text-muted-foreground mt-0.5">
-                                    Staying in: {watchedValues.accommodationType}
-                                </div>
-                            </div>
-                        </div>
-                        <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleEdit(2)}
-                            className="text-xs text-ghana-green hover:text-green-800 hover:bg-ghana-green/10"
-                        >
-                            Edit
-                        </Button>
-                    </div>
-
-                    {/* Destinations */}
-                    <div className="flex items-start justify-between py-2 border-b border-gray-100 group hover:bg-gray-50 transition-colors rounded px-2 -mx-2">
-                        <div className="flex items-start gap-3 flex-1">
-                            <MapPin className="h-5 w-5 text-ghana-green mt-1" />
-                            <div>
-                                <span className="font-semibold text-gray-700 block text-sm">Destinations</span>
-                                <span className="text-sm font-medium text-ghana-green">{regions}</span>
-                            </div>
-                        </div>
-                        <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleEdit(3)}
-                            className="text-xs text-ghana-green hover:text-green-800 hover:bg-ghana-green/10"
-                        >
-                            Edit
-                        </Button>
-                    </div>
-
-                    {/* Transport */}
-                    <div className="flex items-center justify-between py-2 border-b border-gray-100 group hover:bg-gray-50 transition-colors rounded px-2 -mx-2">
-                        <div className="flex items-center gap-3 flex-1">
-                            <Calculator className="h-5 w-5 text-ghana-green" />
-                            <div>
-                                <span className="font-semibold text-gray-700 block text-sm">Transport</span>
-                                <span className="text-base font-bold text-ghana-green">{transportLabel}</span>
-                            </div>
-                        </div>
-                        <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleEdit(4)}
-                            className="text-xs text-ghana-green hover:text-green-800 hover:bg-ghana-green/10"
-                        >
-                            Edit
-                        </Button>
-                    </div>
-
-                    {/* Flights & Insurance */}
-                    <div className="flex items-start justify-between py-2 group hover:bg-gray-50 transition-colors rounded px-2 -mx-2">
-                        <div className="flex items-start gap-3 flex-1">
-                            <Plane className="h-5 w-5 text-ghana-green mt-1" />
-                            <div>
-                                <span className="font-semibold text-gray-700 block text-sm">Flights & Insurance</span>
-                                <div className="text-sm space-y-1">
-                                    <div className="text-ghana-green font-medium">
-                                        International Flights: {watchedValues.includeFlights ? `Yes${watchedValues.flightCost ? ` ($${watchedValues.flightCost})` : ''}` : 'No'}
-                                    </div>
-                                    <div className="text-ghana-green font-medium">
-                                        Travel Insurance: {watchedValues.includeInsurance ? 'Yes' : 'No'}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleEdit(5)}
-                            className="text-xs text-ghana-green hover:text-green-800 hover:bg-ghana-green/10"
-                        >
-                            Edit
-                        </Button>
-                    </div>
-
-                    {/* Interests */}
-                    {watchedValues.interests.length > 0 && (
-                        <div className="flex items-start justify-between py-2 border-t border-gray-100 group hover:bg-gray-50 transition-colors rounded px-2 -mx-2">
-                            <div className="flex items-start gap-3 flex-1">
-                                <Heart className="h-5 w-5 text-ghana-green mt-1" />
                                 <div>
-                                    <span className="font-semibold text-gray-700 block text-sm">Interests</span>
-                                    <div className="flex flex-wrap gap-2 mt-1">
-                                        {watchedValues.interests.map(interest => (
-                                            <span key={interest} className="text-xs bg-ghana-green/10 text-ghana-green px-2 py-1 rounded-full font-medium">
-                                                {interest}
-                                            </span>
-                                        ))}
+                                    <span className="text-sm font-medium text-gray-500 block">Duration & Travelers</span>
+                                    <span className="text-base font-bold text-gray-900">
+                                        {watchedValues.duration} days • {watchedValues.travelers} {watchedValues.travelers === 1 ? 'traveler' : 'travelers'}
+                                    </span>
+                                    <div className="text-xs text-gray-500 mt-1">
+                                        {watchedValues.month} • {watchedValues.arrivalCity} • {watchedValues.roomSharing}
                                     </div>
                                 </div>
                             </div>
@@ -725,19 +640,147 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                                 type="button"
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => handleEdit(6)}
-                                className="text-xs text-ghana-green hover:text-green-800 hover:bg-ghana-green/10"
+                                onClick={() => handleEdit(1)}
+                                className="text-ghana-green hover:text-green-800 hover:bg-ghana-green/10 font-medium"
                             >
                                 Edit
                             </Button>
                         </div>
-                    )}
+
+                        {/* Travel Style */}
+                        <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group">
+                            <div className="flex items-center gap-4 flex-1">
+                                <div className="p-2 bg-white rounded-lg shadow-sm text-ghana-green">
+                                    <Heart className="h-6 w-6" />
+                                </div>
+                                <div>
+                                    <span className="text-sm font-medium text-gray-500 block">Style & Accommodation</span>
+                                    <span className="text-base font-bold text-gray-900">{travelStyleLabel}</span>
+                                    <div className="text-xs text-gray-500 mt-1">
+                                        Staying in: {watchedValues.accommodationType}
+                                    </div>
+                                </div>
+                            </div>
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEdit(2)}
+                                className="text-ghana-green hover:text-green-800 hover:bg-ghana-green/10 font-medium"
+                            >
+                                Edit
+                            </Button>
+                        </div>
+
+                        {/* Destinations */}
+                        <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group">
+                            <div className="flex items-center gap-4 flex-1">
+                                <div className="p-2 bg-white rounded-lg shadow-sm text-ghana-green">
+                                    <MapPin className="h-6 w-6" />
+                                </div>
+                                <div>
+                                    <span className="text-sm font-medium text-gray-500 block">Destinations</span>
+                                    <span className="text-base font-bold text-gray-900 line-clamp-1">{regions}</span>
+                                </div>
+                            </div>
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEdit(3)}
+                                className="text-ghana-green hover:text-green-800 hover:bg-ghana-green/10 font-medium"
+                            >
+                                Edit
+                            </Button>
+                        </div>
+
+                        {/* Transport */}
+                        <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group">
+                            <div className="flex items-center gap-4 flex-1">
+                                <div className="p-2 bg-white rounded-lg shadow-sm text-ghana-green">
+                                    <Calculator className="h-6 w-6" />
+                                </div>
+                                <div>
+                                    <span className="text-sm font-medium text-gray-500 block">Transport</span>
+                                    <span className="text-base font-bold text-gray-900">{transportLabel}</span>
+                                </div>
+                            </div>
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEdit(4)}
+                                className="text-ghana-green hover:text-green-800 hover:bg-ghana-green/10 font-medium"
+                            >
+                                Edit
+                            </Button>
+                        </div>
+
+                        {/* Flights & Insurance */}
+                        <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group">
+                            <div className="flex items-center gap-4 flex-1">
+                                <div className="p-2 bg-white rounded-lg shadow-sm text-ghana-green">
+                                    <Plane className="h-6 w-6" />
+                                </div>
+                                <div>
+                                    <span className="text-sm font-medium text-gray-500 block">Flights & Insurance</span>
+                                    <div className="flex gap-3 mt-1">
+                                        <span className={cn("text-xs px-2 py-1 rounded-full font-bold", watchedValues.includeFlights ? "bg-ghana-green/10 text-ghana-green" : "bg-gray-200 text-gray-500")}>
+                                            Flights: {watchedValues.includeFlights ? 'Yes' : 'No'}
+                                        </span>
+                                        <span className={cn("text-xs px-2 py-1 rounded-full font-bold", watchedValues.includeInsurance ? "bg-ghana-green/10 text-ghana-green" : "bg-gray-200 text-gray-500")}>
+                                            Insurance: {watchedValues.includeInsurance ? 'Yes' : 'No'}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEdit(5)}
+                                className="text-ghana-green hover:text-green-800 hover:bg-ghana-green/10 font-medium"
+                            >
+                                Edit
+                            </Button>
+                        </div>
+
+                        {/* Interests */}
+                        {watchedValues.interests.length > 0 && (
+                            <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group">
+                                <div className="flex items-center gap-4 flex-1">
+                                    <div className="p-2 bg-white rounded-lg shadow-sm text-ghana-green">
+                                        <Heart className="h-6 w-6" />
+                                    </div>
+                                    <div>
+                                        <span className="text-sm font-medium text-gray-500 block">Interests</span>
+                                        <div className="flex flex-wrap gap-2 mt-1">
+                                            {watchedValues.interests.map(interest => (
+                                                <span key={interest} className="text-xs bg-ghana-green/10 text-ghana-green px-2 py-1 rounded-full font-bold">
+                                                    {interest}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleEdit(6)}
+                                    className="text-ghana-green hover:text-green-800 hover:bg-ghana-green/10 font-medium"
+                                >
+                                    Edit
+                                </Button>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 {/* Call to Action */}
-                <div className="text-center p-6 bg-white rounded-xl border-2 border-ghana-green/20 shadow-sm">
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">Everything Look Good?</h3>
-                    <p className="text-sm text-gray-600 mb-4">
+                <div className="text-center p-8 bg-ghana-green/5 rounded-2xl border-2 border-ghana-green/10">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Everything Look Good?</h3>
+                    <p className="text-base text-gray-600 mb-0 max-w-lg mx-auto">
                         Review your selections above. You can edit any section by clicking the "Edit" button, or proceed to generate your personalized budget.
                     </p>
                 </div>
@@ -784,8 +827,17 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
     ];
 
     return (
-        <Card className="w-full max-w-3xl mx-auto shadow-2xl border-t-4 border-t-ghana-yellow overflow-hidden bg-white backdrop-blur-sm">
-            <CardHeader className="bg-secondary/5 pb-8">
+        <Card className="w-full max-w-3xl mx-auto shadow-xl border-none bg-white rounded-2xl overflow-hidden">
+            <div className="bg-white border-b border-gray-100">
+                <ProgressIndicator
+                    currentStep={step}
+                    totalSteps={totalSteps}
+                    onStepClick={(s) => {
+                        if (s < step || returnToReview) setStep(s);
+                    }}
+                />
+            </div>
+            <CardHeader className="pb-2 pt-6 px-6 sm:px-8 bg-white">
                 <div className="flex justify-between items-start mb-6">
                     <div className="flex-1">
                         <CardTitle className="flex items-center gap-2 text-2xl mb-2">
@@ -802,13 +854,6 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                     <span className="text-sm font-medium text-muted-foreground">
                         {step} / {totalSteps}
                     </span>
-                </div>
-                {/* Progress Bar */}
-                <div className="w-full bg-secondary h-2 rounded-full overflow-hidden">
-                    <div
-                        className="bg-ghana-green h-full transition-all duration-500 ease-out"
-                        style={{ width: `${(step / totalSteps) * 100}%` }}
-                    />
                 </div>
             </CardHeader>
 
@@ -845,6 +890,6 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                     )}
                 </CardFooter>
             </form>
-        </Card>
+        </Card >
     );
 }

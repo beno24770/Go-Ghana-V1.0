@@ -1,5 +1,5 @@
 import { Button } from './ui/Button';
-import { ArrowRight, Check, Play, Star, MapPin, Calendar, DollarSign } from 'lucide-react';
+import { ArrowRight, Check, Play, Star, MapPin, DollarSign } from 'lucide-react';
 import { AnimatedSection } from './ui/AnimatedSection';
 
 
@@ -90,7 +90,7 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                     </div>
 
                     {/* Main Headline */}
-                    <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight drop-shadow-2xl animate-fade-in-up opacity-0 delay-200">
+                    <h1 className="text-2xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight drop-shadow-2xl animate-fade-in-up opacity-0 delay-200 px-2">
                         PLAN YOUR GHANA TRIP<br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-ghana-yellow via-yellow-300 to-ghana-green">
                             ON ANY BUDGET
@@ -106,7 +106,7 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
 
                     {/* Handwritten Accent */}
                     <div className="relative animate-fade-in-up opacity-0 delay-350 pb-4">
-                        <span className="text-ghana-yellow font-hand text-4xl md:text-5xl drop-shadow-lg">
+                        <span className="text-ghana-yellow font-hand text-3xl md:text-5xl drop-shadow-lg">
                             in just 3 answers!
                         </span>
                     </div>

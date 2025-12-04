@@ -7,14 +7,13 @@ interface ProgressIndicatorProps {
 }
 
 const stepLabels = [
-    'Start',
-    'Trip Details',
-    'Processing',
-    'Budget',
-    'Tours',
-    'Decision',
-    'Planner',
-    'Summary'
+    'Duration',
+    'Style',
+    'Destinations',
+    'Transport',
+    'Flights',
+    'Interests',
+    'Review'
 ];
 
 export function ProgressIndicator({ currentStep, totalSteps, onStepClick }: ProgressIndicatorProps) {
