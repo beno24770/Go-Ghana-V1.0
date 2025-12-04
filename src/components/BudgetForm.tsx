@@ -121,17 +121,26 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
     const watchedValues = watch();
 
     const [returnToReview, setReturnToReview] = useState(false);
+    const [isNavigating, setIsNavigating] = useState(false);
 
     const handleNext = () => {
-        if (returnToReview) {
-            setStep(totalSteps);
-            setReturnToReview(false);
-        } else {
-            if (step < totalSteps) setStep(s => s + 1);
-        }
+        if (isNavigating) return;
+        setIsNavigating(true);
+
+        // Small delay to prevent double-clicks triggering the next button immediately
+        setTimeout(() => {
+            if (returnToReview) {
+                setStep(totalSteps);
+                setReturnToReview(false);
+            } else {
+                if (step < totalSteps) setStep(s => s + 1);
+            }
+            setIsNavigating(false);
+        }, 300);
     };
 
     const handleBack = () => {
+        if (isNavigating) return;
         if (returnToReview) {
             setStep(totalSteps);
             setReturnToReview(false);
@@ -873,18 +882,27 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                         type="button"
                         variant="ghost"
                         onClick={handleBack}
-                        disabled={step === 1}
+                        disabled={step === 1 || isNavigating}
                         className={cn("gap-2 w-full sm:w-auto", step === 1 && "invisible")}
                     >
                         <ArrowLeft className="h-4 w-4" /> {returnToReview ? 'Cancel Edit' : 'Back'}
                     </Button>
 
                     {step < totalSteps ? (
-                        <Button type="button" onClick={handleNext} className="gap-2 px-8 w-full sm:w-auto bg-ghana-green hover:bg-green-800 text-white">
+                        <Button
+                            type="button"
+                            onClick={handleNext}
+                            disabled={isNavigating}
+                            className="gap-2 px-8 w-full sm:w-auto bg-ghana-green hover:bg-green-800 text-white"
+                        >
                             {returnToReview ? 'Save & Return' : 'Next'} <ArrowRight className="h-4 w-4" />
                         </Button>
                     ) : (
-                        <Button type="submit" className="gap-2 px-8 bg-ghana-green hover:bg-green-800 w-full sm:w-auto text-white shadow-lg hover:shadow-ghana-green/20" disabled={isLoading}>
+                        <Button
+                            type="submit"
+                            className="gap-2 px-8 bg-ghana-green hover:bg-green-800 w-full sm:w-auto text-white shadow-lg hover:shadow-ghana-green/20"
+                            disabled={isLoading || isNavigating}
+                        >
                             {isLoading ? 'Calculating...' : 'Generate My Budget →'} <Check className="h-4 w-4" />
                         </Button>
                     )}
