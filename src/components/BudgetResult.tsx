@@ -66,6 +66,89 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
     const perPerson = breakdown.total / travelerCount;
     const dailyAverage = formData ? breakdown.total / formData.duration : breakdown.total / 7;
 
+    // Helper function to generate tips based on budget level
+    const getAccommodationTips = () => {
+        const dailyAccom = breakdown.accommodation / (formData?.duration || 7) / travelerCount;
+        if (dailyAccom > 800) {
+            return [
+                "Luxury hotels and boutique resorts with premium amenities",
+                "Expect 4-5 star properties with pools, spas, and fine dining",
+                "Popular options: Kempinski, Labadi Beach Hotel, Movenpick"
+            ];
+        } else if (dailyAccom > 400) {
+            return [
+                "Mid-range hotels and comfortable guesthouses",
+                "Clean, safe accommodations with AC and breakfast included",
+                "Good options: Ibis, Best Western, local boutique hotels"
+            ];
+        } else {
+            return [
+                "Budget-friendly hostels and guesthouses",
+                "Basic but clean rooms, often with shared facilities",
+                "Great for backpackers and budget-conscious travelers"
+            ];
+        }
+    };
+
+    const getTransportTips = () => {
+        return [
+            "Includes inter-city travel and local transportation",
+            "Private drivers offer comfort and flexibility",
+            "Bolt/Uber available in major cities for convenience",
+            "Tro-tros (shared vans) are the most economical option"
+        ];
+    };
+
+    const getFoodTips = () => {
+        const dailyFood = breakdown.food / (formData?.duration || 7) / travelerCount;
+        if (dailyFood > 200) {
+            return [
+                "Fine dining at upscale restaurants and hotel buffets",
+                "Mix of international and authentic Ghanaian cuisine",
+                "Budget includes drinks, desserts, and special meals"
+            ];
+        } else if (dailyFood > 100) {
+            return [
+                "Comfortable local restaurants and chop bars",
+                "Authentic Ghanaian dishes: jollof, banku, fufu, waakye",
+                "Mix of sit-down meals and street food experiences"
+            ];
+        } else {
+            return [
+                "Street food and local chop bars",
+                "Authentic and delicious local meals at great prices",
+                "Try waakye, kenkey, red-red, and grilled tilapia"
+            ];
+        }
+    };
+
+    const getActivitiesTips = () => {
+        return [
+            "Entrance fees to castles, museums, and national parks",
+            "Guided tours and cultural experiences",
+            "Adventure activities like canopy walks and boat rides",
+            "Nightlife and entertainment in Accra and Kumasi"
+        ];
+    };
+
+    const getEssentialsTips = () => {
+        return [
+            "Visa fees (varies by nationality)",
+            "Travel insurance for peace of mind",
+            "Local SIM card and mobile data",
+            "Airport transfers and tips"
+        ];
+    };
+
+    const getFlightsTips = () => {
+        return [
+            "Roundtrip international flights to Accra",
+            "Book 2-3 months in advance for best prices",
+            "Consider layovers to save money",
+            "Check baggage allowance for souvenirs"
+        ];
+    };
+
     // Prepare chart data
     const chartData = [
         { name: 'Accommodation', value: breakdown.accommodation, color: '#CE1126' },
@@ -210,6 +293,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                 color="#CE1126"
                                 formatCurrency={formatCurrency}
                                 onEdit={onEditBudget}
+                                tips={getAccommodationTips()}
                             />
                             <CategoryCard
                                 icon={Car}
@@ -219,6 +303,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                 color="#FCD116"
                                 formatCurrency={formatCurrency}
                                 onEdit={onEditBudget}
+                                tips={getTransportTips()}
                             />
                             <CategoryCard
                                 icon={Utensils}
@@ -228,6 +313,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                 color="#006B3F"
                                 formatCurrency={formatCurrency}
                                 onEdit={onEditBudget}
+                                tips={getFoodTips()}
                             />
                             <CategoryCard
                                 icon={MapIcon}
@@ -237,6 +323,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                 color="#CE1126"
                                 formatCurrency={formatCurrency}
                                 onEdit={onEditBudget}
+                                tips={getActivitiesTips()}
                             />
                             <CategoryCard
                                 icon={Shield}
@@ -245,6 +332,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                 percentage={(breakdown.essentials / breakdown.total) * 100}
                                 color="#FCD116"
                                 formatCurrency={formatCurrency}
+                                tips={getEssentialsTips()}
                             />
                             {breakdown.flights > 0 && (
                                 <CategoryCard
@@ -254,6 +342,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                     percentage={(breakdown.flights / breakdown.total) * 100}
                                     color="#006B3F"
                                     formatCurrency={formatCurrency}
+                                    tips={getFlightsTips()}
                                 />
                             )}
                         </CardContent>
