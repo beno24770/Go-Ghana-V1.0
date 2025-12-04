@@ -25,6 +25,8 @@ export interface BudgetFormData {
     accommodationType?: 'hotel' | 'guesthouse' | 'airbnb';
     isNewToGhana?: boolean;
     interests?: string[];
+    origin?: string;
+    nationality?: string;
 }
 
 export interface RegionalBudget {

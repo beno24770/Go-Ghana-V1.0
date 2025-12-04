@@ -79,6 +79,8 @@ const formSchema = z.object({
     includeInsurance: z.boolean().optional(),
 
     interests: z.array(z.string()),
+    origin: z.string().optional(),
+    nationality: z.string().optional(),
 });
 
 type FormSchema = z.infer<typeof formSchema>;
@@ -115,6 +117,8 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
             flightCost: undefined,
             includeInsurance: false,
             interests: [],
+            origin: 'USA',
+            nationality: 'Other',
         },
     });
 
@@ -193,6 +197,8 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
             transportMode: data.transportMode,
             accommodationType: data.accommodationType.toLowerCase() as 'hotel' | 'guesthouse' | 'airbnb',
             isNewToGhana: data.isNewToGhana,
+            origin: data.origin,
+            nationality: data.nationality,
         });
     };
 
@@ -319,6 +325,20 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                                 <MapPin className="h-4 w-4" />
                             </div>
                         </div>
+                    </div>
+                    <div className="space-y-2">
+                        <Label className="font-bold text-gray-900">Nationality (for Visa)</Label>
+                        <select
+                            className="flex h-12 w-full rounded-xl border-2 border-gray-100 bg-white px-4 py-2 text-base ring-offset-background focus:outline-none focus:border-ghana-green focus:ring-0 transition-colors appearance-none"
+                            {...register('nationality')}
+                        >
+                            <option value="Other">Other / International</option>
+                            <option value="USA">American</option>
+                            <option value="UK">British</option>
+                            <option value="EU">European (EU)</option>
+                            <option value="ECOWAS">ECOWAS (West Africa)</option>
+                            <option value="Ghanaian">Ghanaian</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -537,6 +557,22 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                                     {...register('flightCost', { valueAsNumber: true })}
                                 />
                             </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="origin" className="text-base font-bold text-gray-900">Flight Origin</Label>
+                            <select
+                                id="origin"
+                                className="flex h-12 w-full rounded-xl border-2 border-gray-100 bg-white px-4 py-2 text-base focus:outline-none focus:border-ghana-green transition-colors"
+                                {...register('origin')}
+                            >
+                                <option value="USA">USA / North America</option>
+                                <option value="UK">UK</option>
+                                <option value="Europe">Europe</option>
+                                <option value="West Africa">West Africa</option>
+                                <option value="South Africa">South Africa</option>
+                                <option value="Other">Other</option>
+                            </select>
                         </div>
 
                         <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl text-sm text-blue-800 flex items-start gap-3">

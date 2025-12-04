@@ -160,9 +160,96 @@ export const BUDGET_RANGES = {
 
 // Helper function to get budget range from daily cost
 export function getBudgetRange(dailyCostPerPerson: number): 'backpacker' | 'budget' | 'mid' | 'comfort' | 'luxury' {
-    if (dailyCostPerPerson <= 750) return 'backpacker';    // Accra-only trips
     if (dailyCostPerPerson <= 1500) return 'budget';       // Regional trips minimum
     if (dailyCostPerPerson <= 2000) return 'mid';
     if (dailyCostPerPerson <= 2500) return 'comfort';
     return 'luxury';
 }
+
+// --- V2.1 DATA STRUCTURES ---
+
+export const SEASONAL_MULTIPLIERS_V2 = {
+    Peak: { accommodation: 1.35, transport: 1.20, activities: 1.25 }, // Dec
+    High: { accommodation: 1.20, transport: 1.10, activities: 1.10 }, // Jul-Sep
+    Shoulder: { accommodation: 1.00, transport: 1.00, activities: 1.00 }, // Mar-Jun, Oct-Nov
+    Low: { accommodation: 0.90, transport: 0.90, activities: 0.95 } // Feb
+} as const;
+
+export const MONTH_TO_SEASON: Record<string, keyof typeof SEASONAL_MULTIPLIERS_V2> = {
+    "January": "High", // Treated as High/Peak tail
+    "February": "Low",
+    "March": "Shoulder",
+    "April": "Shoulder",
+    "May": "Shoulder",
+    "June": "Shoulder",
+    "July": "High",
+    "August": "High",
+    "September": "High",
+    "October": "Shoulder",
+    "November": "Shoulder",
+    "December": "Peak"
+};
+
+export const REGION_MULTIPLIERS_V2: Record<string, { transport: number, food: number }> = {
+    "Greater Accra": { transport: 1.0, food: 1.0 },
+    "Ashanti": { transport: 0.95, food: 0.95 },
+    "Central": { transport: 0.9, food: 0.9 },
+    "Western": { transport: 1.05, food: 1.1 },
+    "Volta": { transport: 1.1, food: 1.05 },
+    "Northern": { transport: 1.3, food: 1.15 },
+    "Upper East": { transport: 1.3, food: 1.15 },
+    "Upper West": { transport: 1.3, food: 1.15 },
+    "Savannah": { transport: 1.3, food: 1.15 },
+    "North East": { transport: 1.3, food: 1.15 },
+    "Oti": { transport: 1.1, food: 1.05 },
+    "Eastern": { transport: 1.0, food: 1.0 },
+    "Bono": { transport: 1.0, food: 1.0 },
+    "Bono East": { transport: 1.0, food: 1.0 },
+    "Ahafo": { transport: 1.0, food: 1.0 },
+    "Western North": { transport: 1.05, food: 1.0 }
+};
+
+export const ACTIVITY_COSTS_V2 = {
+    daily: {
+        adventure: 50,
+        culture: 30,
+        nightlife: 40,
+        nature: 60, // Wildlife/Nature
+        relaxation: 20 // Beach/Relax
+    },
+    fixedPerActivity: 100 // GHS per planned activity
+} as const;
+
+export const FLIGHT_COSTS_BY_ORIGIN = {
+    "USA": { min: 900, max: 1400 },
+    "UK": { min: 600, max: 900 },
+    "Europe": { min: 450, max: 750 },
+    "West Africa": { min: 200, max: 350 },
+    "South Africa": { min: 350, max: 500 },
+    "Other": { min: 1000, max: 1500 }
+} as const;
+
+export const CONTINGENCY_RATES_V2 = {
+    adventure: 0.15,
+    multiRegion: 0.12,
+    luxury: 0.07,
+    default: 0.10
+} as const;
+
+export const TIER_MULTIPLIERS_V2 = {
+    backpacker: 0.8,
+    budget: 0.8,
+    mid: 1.0,
+    comfort: 1.2,
+    luxury: 1.5
+} as const;
+
+export const FUEL_RATE_PER_KM = 2.5; // GHS per km (approx)
+
+export const VISA_COSTS = {
+    "ECOWAS": 0,
+    "USA": 1200, // ~100 USD
+    "UK": 1200,
+    "EU": 1200,
+    "Other": 1200
+} as const;
