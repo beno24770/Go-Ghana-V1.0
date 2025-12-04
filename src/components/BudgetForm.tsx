@@ -625,7 +625,7 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                 <div className="bg-white rounded-2xl p-6 sm:p-8 space-y-6 border-2 border-gray-100 shadow-sm">
                     <div className="flex items-center justify-between border-b border-gray-100 pb-4">
                         <h3 className="text-xl font-bold text-gray-900">Trip Overview</h3>
-                        <span className="text-sm font-medium text-gray-500">Step 7 of 7 (v7.0.1)</span>
+                        <span className="text-sm font-medium text-gray-500">Step 7 of 7 (v7.0.2)</span>
                     </div>
 
                     <div className="space-y-4">
