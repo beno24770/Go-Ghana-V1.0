@@ -33,9 +33,19 @@ export interface BudgetContext {
     };
 }
 
+export interface CategoryContext {
+    category: string;
+    greeting: string;
+    suggestedQuestions: string[];
+    amount: number;
+    formattedAmount: string;
+}
+
 interface ChatContextType extends ChatState {
     budgetContext: BudgetContext | null;
     setBudgetContext: (context: BudgetContext | null) => void;
+    categoryContext: CategoryContext | null;
+    setCategoryContext: (context: CategoryContext | null) => void;
     toggleChat: () => void;
     sendMessage: (content: string) => void;
     handleAction: (actionType: string, payload?: unknown) => void;
@@ -49,6 +59,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     const [isTyping, setIsTyping] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
     const [budgetContext, setBudgetContextState] = useState<BudgetContext | null>(null);
+    const [categoryContext, setCategoryContextState] = useState<CategoryContext | null>(null);
 
     // Initialize chat with welcome message
     useEffect(() => {
@@ -78,6 +89,24 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
                 timestamp: Date.now()
             };
             setMessages(prev => [...prev, contextMsg]);
+        }
+    }, []);
+
+    const setCategoryContext = useCallback((context: CategoryContext | null) => {
+        setCategoryContextState(context);
+        // If setting category context, add the category-specific greeting
+        if (context) {
+            const greetingMsg: ChatMessage = {
+                id: uuidv4(),
+                role: 'assistant',
+                content: context.greeting,
+                timestamp: Date.now()
+            };
+            setMessages(prev => [...prev, greetingMsg]);
+
+            // Open chat if not already open
+            setIsOpen(true);
+            setUnreadCount(0);
         }
     }, []);
 
@@ -132,6 +161,8 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
             unreadCount,
             budgetContext,
             setBudgetContext,
+            categoryContext,
+            setCategoryContext,
             toggleChat,
             sendMessage,
             handleAction

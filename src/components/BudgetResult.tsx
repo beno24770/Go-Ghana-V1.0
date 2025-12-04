@@ -31,7 +31,7 @@ const TRAVELER_COUNTS = {
 
 export function BudgetResult({ breakdown, isLoading = false, formData, onContinue, onEditBudget }: BudgetResultProps) {
     const { convertAndFormat, selectedCurrency } = useCurrency();
-    const { toggleChat } = useChat();
+    const { toggleChat, setCategoryContext } = useChat();
     const { user } = useAuth();
 
     const [showAuthModal, setShowAuthModal] = useState(false);
@@ -248,14 +248,18 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                 travelStyle: formData.travelerType
             };
 
-            // Generate greeting (will be used when ChatContext is updated)
-            knowledge.greetingTemplate(context);
+            // Generate greeting and set category context
+            const greeting = knowledge.greetingTemplate(context);
 
-            // Open chat widget
-            toggleChat();
+            setCategoryContext({
+                category: categoryKey,
+                greeting,
+                suggestedQuestions: knowledge.suggestedQuestions,
+                amount,
+                formattedAmount: formatCurrency(amount)
+            });
 
-            // TODO: Pass category context to ChatContext for context-aware responses
-            // This will be implemented in the next step
+            // Chat will open automatically via setCategoryContext
         }
     };
 
