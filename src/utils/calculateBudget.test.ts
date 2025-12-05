@@ -210,7 +210,6 @@ describe('Enhanced Cost Calculation System', () => {
 
             // Daily cost: (550 + 300 + 150 + 300) * 1.075 * 1.0 = 1,397.5 GHS/day
             // Inter-region transport: 1 move * 200 GHS (mid-range) = 200 GHS
-            const expectedDailyTotal = Math.round(1300 * 1.075 * 7) + 200; // Add inter-region cost
             const actualDailyTotal = result.accommodation + result.food + result.transport + result.activities;
 
             // Just verify it calculates a reasonable number

@@ -27,6 +27,9 @@ export interface BudgetFormData {
     interests?: string[];
     origin?: string;
     nationality?: string;
+    customDailyBudget?: number;
+    startDate?: string; // ISO string
+    endDate?: string; // ISO string
 }
 
 export interface RegionalBudget {

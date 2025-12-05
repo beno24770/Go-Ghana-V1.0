@@ -43,7 +43,7 @@ export default function ProgressRing({
         } else {
             animatedProgress.value = progress;
         }
-    }, [progress, animated]);
+    }, [progress, animated, animatedProgress]);
 
     const animatedProps = useAnimatedProps(() => {
         const strokeDashoffset = circumference - (circumference * animatedProgress.value) / 100;

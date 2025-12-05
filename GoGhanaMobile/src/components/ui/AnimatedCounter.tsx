@@ -3,8 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Animated, {
     useAnimatedStyle,
     useSharedValue,
-    withSpring,
-    withTiming
+    withSpring
 } from 'react-native-reanimated';
 import { useEffect } from 'react';
 
@@ -28,10 +27,10 @@ export default function AnimatedCounter({
     const scale = useSharedValue(1);
 
     useEffect(() => {
-        scale.value = withSpring(1.1, {}, () => {
+        scale.value = withSpring(1.2, {}, () => {
             scale.value = withSpring(1);
         });
-    }, [value]);
+    }, [value, scale]);
 
     const animatedStyle = useAnimatedStyle(() => ({
         transform: [{ scale: scale.value }],

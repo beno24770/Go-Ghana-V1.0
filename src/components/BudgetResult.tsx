@@ -19,7 +19,7 @@ interface BudgetResultProps {
     isLoading?: boolean;
     formData?: BudgetFormData;
     onContinue?: () => void;
-    onEditBudget?: () => void;
+    onEditBudget?: (step?: number) => void;
 }
 
 const TRAVELER_COUNTS = {
@@ -325,7 +325,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                 percentage={(breakdown.accommodation / breakdown.total) * 100}
                                 color="#CE1126"
                                 formatCurrency={formatCurrency}
-                                onEdit={onEditBudget}
+                                onEdit={() => onEditBudget?.(2)} // Step 2: Accommodation
                                 tips={getAccommodationTips()}
                                 onAskAdepa={() => handleAskAdepa('accommodation', breakdown.accommodation)}
                             />
@@ -336,7 +336,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                 percentage={(breakdown.transport / breakdown.total) * 100}
                                 color="#FCD116"
                                 formatCurrency={formatCurrency}
-                                onEdit={onEditBudget}
+                                onEdit={() => onEditBudget?.(4)} // Step 4: Transport
                                 tips={getTransportTips()}
                                 onAskAdepa={() => handleAskAdepa('transport', breakdown.transport)}
                             />
@@ -347,7 +347,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                 percentage={(breakdown.food / breakdown.total) * 100}
                                 color="#006B3F"
                                 formatCurrency={formatCurrency}
-                                onEdit={onEditBudget}
+                                onEdit={() => onEditBudget?.(2)} // Step 2: Food (tied to tier)
                                 tips={getFoodTips()}
                                 onAskAdepa={() => handleAskAdepa('food', breakdown.food)}
                             />
@@ -358,7 +358,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                 percentage={(breakdown.activities / breakdown.total) * 100}
                                 color="#CE1126"
                                 formatCurrency={formatCurrency}
-                                onEdit={onEditBudget}
+                                onEdit={() => onEditBudget?.(6)} // Step 6: Interests
                                 tips={getActivitiesTips()}
                                 onAskAdepa={() => handleAskAdepa('activities', breakdown.activities)}
                             />
@@ -382,6 +382,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                     formatCurrency={formatCurrency}
                                     tips={getFlightsTips()}
                                     onAskAdepa={() => handleAskAdepa('flights', breakdown.flights)}
+                                    onEdit={() => onEditBudget?.(5)} // Step 5: Flights
                                 />
                             )}
                         </CardContent>
@@ -497,7 +498,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                         <Button
                                             variant="ghost"
                                             className="w-full justify-start text-gray-600 hover:text-ghana-green"
-                                            onClick={onEditBudget}
+                                            onClick={() => onEditBudget?.(1)}
                                         >
                                             <Edit2 className="mr-2 h-4 w-4" />
                                             Edit Full Budget

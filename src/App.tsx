@@ -32,6 +32,7 @@ function AppContent() {
   const [budgetResult, setBudgetResult] = useState<BudgetBreakdown | null>(null);
   const [selectedTour, setSelectedTour] = useState<Tour | null>(null);
   const [isLocalMode, setIsLocalMode] = useState(false);
+  const [budgetFormInitialStep, setBudgetFormInitialStep] = useState(1);
 
   // Initialize Knowledge Service with mock data
   useEffect(() => {
@@ -112,8 +113,9 @@ function AppContent() {
   };
 
   // Step 5: Budget Result - Edit Budget
-  const handleEditBudget = () => {
+  const handleEditBudget = (stepNumber: number = 1) => {
     // Go back to Budget Form (Step 3) with existing data
+    setBudgetFormInitialStep(stepNumber);
     setCurrentStep(3);
   };
 
@@ -234,7 +236,7 @@ function AppContent() {
                   Answer a few questions to get your personalized budget estimate
                 </p>
               </div>
-              <BudgetForm onSubmit={handleFormSubmit} />
+              <BudgetForm onSubmit={handleFormSubmit} initialStep={budgetFormInitialStep} />
             </div>
           </div>
         )}

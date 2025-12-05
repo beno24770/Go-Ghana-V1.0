@@ -21,14 +21,49 @@ export interface KnowledgeChunk {
         tags: string[];
         region?: string;
         budget_tier?: string;
-        [key: string]: any;
+        [key: string]: unknown;
     };
 }
 
 export interface MarkdownDocument {
-    frontmatter: Record<string, any>;
+    frontmatter: Record<string, unknown>;
     content: string;
 }
+
+interface BaseIngestionItem {
+    id?: string;
+    name: string;
+    region?: string;
+    description: string;
+    highlights?: string[];
+    [key: string]: unknown;
+}
+
+interface AccommodationItem extends BaseIngestionItem {
+    tier: string;
+    type: string;
+    neighborhood?: string;
+    city?: string;
+    pricePerNight: { min: number; max: number; average?: number };
+    amenities: string[];
+    rating?: { overall: number };
+}
+
+interface RestaurantItem extends BaseIngestionItem {
+    priceRange: string;
+    neighborhood?: string;
+    city?: string;
+    cuisine: string[];
+    avgCostPerPerson: number;
+    rating?: number;
+}
+
+interface FestivalItem extends BaseIngestionItem {
+    location: string;
+    travelStyle: string[];
+}
+
+type IngestionData = AccommodationItem | RestaurantItem | FestivalItem;
 
 // ============================================
 // STRUCTURED DATA PROCESSORS
@@ -37,13 +72,13 @@ export interface MarkdownDocument {
 /**
  * Convert Accommodation object to embedding text
  */
-export function accommodationToEmbeddingText(acc: any): string {
+export function accommodationToEmbeddingText(acc: AccommodationItem): string {
     const parts = [
         `${acc.name} is a ${acc.tier} ${acc.type} in ${acc.neighborhood || acc.city}, ${acc.region}.`,
         acc.description,
         `Price range: ${acc.pricePerNight.min}-${acc.pricePerNight.max} GHS per night.`,
         `Amenities: ${acc.amenities.join(', ')}.`,
-        acc.highlights?.length > 0 ? `Highlights: ${acc.highlights.join(', ')}.` : '',
+        (acc.highlights?.length ?? 0) > 0 ? `Highlights: ${acc.highlights?.join(', ')}.` : '',
     ];
 
     return parts.filter(Boolean).join(' ');
@@ -52,13 +87,13 @@ export function accommodationToEmbeddingText(acc: any): string {
 /**
  * Convert Restaurant object to embedding text
  */
-export function restaurantToEmbeddingText(rest: any): string {
+export function restaurantToEmbeddingText(rest: RestaurantItem): string {
     const parts = [
         `${rest.name} is a ${rest.priceRange} restaurant in ${rest.neighborhood || rest.city}, ${rest.region}.`,
         rest.description,
         `Cuisine: ${rest.cuisine.join(', ')}.`,
         `Average cost: ${rest.avgCostPerPerson} GHS per person.`,
-        rest.highlights?.length > 0 ? `Known for: ${rest.highlights.join(', ')}.` : '',
+        (rest.highlights?.length ?? 0) > 0 ? `Known for: ${rest.highlights?.join(', ')}.` : '',
     ];
 
     return parts.filter(Boolean).join(' ');
@@ -67,7 +102,7 @@ export function restaurantToEmbeddingText(rest: any): string {
 /**
  * Convert Festival object to embedding text
  */
-export function festivalToEmbeddingText(fest: any): string {
+export function festivalToEmbeddingText(fest: FestivalItem): string {
     const parts = [
         `${fest.name} is a festival in ${fest.location}, ${fest.region}.`,
         fest.description,
@@ -81,9 +116,9 @@ export function festivalToEmbeddingText(fest: any): string {
  * Process structured data from TypeScript files
  */
 export function processStructuredData(
-    dataArray: any[],
+    dataArray: IngestionData[],
     type: 'accommodation' | 'restaurant' | 'festival',
-    converter: (item: any) => string
+    converter: (item: IngestionData) => string
 ): KnowledgeChunk[] {
     return dataArray.map((item, index) => {
         const embeddingText = converter(item);
@@ -96,7 +131,7 @@ export function processStructuredData(
             metadata: {
                 tags: extractTags(item, type),
                 region: item.region,
-                budget_tier: item.tier || item.priceRange,
+                budget_tier: (item as AccommodationItem).tier || (item as RestaurantItem).priceRange,
                 ...extractAdditionalMetadata(item, type),
             },
         };
@@ -106,14 +141,14 @@ export function processStructuredData(
 /**
  * Extract tags from structured data
  */
-function extractTags(item: any, type: string): string[] {
+function extractTags(item: IngestionData, type: string): string[] {
     const tags: string[] = [type];
 
-    if (item.amenities) tags.push(...item.amenities.slice(0, 5));
-    if (item.cuisine) tags.push(...item.cuisine);
-    if (item.travelStyle) tags.push(...item.travelStyle);
-    if (item.tier) tags.push(item.tier);
-    if (item.type) tags.push(item.type);
+    if ((item as AccommodationItem).amenities) tags.push(...(item as AccommodationItem).amenities.slice(0, 5));
+    if ((item as RestaurantItem).cuisine) tags.push(...(item as RestaurantItem).cuisine);
+    if ((item as FestivalItem).travelStyle) tags.push(...(item as FestivalItem).travelStyle);
+    if ((item as AccommodationItem).tier) tags.push((item as AccommodationItem).tier);
+    if ((item as AccommodationItem).type) tags.push((item as AccommodationItem).type);
 
     return [...new Set(tags)]; // Remove duplicates
 }
@@ -121,15 +156,15 @@ function extractTags(item: any, type: string): string[] {
 /**
  * Extract additional metadata
  */
-function extractAdditionalMetadata(item: any, type: string): Record<string, any> {
-    const meta: Record<string, any> = {};
+function extractAdditionalMetadata(item: IngestionData, type: string): Record<string, unknown> {
+    const meta: Record<string, unknown> = {};
 
     if (type === 'accommodation') {
-        meta.price_avg = item.pricePerNight?.average;
-        meta.rating = item.rating?.overall;
+        meta.price_avg = (item as AccommodationItem).pricePerNight?.average;
+        meta.rating = (item as AccommodationItem).rating?.overall;
     } else if (type === 'restaurant') {
-        meta.price_avg = item.avgCostPerPerson;
-        meta.rating = item.rating;
+        meta.price_avg = (item as RestaurantItem).avgCostPerPerson;
+        meta.rating = (item as RestaurantItem).rating;
     }
 
     return meta;
@@ -177,8 +212,8 @@ export function parseMarkdownWithFrontmatter(filePath: string): MarkdownDocument
 /**
  * Simple YAML parser for frontmatter
  */
-function parseSimpleYAML(yaml: string): Record<string, any> {
-    const result: Record<string, any> = {};
+function parseSimpleYAML(yaml: string): Record<string, unknown> {
+    const result: Record<string, unknown> = {};
     const lines = yaml.split('\n');
 
     for (const line of lines) {
@@ -189,17 +224,17 @@ function parseSimpleYAML(yaml: string): Record<string, any> {
         if (colonIndex === -1) continue;
 
         const key = trimmed.substring(0, colonIndex).trim();
-        let value: any = trimmed.substring(colonIndex + 1).trim();
+        let value: unknown = trimmed.substring(colonIndex + 1).trim();
 
         // Remove quotes
-        if ((value.startsWith('"') && value.endsWith('"')) ||
-            (value.startsWith("'") && value.endsWith("'"))) {
+        if (typeof value === 'string' && ((value.startsWith('"') && value.endsWith('"')) ||
+            (value.startsWith("'") && value.endsWith("'")))) {
             value = value.slice(1, -1);
         }
 
         // Parse arrays
-        if (value.startsWith('[') && value.endsWith(']')) {
-            value = value.slice(1, -1).split(',').map(v => v.trim().replace(/['"]/g, ''));
+        if (typeof value === 'string' && value.startsWith('[') && value.endsWith(']')) {
+            value = value.slice(1, -1).split(',').map((v: string) => v.trim().replace(/['"]/g, ''));
         }
 
         result[key] = value;
@@ -258,12 +293,12 @@ export function processMarkdownFile(filePath: string): KnowledgeChunk[] {
 
     return chunks.map((chunk, index) => ({
         id: doc.frontmatter.id ? `${doc.frontmatter.id}_${index}` : `md_${path.basename(filePath, '.md')}_${index}`,
-        type: (doc.frontmatter.category?.toLowerCase() || 'culture') as any,
-        title: doc.frontmatter.title || path.basename(filePath, '.md'),
+        type: (doc.frontmatter.category as string)?.toLowerCase() as 'accommodation' | 'restaurant' | 'culture' | 'history' | 'tip' | 'festival' || 'culture',
+        title: (doc.frontmatter.title as string) || path.basename(filePath, '.md'),
         content: chunk,
         metadata: {
-            tags: Array.isArray(doc.frontmatter.tags) ? doc.frontmatter.tags : [],
-            region: doc.frontmatter.region,
+            tags: Array.isArray(doc.frontmatter.tags) ? (doc.frontmatter.tags as string[]) : [],
+            region: doc.frontmatter.region as string | undefined,
             ...doc.frontmatter,
         },
     }));

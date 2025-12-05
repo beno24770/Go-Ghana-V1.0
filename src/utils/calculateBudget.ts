@@ -35,8 +35,33 @@ export function calculateBudget(data: BudgetFormData): BudgetBreakdown {
     // Determine Tier
     const tier = data.accommodationLevel; // backpacker, budget, mid, comfort, luxury
 
+    // --- CUSTOM BUDGET SCALING ---
+    let scalingFactor = 1.0;
+    if (data.customDailyBudget) {
+        // Calculate default daily cost for this tier to derive scaling factor
+        // We use base rates without seasonality/region for the baseline comparison
+        const defaultAccom = BASE_COSTS.accommodation[tier];
+        const defaultFood = BASE_COSTS.food[tier];
+        const defaultTransport = BASE_COSTS.transport[tier];
+
+        // Estimate daily activity (rough average)
+        let defaultActivity = 0;
+        if (tier === 'backpacker') defaultActivity = 50;
+        else if (tier === 'budget') defaultActivity = 100;
+        else if (tier === 'mid') defaultActivity = 200;
+        else if (tier === 'comfort') defaultActivity = 400;
+        else if (tier === 'luxury') defaultActivity = 800;
+
+        const defaultDailyTotalGHS = defaultAccom + defaultFood + defaultTransport + defaultActivity;
+        const targetDailyTotalGHS = data.customDailyBudget * USD_TO_GHS_RATE;
+
+        if (defaultDailyTotalGHS > 0) {
+            scalingFactor = targetDailyTotalGHS / defaultDailyTotalGHS;
+        }
+    }
+
     // --- STEP 1: ACCOMMODATION ---
-    const baseAccomRate = BASE_COSTS.accommodation[tier];
+    const baseAccomRate = BASE_COSTS.accommodation[tier] * scalingFactor;
     let accomCostPerPerson: number = baseAccomRate;
 
     if (data.roomSharing === 'shared') {
@@ -92,12 +117,12 @@ export function calculateBudget(data: BudgetFormData): BudgetBreakdown {
         // Distance based public transport
         // Base rate + (dist * rate) / days
         const totalPublicCost = (totalDistance * 0.5); // 0.5 GHS per km for public?
-        dailyTransportCost = (BASE_COSTS.transport[tier] + (totalPublicCost / duration));
+        dailyTransportCost = ((BASE_COSTS.transport[tier] * scalingFactor) + (totalPublicCost / duration));
     } else {
         // Default Distance-based calculation
         // transportCost = baseRate + (distanceKm * fuelRate * regionMultiplier * seasonMultiplier)
         // We calculate a daily average
-        const baseTransport = BASE_COSTS.transport[tier];
+        const baseTransport = BASE_COSTS.transport[tier] * scalingFactor;
         const fuelCostTotal = totalDistance * FUEL_RATE_PER_KM;
 
         // Average region multiplier
@@ -124,7 +149,7 @@ export function calculateBudget(data: BudgetFormData): BudgetBreakdown {
         });
     }
     // Apply Tier Multiplier to daily activities
-    const tierMult = TIER_MULTIPLIERS_V2[tier] || 1.0;
+    const tierMult = (TIER_MULTIPLIERS_V2[tier] || 1.0) * scalingFactor;
     dailyActivityBase *= tierMult;
 
     // Apply Season Multiplier
@@ -150,7 +175,7 @@ export function calculateBudget(data: BudgetFormData): BudgetBreakdown {
         const modifiers = REGION_MULTIPLIERS_V2[region] || { transport: 1.0, food: 1.0 };
 
         // Food
-        const baseFood = BASE_COSTS.food[tier];
+        const baseFood = BASE_COSTS.food[tier] * scalingFactor;
         const regionFood = baseFood * modifiers.food;
 
         // Transport (apply region modifier to daily cost)

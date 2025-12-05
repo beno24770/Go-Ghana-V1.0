@@ -156,15 +156,8 @@ Remember: You are the PRIMARY intelligence. The context data is your source of t
      * Generate a complete trip itinerary using AI
      */
     async generateItinerary(
-        context: {
-            budget: unknown;
-            formData: unknown;
-            options: unknown;
-            availableAccommodations: unknown;
-            availableRestaurants: unknown;
-            availableActivities: unknown;
-        }
-    ): Promise<unknown> {
+        context: Record<string, unknown>
+    ): Promise<Record<string, unknown>> {
         if (!this.config.apiKey) {
             throw new Error("API Key is missing. Please configure the LLM settings.");
         }
@@ -284,7 +277,7 @@ IMPORTANT: Return ONLY the JSON object, no additional text or markdown formattin
                     generatedBy: 'ai',
                     aiModel: this.config.model,
                 };
-            } catch (parseError) {
+            } catch {
                 console.error("Failed to parse AI response:", content);
                 throw new Error("AI generated invalid itinerary format");
             }
@@ -298,27 +291,44 @@ IMPORTANT: Return ONLY the JSON object, no additional text or markdown formattin
     /**
      * Calculate summary from days array
      */
-    private calculateSummary(days: any[]): any {
+    private calculateSummary(days: Array<Record<string, unknown>>): Record<string, unknown> {
         let totalAccommodationCost = 0;
         let totalFoodCost = 0;
         let totalTransportCost = 0;
         let totalActivitiesCost = 0;
 
+        interface DayMeal {
+            averageCost?: number;
+        }
+
+        interface DayMeals {
+            breakfast?: DayMeal;
+            lunch?: DayMeal;
+            dinner?: DayMeal;
+        }
+
+        interface DayAccommodation {
+            pricePerNight?: number;
+        }
+
         for (const day of days) {
-            if (day.accommodation?.pricePerNight) {
-                totalAccommodationCost += day.accommodation.pricePerNight;
+            const accommodation = day.accommodation as DayAccommodation | undefined;
+            if (accommodation?.pricePerNight) {
+                totalAccommodationCost += accommodation.pricePerNight;
             }
-            if (day.meals) {
-                totalFoodCost += (day.meals.breakfast?.averageCost || 0) +
-                    (day.meals.lunch?.averageCost || 0) +
-                    (day.meals.dinner?.averageCost || 0);
+
+            const meals = day.meals as DayMeals | undefined;
+            if (meals) {
+                totalFoodCost += (meals.breakfast?.averageCost || 0) +
+                    (meals.lunch?.averageCost || 0) +
+                    (meals.dinner?.averageCost || 0);
             }
             if (day.transport) {
-                totalTransportCost += day.transport.reduce((sum: number, t: any) => sum + (t.estimatedCost || 0), 0);
+                totalTransportCost += (day.transport as Array<{ estimatedCost?: number }>).reduce((sum: number, t) => sum + (t.estimatedCost || 0), 0);
             }
 
             const dayActivities = [...(day.morning || []), ...(day.afternoon || []), ...(day.evening || [])];
-            totalActivitiesCost += dayActivities.reduce((sum: number, act: any) => sum + (act.cost || 0), 0);
+            totalActivitiesCost += dayActivities.reduce((sum: number, act: Record<string, unknown>) => sum + ((act.cost as number) || 0), 0);
         }
 
         const totalCost = totalAccommodationCost + totalFoodCost + totalTransportCost + totalActivitiesCost;
@@ -339,6 +349,6 @@ export const llmService = new LLMService();
 /**
  * Convenience function to generate itinerary with AI
  */
-export async function generateItineraryWithAI(context: any): Promise<any> {
+export async function generateItineraryWithAI(context: Record<string, unknown>): Promise<Record<string, unknown>> {
     return await llmService.generateItinerary(context);
 }

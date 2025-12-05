@@ -6,6 +6,7 @@ import {
     Calculator, Calendar, MapPin, Plane,
     Briefcase, Heart, ArrowRight, ArrowLeft, Check, Info
 } from 'lucide-react';
+import { sleep } from '../utils/delay';
 import { Button } from './ui/Button';
 import { Label } from './ui/Label';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './ui/Card';
@@ -81,6 +82,9 @@ const formSchema = z.object({
     interests: z.array(z.string()),
     origin: z.string().optional(),
     nationality: z.string().optional(),
+    customDailyBudget: z.number().optional(),
+    startDate: z.string().optional(),
+    endDate: z.string().optional(),
 });
 
 type FormSchema = z.infer<typeof formSchema>;
@@ -88,12 +92,17 @@ type FormSchema = z.infer<typeof formSchema>;
 export interface BudgetFormProps {
     onSubmit: (data: BudgetFormData) => void;
     isLoading?: boolean;
+    initialStep?: number;
 }
 
-export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
-    const [step, setStep] = useState(1);
+export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: BudgetFormProps) {
+    const [step, setStep] = useState(initialStep);
     const totalSteps = 7; // Now includes Review & Confirm step
     console.log("BudgetForm loaded - v7.0 (Review Step Added)");
+
+    useEffect(() => {
+        setStep(initialStep);
+    }, [initialStep]);
 
     const {
         register,
@@ -127,20 +136,20 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
     const [returnToReview, setReturnToReview] = useState(false);
     const [isNavigating, setIsNavigating] = useState(false);
 
-    const handleNext = () => {
+    const handleNext = async () => {
         if (isNavigating) return;
         setIsNavigating(true);
 
         // Small delay to prevent double-clicks triggering the next button immediately
-        setTimeout(() => {
-            if (returnToReview) {
-                setStep(totalSteps);
-                setReturnToReview(false);
-            } else {
-                if (step < totalSteps) setStep(s => s + 1);
-            }
-            setIsNavigating(false);
-        }, 300);
+        await sleep(300);
+
+        if (returnToReview) {
+            setStep(totalSteps);
+            setReturnToReview(false);
+        } else {
+            if (step < totalSteps) setStep(s => s + 1);
+        }
+        setIsNavigating(false);
     };
 
     const handleBack = () => {
@@ -213,35 +222,54 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
             <div className="space-y-6">
                 <div className="space-y-4">
                     <div className="flex justify-between items-end">
-                        <Label className="text-lg font-bold text-gray-900">Trip Duration</Label>
+                        <Label className="text-lg font-bold text-gray-900">Trip Dates</Label>
                         <span className="text-2xl font-bold text-ghana-green">{watchedValues.duration} <span className="text-sm font-medium text-gray-500">days</span></span>
                     </div>
-                    <input
-                        type="range"
-                        min="1"
-                        max="30"
-                        className="w-full h-3 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-ghana-green focus:outline-none focus:ring-2 focus:ring-ghana-green/20"
-                        aria-label="Trip Duration"
-                        {...register('duration', { valueAsNumber: true })}
-                    />
-                    <div className="flex gap-2 flex-wrap pt-2">
-                        {[3, 7, 10, 14, 21].map(d => (
-                            <Button
-                                key={d}
-                                type="button"
-                                variant={watchedValues.duration === d ? "default" : "outline"}
-                                size="sm"
-                                onClick={() => setValue('duration', d)}
-                                className={cn(
-                                    "h-9 px-4 rounded-full transition-all",
-                                    watchedValues.duration === d
-                                        ? "bg-ghana-green hover:bg-green-800 text-white shadow-md transform scale-105"
-                                        : "border-gray-200 hover:border-ghana-green hover:text-ghana-green bg-white"
-                                )}
-                            >
-                                {d} days
-                            </Button>
-                        ))}
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="startDate" className="text-sm font-medium text-gray-500">Start Date</Label>
+                            <input
+                                id="startDate"
+                                type="date"
+                                className="w-full h-12 px-4 rounded-xl border-2 border-gray-100 bg-white focus:outline-none focus:border-ghana-green focus:ring-0 transition-colors"
+                                {...register('startDate', {
+                                    onChange: (e) => {
+                                        const start = new Date(e.target.value);
+                                        const endVal = watch('endDate');
+                                        if (endVal) {
+                                            const end = new Date(endVal);
+                                            const diffTime = Math.abs(end.getTime() - start.getTime());
+                                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // Inclusive
+                                            if (diffDays > 0) setValue('duration', diffDays);
+
+                                            // Set Month automatically
+                                            const monthName = start.toLocaleString('default', { month: 'long' });
+                                            setValue('month', monthName);
+                                        }
+                                    }
+                                })}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="endDate" className="text-sm font-medium text-gray-500">End Date</Label>
+                            <input
+                                id="endDate"
+                                type="date"
+                                className="w-full h-12 px-4 rounded-xl border-2 border-gray-100 bg-white focus:outline-none focus:border-ghana-green focus:ring-0 transition-colors"
+                                {...register('endDate', {
+                                    onChange: (e) => {
+                                        const end = new Date(e.target.value);
+                                        const startVal = watch('startDate');
+                                        if (startVal) {
+                                            const start = new Date(startVal);
+                                            const diffTime = Math.abs(end.getTime() - start.getTime());
+                                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // Inclusive
+                                            if (diffDays > 0) setValue('duration', diffDays);
+                                        }
+                                    }
+                                })}
+                            />
+                        </div>
                     </div>
                 </div>
 
@@ -355,29 +383,51 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                             <label
                                 key={style.id}
                                 className={cn(
-                                    "relative flex items-start space-x-4 p-5 rounded-xl border-2 cursor-pointer transition-all duration-200 hover:shadow-md",
+                                    "relative flex flex-col p-5 rounded-xl border-2 cursor-pointer transition-all duration-200 hover:shadow-md",
                                     watchedValues.travelStyle === style.id
                                         ? "border-ghana-green bg-ghana-green/5 shadow-sm"
                                         : "border-gray-100 hover:border-ghana-green/30 bg-white"
                                 )}
                             >
-                                <input
-                                    type="radio"
-                                    value={style.id}
-                                    className="mt-1.5 accent-ghana-green h-4 w-4"
-                                    {...register('travelStyle')}
-                                />
-                                <div className="flex-1">
-                                    <div className="flex flex-wrap justify-between items-center mb-1 gap-2">
-                                        <span className={cn("font-bold text-lg", watchedValues.travelStyle === style.id ? "text-ghana-green" : "text-gray-900")}>
-                                            {style.label}
-                                        </span>
-                                        <span className="text-xs font-bold text-ghana-green bg-ghana-green/10 px-3 py-1 rounded-full whitespace-nowrap">
-                                            {style.cost}
-                                        </span>
+                                <div className="flex items-start space-x-4">
+                                    <input
+                                        type="radio"
+                                        value={style.id}
+                                        data-testid={`travel-style-${style.id}`}
+                                        className="mt-1.5 accent-ghana-green h-4 w-4"
+                                        {...register('travelStyle')}
+                                    />
+                                    <div className="flex-1">
+                                        <div className="flex flex-wrap justify-between items-center mb-1 gap-2">
+                                            <span className={cn("font-bold text-lg", watchedValues.travelStyle === style.id ? "text-ghana-green" : "text-gray-900")}>
+                                                {style.label}
+                                            </span>
+                                            <span className="text-xs font-bold text-ghana-green bg-ghana-green/10 px-3 py-1 rounded-full whitespace-nowrap">
+                                                {style.cost}
+                                            </span>
+                                        </div>
+                                        <p className="text-sm text-gray-500 leading-relaxed">{style.desc}</p>
                                     </div>
-                                    <p className="text-sm text-gray-500 leading-relaxed">{style.desc}</p>
                                 </div>
+
+                                {/* Custom Budget Input - Only show for selected style */}
+                                {watchedValues.travelStyle === style.id && (
+                                    <div className="mt-4 pt-4 border-t border-gray-200/50 animate-in fade-in slide-in-from-top-2">
+                                        <Label className="text-sm font-bold text-gray-700 mb-2 block">
+                                            Want to set a specific daily budget? (USD)
+                                        </Label>
+                                        <div className="relative max-w-[200px]">
+                                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-bold">$</span>
+                                            <input
+                                                type="number"
+                                                placeholder="e.g. 45"
+                                                className="w-full h-10 pl-7 pr-3 rounded-lg border border-gray-300 focus:border-ghana-green focus:ring-1 focus:ring-ghana-green outline-none transition-all text-sm font-medium"
+                                                {...register('customDailyBudget', { valueAsNumber: true })}
+                                                onClick={(e) => e.stopPropagation()}
+                                            />
+                                        </div>
+                                    </div>
+                                )}
                             </label>
                         ))}
                     </div>
@@ -391,7 +441,7 @@ export function BudgetForm({ onSubmit, isLoading = false }: BudgetFormProps) {
                                 "flex items-center space-x-2 px-5 py-2.5 rounded-full border-2 cursor-pointer transition-all duration-200",
                                 watchedValues.accommodationType === type
                                     ? "bg-ghana-green text-white border-ghana-green shadow-md transform scale-105"
-                                    : "bg-white text-gray-700 border-gray-200 hover:border-ghana-green/50 hover:bg-gray-50"
+                                    : "bg-white text-gray-700 border-gray-200 hover:border-ghana-green hover:bg-white" // Changed hover bg to white to keep text visible
                             )}>
                                 <input
                                     type="radio"

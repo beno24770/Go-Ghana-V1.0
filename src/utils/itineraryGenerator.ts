@@ -77,7 +77,6 @@ function generateTemplateItinerary(
 ): TripItinerary {
 
     const { duration, regions, accommodationLevel, activities } = formData;
-    const travelerCount = formData.travelers || 1;
 
     // Determine budget tier
     const tier = accommodationLevel;
@@ -189,7 +188,7 @@ function generateMeals(
  */
 function generateMorningActivities(
     region: string,
-    interests: string[],
+    _interests: string[], // Reserved for future use to filter activities by user interests
     isFirstDay: boolean
 ): ItineraryActivity[] {
 
@@ -228,8 +227,7 @@ function generateMorningActivities(
  * Generate afternoon activities
  */
 function generateAfternoonActivities(
-    region: string,
-    interests: string[]
+    region: string
 ): ItineraryActivity[] {
 
     const activities = getActivitiesByType(region, 'culture');
@@ -255,8 +253,7 @@ function generateAfternoonActivities(
  * Generate evening activities
  */
 function generateEveningActivities(
-    region: string,
-    interests: string[]
+    region: string
 ): ItineraryActivity[] {
 
     const activities = getActivitiesByType(region, 'nightlife');

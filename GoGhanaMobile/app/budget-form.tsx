@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Platform, KeyboardAvoidingView, Alert } from 'react-native';
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,10 +7,10 @@ import { calculateBudget, formatCurrency } from '../src/utils/calculateBudget';
 import { generateItinerary } from '../src/services/gemini';
 import { cacheItinerary, saveTrip } from '../src/services/storage';
 
-const MONTHS = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-];
+// const MONTHS = [
+//     'January', 'February', 'March', 'April', 'May', 'June',
+//     'July', 'August', 'September', 'October', 'November', 'December'
+// ];
 
 const ACCOMMODATION_LEVELS = [
     { value: 'backpacker', label: 'Backpacker', description: 'Hostels & budget stays' },
@@ -109,7 +109,7 @@ export default function BudgetFormScreen() {
                     },
                 ]
             );
-        } catch (error) {
+        } catch {
             Alert.alert('Error', 'Failed to generate itinerary. Please try again.');
         } finally {
             setLoading(false);
@@ -268,8 +268,8 @@ function Step2Travelers({ formData, updateFormData }: StepProps) {
                     <TouchableOpacity
                         key={type.value}
                         className={`flex-row items-center p-4 rounded-lg border-2 ${formData.travelerType === type.value
-                                ? 'border-ghana-green bg-ghana-green/10'
-                                : 'border-gray-200 bg-white'
+                            ? 'border-ghana-green bg-ghana-green/10'
+                            : 'border-gray-200 bg-white'
                             }`}
                         onPress={() => updateFormData({ travelerType: type.value as any })}
                     >
@@ -304,8 +304,8 @@ function Step3Accommodation({ formData, updateFormData }: StepProps) {
                     <TouchableOpacity
                         key={level.value}
                         className={`p-4 rounded-lg border-2 ${formData.accommodationLevel === level.value
-                                ? 'border-ghana-green bg-ghana-green/10'
-                                : 'border-gray-200 bg-white'
+                            ? 'border-ghana-green bg-ghana-green/10'
+                            : 'border-gray-200 bg-white'
                             }`}
                         onPress={() => updateFormData({ accommodationLevel: level.value as any })}
                     >
@@ -346,8 +346,8 @@ function Step4Activities({ formData, updateFormData }: StepProps) {
                         <TouchableOpacity
                             key={activity.value}
                             className={`flex-row items-center p-4 rounded-lg border-2 ${isSelected
-                                    ? 'border-ghana-green bg-ghana-green/10'
-                                    : 'border-gray-200 bg-white'
+                                ? 'border-ghana-green bg-ghana-green/10'
+                                : 'border-gray-200 bg-white'
                                 }`}
                             onPress={() => toggleActivity(activity.value)}
                         >
@@ -384,8 +384,8 @@ function Step5Extras({ formData, updateFormData }: StepProps) {
             <View className="gap-4">
                 <TouchableOpacity
                     className={`flex-row items-center justify-between p-4 rounded-lg border-2 ${formData.includeFlights
-                            ? 'border-ghana-green bg-ghana-green/10'
-                            : 'border-gray-200 bg-white'
+                        ? 'border-ghana-green bg-ghana-green/10'
+                        : 'border-gray-200 bg-white'
                         }`}
                     onPress={() => updateFormData({ includeFlights: !formData.includeFlights })}
                 >
@@ -413,8 +413,8 @@ function Step5Extras({ formData, updateFormData }: StepProps) {
 
                 <TouchableOpacity
                     className={`flex-row items-center justify-between p-4 rounded-lg border-2 ${formData.includeInsurance
-                            ? 'border-ghana-green bg-ghana-green/10'
-                            : 'border-gray-200 bg-white'
+                        ? 'border-ghana-green bg-ghana-green/10'
+                        : 'border-gray-200 bg-white'
                         }`}
                     onPress={() => updateFormData({ includeInsurance: !formData.includeInsurance })}
                 >

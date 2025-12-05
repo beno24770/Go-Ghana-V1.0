@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronUp, MapPin, Clock, DollarSign, Star } from 'lucide-react';
 import type { ItineraryDay } from '../types/itinerary';
-import { Button } from './ui/Button';
 
 interface ItineraryDayCardProps {
     day: ItineraryDay;

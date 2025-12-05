@@ -128,56 +128,6 @@ export default function ItineraryDetailScreen() {
                         </View>
                     ))}
                 </View>
-            )}
-
-            {/* Day-by-Day Itinerary */}
-            <View className="px-6 py-6">
-                <Text className="text-lg font-bold text-ghana-black mb-4">
-                    Day-by-Day Itinerary
-                </Text>
-                {itinerary.days.map((day, index) => (
-                    <DayCard
-                        key={day.day}
-                        day={day}
-                        isExpanded={expandedDay === day.day}
-                        onToggle={() => setExpandedDay(expandedDay === day.day ? null : day.day)}
-                    />
-                ))}
-            </View>
-
-            {/* Save Button */}
-            <View className="px-6 py-6">
-                <TouchableOpacity
-                    className="bg-ghana-yellow py-4 px-8 rounded-lg"
-                    onPress={handleSaveTrip}
-                >
-                    <Text className="text-white text-center font-bold text-lg">
-                        💾 Save This Trip
-                    </Text>
-                </TouchableOpacity>
-            </View>
-        </ScrollView>
-    );
-}
-
-function DayCard({ day, isExpanded, onToggle }: {
-    day: ItineraryDay;
-    isExpanded: boolean;
-    onToggle: () => void;
-}) {
-    const height = useSharedValue(isExpanded ? 'auto' : 0);
-
-    const animatedStyle = useAnimatedStyle(() => ({
-        height: withTiming(height.value, { duration: 300 }),
-    }));
-
-    return (
-        <View className="mb-4 border border-gray-200 rounded-lg overflow-hidden">
-            <TouchableOpacity
-                className="bg-soft-ivory p-4 flex-row justify-between items-center"
-                onPress={onToggle}
-            >
-                <View className="flex-1">
                     <Text className="text-lg font-bold text-ghana-black">
                         Day {day.day}
                     </Text>
@@ -188,65 +138,66 @@ function DayCard({ day, isExpanded, onToggle }: {
                     size={24}
                     color="#15803D"
                 />
-            </TouchableOpacity>
+            </TouchableOpacity >
 
-            {isExpanded && (
-                <Animated.View entering={FadeIn} exiting={FadeOut} className="p-4">
-                    {/* Morning */}
-                    <TimeSection title="Morning" activities={day.morning} icon="sunny" />
+        { isExpanded && (
+            <Animated.View entering={FadeIn} exiting={FadeOut} className="p-4">
+                {/* Morning */}
+                <TimeSection title="Morning" activities={day.morning} icon="sunny" />
 
-                    {/* Afternoon */}
-                    <TimeSection title="Afternoon" activities={day.afternoon} icon="partly-sunny" />
+                {/* Afternoon */}
+                <TimeSection title="Afternoon" activities={day.afternoon} icon="partly-sunny" />
 
-                    {/* Evening */}
-                    <TimeSection title="Evening" activities={day.evening} icon="moon" />
+                {/* Evening */}
+                <TimeSection title="Evening" activities={day.evening} icon="moon" />
 
-                    {/* Meals */}
-                    {day.meals && (
-                        <View className="mt-4 pt-4 border-t border-gray-200">
-                            <View className="flex-row items-center mb-3">
-                                <Ionicons name="restaurant" size={20} color="#D97706" />
-                                <Text className="text-lg font-semibold text-ghana-black ml-2">
-                                    Meals
-                                </Text>
-                            </View>
-                            {day.meals.breakfast && (
-                                <MealItem meal={day.meals.breakfast} type="Breakfast" />
-                            )}
-                            {day.meals.lunch && (
-                                <MealItem meal={day.meals.lunch} type="Lunch" />
-                            )}
-                            {day.meals.dinner && (
-                                <MealItem meal={day.meals.dinner} type="Dinner" />
-                            )}
+                {/* Meals */}
+                {day.meals && (
+                    <View className="mt-4 pt-4 border-t border-gray-200">
+                        <View className="flex-row items-center mb-3">
+                            <Ionicons name="restaurant" size={20} color="#D97706" />
+                            <Text className="text-lg font-semibold text-ghana-black ml-2">
+                                Meals
+                            </Text>
                         </View>
-                    )}
+                        {day.meals.breakfast && (
+                            <MealItem meal={day.meals.breakfast} type="Breakfast" />
+                        )}
+                        {day.meals.lunch && (
+                            <MealItem meal={day.meals.lunch} type="Lunch" />
+                        )}
+                        {day.meals.dinner && (
+                            <MealItem meal={day.meals.dinner} type="Dinner" />
+                        )}
+                    </View>
+                )}
 
-                    {/* Accommodation */}
-                    {day.accommodation && (
-                        <View className="mt-4 pt-4 border-t border-gray-200">
-                            <View className="flex-row items-center mb-3">
-                                <Ionicons name="bed" size={20} color="#D97706" />
-                                <Text className="text-lg font-semibold text-ghana-black ml-2">
-                                    Accommodation
-                                </Text>
-                            </View>
-                            <View className="bg-soft-ivory p-3 rounded-lg">
-                                <Text className="font-semibold text-ghana-black">
-                                    {day.accommodation.name}
-                                </Text>
-                                <Text className="text-gray-600 text-sm">
-                                    {day.accommodation.type} • {day.accommodation.location}
-                                </Text>
-                                <Text className="text-ghana-green font-semibold mt-1">
-                                    {formatCurrency(day.accommodation.estimatedCost)}
-                                </Text>
-                            </View>
+                {/* Accommodation */}
+                {day.accommodation && (
+                    <View className="mt-4 pt-4 border-t border-gray-200">
+                        <View className="flex-row items-center mb-3">
+                            <Ionicons name="bed" size={20} color="#D97706" />
+                            <Text className="text-lg font-semibold text-ghana-black ml-2">
+                                Accommodation
+                            </Text>
                         </View>
-                    )}
-                </Animated.View>
-            )}
-        </View>
+                        <View className="bg-soft-ivory p-3 rounded-lg">
+                            <Text className="font-semibold text-ghana-black">
+                                {day.accommodation.name}
+                            </Text>
+                            <Text className="text-gray-600 text-sm">
+                                {day.accommodation.type} • {day.accommodation.location}
+                            </Text>
+                            <Text className="text-ghana-green font-semibold mt-1">
+                                {formatCurrency(day.accommodation.estimatedCost)}
+                            </Text>
+                        </View>
+                    </View>
+                )}
+            </Animated.View>
+        )
+}
+        </View >
     );
 }
 

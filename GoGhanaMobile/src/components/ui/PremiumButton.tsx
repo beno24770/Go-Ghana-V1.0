@@ -4,8 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Animated, {
     useAnimatedStyle,
     useSharedValue,
-    withSpring,
-    withTiming
+    withSpring
 } from 'react-native-reanimated';
 
 interface PremiumButtonProps {

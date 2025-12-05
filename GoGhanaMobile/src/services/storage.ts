@@ -33,19 +33,6 @@ export async function saveTrip(trip: TripItinerary, name: string): Promise<void>
 }
 
 /**
- * Get all saved trips
- */
-export async function getSavedTrips(): Promise<SavedTrip[]> {
-    try {
-        const tripsJson = await AsyncStorage.getItem(STORAGE_KEYS.TRIPS);
-        return tripsJson ? JSON.parse(tripsJson) : [];
-    } catch (error) {
-        console.error('Error getting saved trips:', error);
-        return [];
-    }
-}
-
-/**
  * Get a specific trip by ID
  */
 export async function getTripById(id: string): Promise<SavedTrip | null> {
@@ -58,19 +45,6 @@ export async function getTripById(id: string): Promise<SavedTrip | null> {
     }
 }
 
-/**
- * Delete a saved trip
- */
-export async function deleteTrip(id: string): Promise<void> {
-    try {
-        const trips = await getSavedTrips();
-        const updatedTrips = trips.filter(trip => trip.id !== id);
-        await AsyncStorage.setItem(STORAGE_KEYS.TRIPS, JSON.stringify(updatedTrips));
-    } catch (error) {
-        console.error('Error deleting trip:', error);
-        throw new Error('Failed to delete trip');
-    }
-}
 
 /**
  * Cache the current itinerary for offline access
