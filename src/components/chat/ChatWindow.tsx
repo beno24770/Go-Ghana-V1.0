@@ -6,7 +6,7 @@ import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 
 export const ChatWindow: React.FC = () => {
-    const { messages, isTyping, sendMessage, toggleChat } = useChat();
+    const { messages, isTyping, sendMessage, toggleChat, categoryContext } = useChat();
     const [inputValue, setInputValue] = useState('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -77,6 +77,23 @@ export const ChatWindow: React.FC = () => {
                 )}
                 <div ref={messagesEndRef} />
             </div>
+
+            {/* Suggested Questions (Context Aware) */}
+            {categoryContext && categoryContext.suggestedQuestions.length > 0 && (
+                <div className="px-3 sm:px-4 py-2 bg-gray-50 border-t border-gray-100 overflow-x-auto whitespace-nowrap scrollbar-hide">
+                    <div className="flex gap-2">
+                        {categoryContext.suggestedQuestions.map((question, idx) => (
+                            <button
+                                key={idx}
+                                onClick={() => sendMessage(question)}
+                                className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-white border border-ghana-green/30 text-ghana-green hover:bg-ghana-green hover:text-white transition-colors shadow-sm"
+                            >
+                                {question}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {/* Input */}
             <div className="p-3 sm:p-4 bg-white border-t border-gray-200 rounded-b-xl">

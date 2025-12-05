@@ -126,7 +126,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         // We wrap the async call in a timeout to ensure the UI shows "typing" for at least a bit
         setTimeout(async () => {
             try {
-                const response = await chatService.processMessage(content, budgetContext);
+                const response = await chatService.processMessage(content, budgetContext, categoryContext);
                 setMessages(prev => [...prev, response]);
             } catch (error) {
                 console.error("Failed to process message:", error);
@@ -138,7 +138,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
                 }
             }
         }, 1000);
-    }, [isOpen, budgetContext]);
+    }, [isOpen, budgetContext, categoryContext]);
 
     const handleAction = useCallback((actionType: string, payload?: unknown) => {
         // Handle specific actions by converting them to user messages

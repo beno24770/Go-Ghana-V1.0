@@ -1,7 +1,7 @@
 import type { ChatMessage } from '../types/chat';
 import { GHANA_KNOWLEDGE_BASE, FALLBACK_RESPONSE } from '../data/chatData';
 import { v4 as uuidv4 } from 'uuid';
-import type { BudgetContext } from '../contexts/ChatContext';
+import type { BudgetContext, CategoryContext } from '../contexts/ChatContext';
 import { ACCOMMODATIONS } from '../data/accommodationData';
 import { RESTAURANTS } from '../data/restaurantData';
 import { TRANSPORT_OPTIONS } from '../data/transportData';
@@ -32,10 +32,10 @@ export class ChatService {
      * LLM-FIRST ARCHITECTURE
      * The LLM is the primary brain. We inject all our data as context.
      */
-    public async processMessage(content: string, budgetContext?: BudgetContext | null): Promise<ChatMessage> {
+    public async processMessage(content: string, budgetContext?: BudgetContext | null, categoryContext?: CategoryContext | null): Promise<ChatMessage> {
         try {
             // Build comprehensive context for the LLM
-            const contextData = this.buildLLMContext(content, budgetContext);
+            const contextData = this.buildLLMContext(content, budgetContext, categoryContext);
 
             // Call LLM with full context
             const llmResponse = await import('./llmService').then(m =>
@@ -66,11 +66,21 @@ export class ChatService {
     /**
      * Build comprehensive context to inject into LLM
      */
-    private buildLLMContext(query: string, budgetContext?: BudgetContext | null): LLMContextData {
+    private buildLLMContext(query: string, budgetContext?: BudgetContext | null, categoryContext?: CategoryContext | null): LLMContextData {
         const context: LLMContextData = {
             userQuery: query,
             currentDate: new Date().toISOString(),
         };
+
+        // 0. Category Context (if available) - High Priority
+        if (categoryContext) {
+            context.categoryFocus = {
+                category: categoryContext.category,
+                budgetAmount: categoryContext.amount,
+                formattedBudget: categoryContext.formattedAmount,
+                suggestedQuestions: categoryContext.suggestedQuestions
+            };
+        }
 
         // 1. Budget Context (if available)
         if (budgetContext) {
