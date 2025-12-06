@@ -352,3 +352,79 @@ export const llmService = new LLMService();
 export async function generateItineraryWithAI(context: Record<string, unknown>): Promise<Record<string, unknown>> {
     return await llmService.generateItinerary(context);
 }
+
+import type { Recommendation, VerificationResult } from '../types/recommendations';
+
+/**
+ * Verify a recommendation using Adepa with web search
+ */
+export async function verifyRecommendation(recommendation: Recommendation): Promise<VerificationResult> {
+    const verificationPrompt = `Search the web for current information about "${recommendation.name}" in ${recommendation.location}, Ghana.
+
+Find and return:
+1. Current prices/rates (in GHS if possible)
+2. Availability status
+3. Recent customer reviews and ratings
+4. Booking platforms/links
+5. Recent images
+
+Return ONLY valid JSON in this exact format:
+{
+  "currentPrice": { "min": 400, "max": 650, "currency": "GHS", "source": "Booking.com" },
+  "availability": "available",
+  "reviews": { "rating": 4.5, "count": 234, "source": "Google Reviews" },
+  "bookingLinks": [
+    { "platform": "Booking.com", "url": "https://..." },
+    { "platform": "Expedia", "url": "https://..." }
+  ],
+  "images": ["url1", "url2", "url3"],
+  "sources": ["source1.com", "source2.com"]
+}
+
+If information is not available, omit that field. Be accurate and cite sources.`;
+
+    const apiKey = 'AIzaSyAY4e3w9o5mJsmwNsojXOIzzMt9LsEZqNA';
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ role: 'user', parts: [{ text: verificationPrompt }] }],
+                generationConfig: { temperature: 0.3, maxOutputTokens: 1024 }
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Verification failed: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        const content = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+
+        // Parse the JSON response
+        const cleanContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+        const verificationData = JSON.parse(cleanContent);
+
+        return {
+            recommendation,
+            currentPrice: verificationData.currentPrice,
+            availability: verificationData.availability || 'unknown',
+            images: verificationData.images || [],
+            reviews: verificationData.reviews,
+            bookingLinks: verificationData.bookingLinks || [],
+            lastChecked: new Date(),
+            sources: verificationData.sources || []
+        };
+    } catch (error) {
+        console.error("Verification error:", error);
+        // Return minimal data on error
+        return {
+            recommendation,
+            availability: 'unknown',
+            lastChecked: new Date(),
+            sources: []
+        };
+    }
+}

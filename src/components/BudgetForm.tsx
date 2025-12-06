@@ -76,13 +76,19 @@ const formSchema = z.object({
     transportMode: z.enum(['bolt', 'private_driver', 'rental', 'public', 'flight']),
 
     includeFlights: z.boolean(),
-    flightCost: z.number().optional(),
+    flightCost: z.preprocess(
+        (val) => (val === '' || val === null || Number.isNaN(Number(val)) ? undefined : Number(val)),
+        z.number().optional()
+    ),
     includeInsurance: z.boolean().optional(),
 
     interests: z.array(z.string()),
     origin: z.string().optional(),
     nationality: z.string().optional(),
-    customDailyBudget: z.number().optional(),
+    customDailyBudget: z.preprocess(
+        (val) => (val === '' || val === null || Number.isNaN(Number(val)) ? undefined : Number(val)),
+        z.number().optional()
+    ),
     startDate: z.string().optional(),
     endDate: z.string().optional(),
 });
@@ -163,6 +169,8 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
     };
 
     const onFormSubmit = (data: FormSchema) => {
+        console.log('🎯 Form submitted! Data:', data);
+
         let travelerType: TravelerType = 'solo';
         if (data.travelers === 2) travelerType = 'couple';
         else if (data.travelers > 2 && data.travelers <= 4) travelerType = 'family';
@@ -187,6 +195,7 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
 
         const finalRegions = data.regions.length > 0 ? data.regions : ['Greater Accra', 'Central', 'Ashanti'];
 
+        console.log('✅ Calling parent onSubmit with transformed data');
         onSubmit({
             duration: data.duration,
             travelers: data.travelers,
@@ -952,7 +961,11 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
                 </div>
             </CardHeader>
 
-            <form onSubmit={handleSubmit(onFormSubmit)}>
+            <form onSubmit={handleSubmit(onFormSubmit, (errors) => {
+                console.error("❌ Form validation failed:", errors);
+                // Alert the user if there are errors
+                alert("Please check your entries. Some required fields are missing or invalid.");
+            })}>
                 <CardContent className="p-6 sm:p-8 min-h-[400px]">
                     {step === 1 && renderStep1()}
                     {step === 2 && renderStep2()}

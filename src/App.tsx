@@ -5,6 +5,7 @@ import { LandingScreen } from './components/LandingScreen';
 import { BudgetForm } from './components/BudgetForm';
 import { LoadingScreen } from './components/LoadingScreen';
 import { BudgetResult } from './components/BudgetResult';
+import { BudgetRecommendations } from './components/BudgetRecommendations';
 import { TourRecommendations } from './components/TourRecommendations';
 import { DecisionNode } from './components/DecisionNode';
 import { TripPlanner } from './components/TripPlanner';
@@ -23,6 +24,7 @@ import { ChatWidget } from './components/chat/ChatWidget';
 import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 import { knowledgeService } from './services/knowledgeService';
 import type { BudgetFormData, BudgetBreakdown, Tour } from './types';
+import type { SelectedRecommendations } from './types/recommendations';
 
 function AppContent() {
   // Auth context is available but not currently needed in this component
@@ -33,6 +35,7 @@ function AppContent() {
   const [selectedTour, setSelectedTour] = useState<Tour | null>(null);
   const [isLocalMode, setIsLocalMode] = useState(false);
   const [budgetFormInitialStep, setBudgetFormInitialStep] = useState(1);
+  const [selectedRecommendations, setSelectedRecommendations] = useState<SelectedRecommendations>({});
 
   // Initialize Knowledge Service with mock data
   useEffect(() => {
@@ -119,9 +122,14 @@ function AppContent() {
     setCurrentStep(3);
   };
 
-  // Step 5: Budget Result - Continue to Tours
+  // Step 5: Budget Result - Continue to Recommendations
+  const handleContinueToRecommendations = () => {
+    setCurrentStep(6); // New recommendations page
+  };
+
+  // Step 6: Recommendations - Continue to Tours
   const handleContinueToTours = () => {
-    setCurrentStep(6);
+    setCurrentStep(7); // Tours moved to step 7
   };
 
   // Step 6: Tour Recommendations
@@ -250,13 +258,24 @@ function AppContent() {
             <BudgetResult
               breakdown={budgetResult}
               formData={formData}
-              onContinue={handleContinueToTours}
+              onContinue={handleContinueToRecommendations}
               onEditBudget={handleEditBudget}
             />
           </div>
         )}
 
-        {currentStep === 6 && formData && budgetResult && (
+        {currentStep === 6 && budgetResult && formData && (
+          <BudgetRecommendations
+            breakdown={budgetResult}
+            formData={formData}
+            selectedRecommendations={selectedRecommendations}
+            onSelectionsChange={setSelectedRecommendations}
+            onContinue={handleContinueToTours}
+            onBack={() => setCurrentStep(5)}
+          />
+        )}
+
+        {currentStep === 7 && formData && budgetResult && (
           <TourRecommendations
             interests={formData.activities}
             budget={budgetResult.total}
@@ -267,7 +286,7 @@ function AppContent() {
           />
         )}
 
-        {currentStep === 7 && (
+        {currentStep === 8 && (
           <DecisionNode
             selectedTour={selectedTour}
             onSelectTour={handleBackToTours}
@@ -275,7 +294,7 @@ function AppContent() {
           />
         )}
 
-        {currentStep === 8 && formData && budgetResult && (
+        {currentStep === 9 && formData && budgetResult && (
           <TripPlanner
             formData={formData}
             budgetTotal={budgetResult.total}
@@ -284,7 +303,7 @@ function AppContent() {
           />
         )}
 
-        {currentStep === 9 && formData && budgetResult && (
+        {currentStep === 10 && formData && budgetResult && (
           <TripSummary
             formData={formData}
             budgetBreakdown={budgetResult}
