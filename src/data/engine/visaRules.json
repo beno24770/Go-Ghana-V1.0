@@ -1,0 +1,32 @@
+{
+    "USA": {
+        "visaRequired": true,
+        "cost": 1500,
+        "currency": "GHS"
+    },
+    "UK": {
+        "visaRequired": true,
+        "cost": 1500,
+        "currency": "GHS"
+    },
+    "EU": {
+        "visaRequired": true,
+        "cost": 1500,
+        "currency": "GHS"
+    },
+    "ECOWAS": {
+        "visaRequired": false,
+        "cost": 0,
+        "currency": "GHS"
+    },
+    "Ghanaian": {
+        "visaRequired": false,
+        "cost": 0,
+        "currency": "GHS"
+    },
+    "Other": {
+        "visaRequired": true,
+        "cost": 1500,
+        "currency": "GHS"
+    }
+}

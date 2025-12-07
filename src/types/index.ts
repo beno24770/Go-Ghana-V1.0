@@ -10,7 +10,8 @@ export interface BudgetFormData {
     travelerType: TravelerType;
     accommodationLevel: AccommodationLevel;
     activities: ActivityInterest[];
-    // New optional fields for enhanced calculations
+
+    // Optional / Advanced fields
     month?: string;
     regions?: string[];
     intensity?: 'Relaxed' | 'Moderate' | 'Packed';
@@ -18,7 +19,7 @@ export interface BudgetFormData {
     flightCost?: number;
     includeInsurance?: boolean;
 
-    // Revamp fields
+    // V3 Revamp fields
     roomSharing?: 'private' | 'shared' | 'family';
     arrivalCity?: string;
     transportMode?: 'bolt' | 'private_driver' | 'rental' | 'public' | 'flight';
@@ -41,7 +42,7 @@ export interface RegionalBudget {
     transport: number;
     activities: number;
     tips: string[];
-    note: string;
+    note?: string;
 }
 
 export interface BudgetBreakdown {
@@ -53,7 +54,14 @@ export interface BudgetBreakdown {
     flights: number;
     contingency: number;
     total: number;
-    regionalBreakdown?: RegionalBudget[];
+    regionalBreakdown: RegionalBudget[];
+    // V3 Scaling/Debug Info
+    scaling?: {
+        baseScalingFactor: number;
+        effectiveScalingFactor?: number;
+        seasonAdjustment?: number;
+        regionAdjustment?: number;
+    };
 }
 
 export interface Tour {
@@ -68,8 +76,8 @@ export interface Tour {
     bestMonths?: string[];
     dailyCost: number;
     range: 'backpacker' | 'budget' | 'mid' | 'comfort' | 'luxury';
-    backpackerSubTier?: BackpackerSubTier; // Optional: 'urban' for Accra street culture, 'classic' for Accra + nearby
-    images?: string[]; // Optional: Array of image paths for tour gallery
+    backpackerSubTier?: BackpackerSubTier;
+    images?: string[];
 }
 
 export interface LocalItinerary {
@@ -84,3 +92,4 @@ export interface LocalItinerary {
     };
     highlights: string[];
 }
+

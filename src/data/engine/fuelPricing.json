@@ -1,0 +1,7 @@
+{
+    "baseFuelPrice": 15.80,
+    "dieselMultiplier": 1.05,
+    "inflationTrend": 0.05,
+    "currency": "GHS",
+    "perLiter": true
+}

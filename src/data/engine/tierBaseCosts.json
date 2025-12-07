@@ -1,0 +1,35 @@
+{
+    "backpacker": {
+        "accommodation": 250,
+        "food": 150,
+        "transport": 50,
+        "activity": 50
+    },
+    "budget": {
+        "accommodation": 450,
+        "food": 250,
+        "transport": 100,
+        "activity": 100
+    },
+    "mid-range": {
+        "accommodation": 900,
+        "food": 450,
+        "transport": 200,
+        "activity": 200
+    },
+    "comfort": {
+        "accommodation": 1800,
+        "food": 800,
+        "transport": 450,
+        "activity": 400
+    },
+    "luxury": {
+        "accommodation": 3500,
+        "food": 1500,
+        "transport": 800,
+        "activity": 1000
+    },
+    "flex": {
+        "description": "User defined budget scaling"
+    }
+}

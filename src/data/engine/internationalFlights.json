@@ -1,0 +1,38 @@
+{
+    "USA": {
+        "low": 1100,
+        "standard": 1500,
+        "high": 2200,
+        "currency": "USD"
+    },
+    "UK": {
+        "low": 800,
+        "standard": 1100,
+        "high": 1600,
+        "currency": "USD"
+    },
+    "Europe": {
+        "low": 700,
+        "standard": 1000,
+        "high": 1500,
+        "currency": "USD"
+    },
+    "West Africa": {
+        "low": 300,
+        "standard": 500,
+        "high": 800,
+        "currency": "USD"
+    },
+    "South Africa": {
+        "low": 600,
+        "standard": 900,
+        "high": 1300,
+        "currency": "USD"
+    },
+    "Other": {
+        "low": 1200,
+        "standard": 1600,
+        "high": 2300,
+        "currency": "USD"
+    }
+}

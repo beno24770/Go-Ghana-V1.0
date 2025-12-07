@@ -1,271 +1,274 @@
-import type { BudgetFormData, BudgetBreakdown, RegionalBudget } from '../types';
-import {
-    BASE_COSTS,
-    SEASONAL_MULTIPLIERS_V2,
-    MONTH_TO_SEASON,
-    REGION_MULTIPLIERS_V2,
-    ACTIVITY_COSTS_V2,
-    FLIGHT_COSTS_BY_ORIGIN,
-    CONTINGENCY_RATES_V2,
-    TIER_MULTIPLIERS_V2,
-    FUEL_RATE_PER_KM,
-    VISA_COSTS,
-    ESSENTIAL_COSTS,
-    USD_TO_GHS_RATE,
-    TRANSPORT_MODE_COSTS
-} from '../data/costData';
-import { REGION_INFO } from '../data/regionData';
-import regionDistances from '../data/regionDistances.json';
+import type { BudgetFormData, BudgetBreakdown } from '../types';
 
-const TRAVELER_COUNTS = {
+// New V3 Data Engine Imports
+import tierBaseCosts from '../data/engine/tierBaseCosts.json';
+import regionCostProfiles from '../data/engine/regionCostProfiles.json';
+import distanceMatrix from '../data/engine/distanceMatrix.json';
+import fuelPricing from '../data/engine/fuelPricing.json';
+import activityBaseCosts from '../data/engine/activityBaseCosts.json';
+import transportModes from '../data/engine/transportModes.json';
+import visaRules from '../data/engine/visaRules.json';
+import internationalFlights from '../data/engine/internationalFlights.json';
+
+// Constants
+const USD_TO_GHS = 15.8; // Fallback or sync with CurrencyContext
+const TRAVELER_COUNTS: Record<string, number> = {
     solo: 1,
     couple: 2,
     family: 4,
     group: 4,
 };
 
+// --- HELPER TYPES & INTERFACES ---
+interface RegionProfile {
+    name: string;
+    accommodationMultiplier: number;
+    foodMultiplier: number;
+    transportMultiplier: number;
+    activityMultiplier: number;
+    seasonalityIndex: number[];
+}
+
+interface TierCost {
+    accommodation: number;
+    food: number;
+    transport: number;
+    activity: number;
+}
+
+// --- CORE V3 ENGINE ---
 export function calculateBudget(data: BudgetFormData): BudgetBreakdown {
     const travelerCount = data.travelers || TRAVELER_COUNTS[data.travelerType] || 1;
     const duration = data.duration;
+    const regions = (data.regions && data.regions.length > 0) ? data.regions : ['Greater Accra'];
 
-    // Determine Season
-    const season = data.month && MONTH_TO_SEASON[data.month] ? MONTH_TO_SEASON[data.month] : "Shoulder";
-    const seasonalMultipliers = SEASONAL_MULTIPLIERS_V2[season];
+    // 1. Determine Month Index (0-11) for Seasonality
+    const monthMap: Record<string, number> = {
+        'January': 0, 'February': 1, 'March': 2, 'April': 3, 'May': 4, 'June': 5,
+        'July': 6, 'August': 7, 'September': 8, 'October': 9, 'November': 10, 'December': 11
+    };
+    const monthIndex = data.month ? monthMap[data.month] : 9; // Default to October if undefined
 
-    // Determine Tier
-    const tier = data.accommodationLevel; // backpacker, budget, mid, comfort, luxury
+    // 2. Base Tier Logic & Adaptive Scaling
+    const tier = data.accommodationLevel;
+    // @ts-ignore
+    const baseCosts: TierCost = tierBaseCosts[tier] || tierBaseCosts['budget'];
 
-    // --- CUSTOM BUDGET SCALING ---
-    let scalingFactor = 1.0;
+    let baseScalingFactor = 1.0;
+
+    // "Flex Tier" / Custom Budget Logic
     if (data.customDailyBudget) {
-        // Calculate default daily cost for this tier to derive scaling factor
-        // We use base rates without seasonality/region for the baseline comparison
-        const defaultAccom = BASE_COSTS.accommodation[tier];
-        const defaultFood = BASE_COSTS.food[tier];
-        const defaultTransport = BASE_COSTS.transport[tier];
-
-        // Estimate daily activity (rough average)
-        let defaultActivity = 0;
-        if (tier === 'backpacker') defaultActivity = 50;
-        else if (tier === 'budget') defaultActivity = 100;
-        else if (tier === 'mid') defaultActivity = 200;
-        else if (tier === 'comfort') defaultActivity = 400;
-        else if (tier === 'luxury') defaultActivity = 800;
-
-        const defaultDailyTotalGHS = defaultAccom + defaultFood + defaultTransport + defaultActivity;
-        const targetDailyTotalGHS = data.customDailyBudget * USD_TO_GHS_RATE;
-
-        if (defaultDailyTotalGHS > 0) {
-            scalingFactor = targetDailyTotalGHS / defaultDailyTotalGHS;
+        const defaultDaily = baseCosts.accommodation + baseCosts.food + baseCosts.transport + baseCosts.activity;
+        const targetGHS = data.customDailyBudget * USD_TO_GHS;
+        if (defaultDaily > 0) {
+            baseScalingFactor = targetGHS / defaultDaily;
         }
     }
 
-    // --- STEP 1: ACCOMMODATION ---
-    const baseAccomRate = BASE_COSTS.accommodation[tier] * scalingFactor;
-    let accomCostPerPerson: number = baseAccomRate;
+    // 3. Regional Adjustments (Average across selected regions)
+    let regionAccomMultSum = 0;
+    let regionFoodMultSum = 0;
+    let regionTransportMultSum = 0;
 
-    if (data.roomSharing === 'shared') {
-        accomCostPerPerson = baseAccomRate / Math.min(2, travelerCount);
-    } else if (data.roomSharing === 'family') {
-        accomCostPerPerson = travelerCount >= 3 ? baseAccomRate * 0.6 : baseAccomRate * 0.75;
-    } else {
-        // Private
-        accomCostPerPerson = baseAccomRate;
-    }
-
-    // Apply Seasonality to Accommodation
-    accomCostPerPerson *= seasonalMultipliers.accommodation;
-
-    // --- STEP 2: TRANSPORT ---
-    // Calculate total distance
-    const regions = (data.regions && data.regions.length > 0) ? data.regions : ['Greater Accra'];
-    let totalDistance = 0;
-
-    // Assume route: Accra -> Region 1 -> Region 2 ... -> Accra
-    let currentLoc = "Accra";
     regions.forEach(r => {
-        // Map region name to city name if needed, or use region name if in JSON
-        // JSON has "Accra", "Kumasi" (Ashanti), "Cape Coast" (Central), "Takoradi" (Western), "Ho" (Volta), "Tamale" (Northern), "Sunyani" (Bono)
-        let targetCity = r;
-        if (r === "Greater Accra") targetCity = "Accra";
-        if (r === "Ashanti") targetCity = "Kumasi";
-        if (r === "Central") targetCity = "Cape Coast";
-        if (r === "Western") targetCity = "Takoradi";
-        if (r === "Volta") targetCity = "Ho";
-        if (r === "Northern") targetCity = "Tamale";
-        if (r === "Bono") targetCity = "Sunyani";
-
         // @ts-ignore
-        const dist = regionDistances[currentLoc]?.[targetCity] || regionDistances[targetCity]?.[currentLoc] || 150; // Default 150km
-        totalDistance += dist;
-        currentLoc = targetCity;
+        const profile: RegionProfile = regionCostProfiles[r] || regionCostProfiles['Greater Accra'];
+        regionAccomMultSum += profile.accommodationMultiplier;
+        regionFoodMultSum += profile.foodMultiplier;
+        regionTransportMultSum += profile.transportMultiplier;
+    });
+
+    const avgRegionAccomMult = regionAccomMultSum / regions.length;
+    const avgRegionFoodMult = regionFoodMultSum / regions.length;
+    const avgRegionTransportMult = regionTransportMultSum / regions.length;
+
+    // 4. Seasonality Factory (Average across selected regions for the specific month)
+    let seasonFactorSum = 0;
+    regions.forEach(r => {
+        // @ts-ignore
+        const profile: RegionProfile = regionCostProfiles[r] || regionCostProfiles['Greater Accra'];
+        seasonFactorSum += profile.seasonalityIndex[monthIndex];
+    });
+    const avgSeasonFactor = seasonFactorSum / regions.length;
+
+    // --- ENGINE: ACCOMMODATION ---
+    // Occupancy Smoothing
+    let occupancyDivider = 1;
+    if (data.roomSharing === 'shared') occupancyDivider = 2; // Split by 2
+    else if (data.roomSharing === 'family') occupancyDivider = travelerCount >= 3 ? 2.5 : 1.5; // Approximation
+
+    let dailyAccom = (baseCosts.accommodation * baseScalingFactor * avgRegionAccomMult * avgSeasonFactor) / occupancyDivider;
+
+    // Price Pressure Adjuster (Start basic, refine later)
+    // If accom > 55% of budget, we might need to clamp, but let's stick to pure calc for now.
+
+    const totalAccom = dailyAccom * duration * travelerCount;
+
+    // --- ENGINE: TRANSPORT ---
+    // Complex Distance Matrix routing
+    let totalDistanceKm = 0;
+    let currentCity = "Accra"; // Start in Accra
+
+    // Map regions to cities for distance matrix
+    const regionToCity: Record<string, string> = {
+        "Greater Accra": "Accra", "Ashanti": "Kumasi", "Central": "Cape Coast", "Western": "Takoradi",
+        "Volta": "Ho", "Northern": "Tamale", "Bono": "Sunyani", "Eastern": "Koforidua"
+    };
+
+    regions.forEach(r => {
+        const targetCity = regionToCity[r] || "Accra";
+        if (targetCity !== currentCity) {
+            // @ts-ignore
+            const dist = distanceMatrix[currentCity]?.[targetCity] || distanceMatrix[targetCity]?.[currentCity] || 200;
+            totalDistanceKm += dist;
+            currentCity = targetCity;
+        }
     });
     // Return to Accra
     // @ts-ignore
-    const returnDist = regionDistances[currentLoc]?.["Accra"] || regionDistances["Accra"]?.[currentLoc] || 150;
-    totalDistance += returnDist;
+    totalDistanceKm += (distanceMatrix[currentCity]?.["Accra"] || distanceMatrix["Accra"]?.[currentCity] || 150);
 
-    let dailyTransportCost = 0;
+    let totalTransportCost = 0;
 
-    if (data.transportMode === 'private_driver' || data.transportMode === 'rental') {
-        // Minimum daily cost override
-        dailyTransportCost = TRANSPORT_MODE_COSTS[data.transportMode] / travelerCount;
-    } else if (data.transportMode === 'bolt') {
-        // Bolt (City based) - approx 160/day per vehicle
-        dailyTransportCost = (TRANSPORT_MODE_COSTS.bolt * Math.ceil(travelerCount / 3)) / travelerCount;
-    } else if (data.transportMode === 'public') {
-        // Distance based public transport
-        // Base rate + (dist * rate) / days
-        const totalPublicCost = (totalDistance * 0.5); // 0.5 GHS per km for public?
-        dailyTransportCost = ((BASE_COSTS.transport[tier] * scalingFactor) + (totalPublicCost / duration));
-    } else {
-        // Default Distance-based calculation
-        // transportCost = baseRate + (distanceKm * fuelRate * regionMultiplier * seasonMultiplier)
-        // We calculate a daily average
-        const baseTransport = BASE_COSTS.transport[tier] * scalingFactor;
-        const fuelCostTotal = totalDistance * FUEL_RATE_PER_KM;
+    // Handle Transport Modes
+    const mode = data.transportMode || 'public';
+    // @ts-ignore
+    const modeData = transportModes[mode] || transportModes['public'];
 
-        // Average region multiplier
-        const avgRegionMult = regions.reduce((sum, r) => sum + (REGION_MULTIPLIERS_V2[r]?.transport || 1.0), 0) / regions.length;
+    if (mode === 'public') {
+        const publicCost = (totalDistanceKm * modeData.costPerKm) + (modeData.baseFare * duration);
+        totalTransportCost = publicCost * travelerCount * avgRegionTransportMult;
+    }
+    else if (mode === 'bolt') {
+        // Bolt is mostly city-based + intercity surcharges
+        const dailyBolt = modeData.baseFare * 8; // ~8 rides/day equivalent or distance approx
+        // Complex bolt calc: (Dist * Cost) + (DailyBase * Days)
+        const interCity = totalDistanceKm * modeData.costPerKm;
+        const intraCity = duration * 200; // 200 GHS/day local movement
+        const vehicles = Math.ceil(travelerCount / modeData.maxPassengers);
+        totalTransportCost = (interCity + intraCity) * vehicles;
+    }
+    else if (mode === 'private_driver' || mode === 'rental') {
+        const vehicles = Math.ceil(travelerCount / modeData.maxPassengers);
+        const rentalCost = modeData.dailyRate * duration * vehicles;
 
-        const totalTransport = (baseTransport * duration) + (fuelCostTotal * avgRegionMult * seasonalMultipliers.transport);
-        dailyTransportCost = totalTransport / duration;
+        // Fuel
+        const fuelEfficiencyKmPerLiter = 8; // SUV approx
+        const fuelRequired = totalDistanceKm / fuelEfficiencyKmPerLiter;
+        // @ts-ignore
+        const fuelCost = fuelRequired * fuelPricing.baseFuelPrice * fuelPricing.dieselMultiplier;
+
+        totalTransportCost = rentalCost + (fuelCost * vehicles);
+    }
+    else if (mode === 'flight') {
+        // Domestic Flight Logic (If Northern region is present)
+        // If 'flight' is selected, we assume flying to ALL capable airports
+        const northernRegions = ['Northern', 'Tamale'];
+        const hasNorth = regions.some(r => northernRegions.includes(r));
+        const flightCount = hasNorth ? 2 : 0; // To/From Tamale
+        // @ts-ignore
+        const flightCost = flightCount * transportModes.flight.baseFare * travelerCount;
+
+        // Plus local transport (bolt/taxi)
+        const localTransport = duration * 150 * travelerCount;
+        totalTransportCost = flightCost + localTransport;
     }
 
-    // Domestic Flights (Northern Regions)
-    const northernRegions = ['Northern', 'Upper East', 'Upper West', 'Savannah', 'North East'];
-    const hasNorthernLeg = regions.some(r => northernRegions.includes(r));
-    const domesticFlightCost = hasNorthernLeg ? 2000 : 0;
-
-    // --- STEP 3: ACTIVITIES ---
-    // Daily-style costs (mood-based)
-    let dailyActivityBase = 0;
+    // --- ENGINE: ACTIVITIES ---
+    let dailyActivityCost = 0;
     if (data.activities) {
         data.activities.forEach(act => {
-            if (act === 'adventure') dailyActivityBase += ACTIVITY_COSTS_V2.daily.adventure;
-            if (act === 'culture') dailyActivityBase += ACTIVITY_COSTS_V2.daily.culture;
-            if (act === 'nature') dailyActivityBase += ACTIVITY_COSTS_V2.daily.nature;
-            if (act === 'relaxation') dailyActivityBase += ACTIVITY_COSTS_V2.daily.relaxation;
+            // @ts-ignore
+            const actData = activityBaseCosts[act] || { baseCost: 50, tierMultiplier: 1 };
+            // Cost = Base * Tier * Scaling * Season
+            dailyActivityCost += actData.baseCost * (baseCosts.activity / 100) * avgSeasonFactor;
         });
+    } else {
+        dailyActivityCost = baseCosts.activity * avgSeasonFactor;
     }
-    // Apply Tier Multiplier to daily activities
-    const tierMult = (TIER_MULTIPLIERS_V2[tier] || 1.0) * scalingFactor;
-    dailyActivityBase *= tierMult;
+    const totalActivityCost = dailyActivityCost * duration * travelerCount;
 
-    // Apply Season Multiplier
-    dailyActivityBase *= seasonalMultipliers.activities;
+    // --- ENGINE: FOOD ---
+    const dailyFood = baseCosts.food * avgRegionFoodMult * baseScalingFactor;
+    const totalFoodCost = dailyFood * duration * travelerCount;
 
-    // Fixed activity cost (100 GHS per planned activity)
-    // Estimate 1 fixed activity every 2 days
-    const estimatedFixedActivities = Math.ceil(duration / 2);
-    const totalFixedActivityCost = estimatedFixedActivities * ACTIVITY_COSTS_V2.fixedPerActivity;
+    // --- ENGINE: ESSENTIALS ---
+    let visaCost = 0;
+    if (data.nationality) {
+        // @ts-ignore
+        const rule = visaRules[data.nationality] || visaRules["Other"];
+        visaCost = rule.visaRequired ? rule.cost : 0;
+    }
 
-    const dailyActivityTotal = dailyActivityBase + (totalFixedActivityCost / duration);
+    const simCard = 100; // Static estimate
+    const airportTransfer = 300;
+    let internationalFlight = 0;
 
+    if (data.includeFlights) {
+        if (data.flightCost) {
+            internationalFlight = data.flightCost * USD_TO_GHS;
+        } else if (data.origin) {
+            // @ts-ignore
+            const flightData = internationalFlights[data.origin] || internationalFlights["Other"];
+            internationalFlight = flightData.standard * USD_TO_GHS;
+        }
+    }
 
-    // --- STEP 4: REGIONAL BREAKDOWN ---
+    const totalEssentials = ((visaCost + simCard + airportTransfer + internationalFlight) * travelerCount);
+    // Add insurance
+    const insuranceQuote = data.includeInsurance ? ((totalAccom + totalTransportCost + totalActivityCost + totalFoodCost) * 0.05) : 0;
+
+    // --- ENGINE: CONTINGENCY ---
+    const isLuxury = tier === 'luxury';
+    const isAdventure = data.activities?.includes('adventure');
+    const isMultiRegion = regions.length > 2;
+
+    let contingencyPct = 0.10; // Base 10%
+    if (isLuxury) contingencyPct += 0.05;
+    if (isAdventure) contingencyPct += 0.03;
+    if (isMultiRegion) contingencyPct += 0.02;
+
+    const subTotal = totalAccom + totalFoodCost + totalTransportCost + totalActivityCost + totalEssentials + insuranceQuote;
+    const contingencyTotal = subTotal * contingencyPct;
+
+    const GRAND_TOTAL = subTotal + contingencyTotal;
+
+    // --- REGIONAL BREAKDOWN GENERATION ---
     const daysPerRegion = duration / regions.length;
-    let totalAccom = 0;
-    let totalFood = 0;
-    let totalTransport = 0;
-    let totalActivities = 0;
-    const regionalBreakdown: RegionalBudget[] = [];
+    const regionalBreakdown = regions.map(r => {
+        // @ts-ignore
+        const profile = regionCostProfiles[r] || regionCostProfiles["Greater Accra"];
 
-    regions.forEach(region => {
-        const modifiers = REGION_MULTIPLIERS_V2[region] || { transport: 1.0, food: 1.0 };
+        // Distribute proportional costs
+        const rAccom = (totalAccom / regions.length);
+        const rFood = (totalFoodCost / regions.length) * profile.foodMultiplier; // Weighted by profile
+        const rTrans = (totalTransportCost / regions.length); // Simplified distribution
+        const rAct = (totalActivityCost / regions.length) * profile.activityMultiplier;
 
-        // Food
-        const baseFood = BASE_COSTS.food[tier] * scalingFactor;
-        const regionFood = baseFood * modifiers.food;
+        const rTotal = rAccom + rFood + rTrans + rAct;
 
-        // Transport (apply region modifier to daily cost)
-        const regionTransport = dailyTransportCost * modifiers.transport;
-
-        // Calculate totals for this region
-        const rAccom = accomCostPerPerson * daysPerRegion * travelerCount;
-        const rFood = regionFood * daysPerRegion * travelerCount;
-        const rTransport = regionTransport * daysPerRegion * travelerCount;
-        const rActivity = dailyActivityTotal * daysPerRegion * travelerCount;
-
-        totalAccom += rAccom;
-        totalFood += rFood;
-        totalTransport += rTransport;
-        totalActivities += rActivity;
-
-        const info = REGION_INFO[region] || { tips: [], note: '', highlights: [] };
-
-        regionalBreakdown.push({
-            region,
-            dailyCost: Math.round(accomCostPerPerson + regionFood + regionTransport + dailyActivityTotal),
-            totalCost: Math.round(rAccom + rFood + rTransport + rActivity),
+        return {
+            region: r,
+            dailyCost: Math.round(rTotal / (daysPerRegion * travelerCount)),
+            totalCost: Math.round(rTotal),
             accommodation: Math.round(rAccom),
             food: Math.round(rFood),
-            transport: Math.round(rTransport),
-            activities: Math.round(rActivity),
-            tips: info.tips,
-            note: info.note
-        });
+            transport: Math.round(rTrans),
+            activities: Math.round(rAct),
+            tips: [],
+            note: `Estimates weighted by ${profile.seasonalityIndex[monthIndex]}x seasonality factor.`
+        };
     });
-
-    // Add Domestic Flights to Transport Total
-    totalTransport += (domesticFlightCost * travelerCount);
-
-    // --- STEP 5: ESSENTIALS ---
-    // Visa
-    let visaCost = 1200; // Default
-    if (data.nationality) {
-        // Simple lookup or default
-        // @ts-ignore
-        visaCost = VISA_COSTS[data.nationality] !== undefined ? VISA_COSTS[data.nationality] : VISA_COSTS["Other"];
-    }
-
-    // Airport Transfer
-    const isAccra = regions.includes("Greater Accra");
-    const airportTransfer = isAccra ? 250 : 300; // 200-300 range
-
-    // Insurance (calculated later on subtotal, but here we need a base)
-    // We'll calculate it on the (Accom + Food + Transport + Activity + Flights) total
-
-    // International Flights
-    let flightCost = 0;
-    if (data.includeFlights && data.origin) {
-        // @ts-ignore
-        const range = FLIGHT_COSTS_BY_ORIGIN[data.origin] || FLIGHT_COSTS_BY_ORIGIN["Other"];
-        const avgUSD = (range.min + range.max) / 2;
-        flightCost = avgUSD * USD_TO_GHS_RATE;
-    } else if (data.includeFlights) {
-        flightCost = 900 * USD_TO_GHS_RATE; // Default
-    }
-
-    const totalFlightCost = flightCost * travelerCount;
-
-    // Subtotal for Insurance Calculation
-    const tripCostForInsurance = totalAccom + totalFood + totalTransport + totalActivities + totalFlightCost;
-    const insuranceCost = data.includeInsurance ? (tripCostForInsurance * 0.04) : 0;
-
-    const essentialsTotal = Math.round(
-        (visaCost + ESSENTIAL_COSTS.simCard + airportTransfer) * travelerCount + insuranceCost
-    );
-
-    // --- STEP 6: CONTINGENCY ---
-    let contingencyRate: number = CONTINGENCY_RATES_V2.default;
-    if (tier === 'luxury') contingencyRate = CONTINGENCY_RATES_V2.luxury;
-    else if (regions.length > 2) contingencyRate = CONTINGENCY_RATES_V2.multiRegion;
-    else if (data.activities?.includes('adventure')) contingencyRate = CONTINGENCY_RATES_V2.adventure;
-
-    const subtotal = totalAccom + totalFood + totalTransport + totalActivities + essentialsTotal + totalFlightCost;
-    const contingencyAmount = Math.round(subtotal * contingencyRate);
-    const total = Math.round(subtotal + contingencyAmount);
 
     return {
         accommodation: Math.round(totalAccom),
-        food: Math.round(totalFood),
-        transport: Math.round(totalTransport),
-        activities: Math.round(totalActivities),
-        essentials: essentialsTotal,
-        flights: Math.round(totalFlightCost),
-        contingency: contingencyAmount,
-        total: total,
-        regionalBreakdown: regionalBreakdown
+        food: Math.round(totalFoodCost),
+        transport: Math.round(totalTransportCost),
+        activities: Math.round(totalActivityCost),
+        essentials: Math.round(totalEssentials + insuranceQuote),
+        flights: Math.round(internationalFlight * travelerCount),
+        contingency: Math.round(contingencyTotal),
+        total: Math.round(GRAND_TOTAL),
+        regionalBreakdown: regionalBreakdown,
     };
 }

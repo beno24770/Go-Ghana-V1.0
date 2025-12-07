@@ -9,7 +9,7 @@ import { BudgetRecommendations } from './components/BudgetRecommendations';
 import { TourRecommendations } from './components/TourRecommendations';
 import { DecisionNode } from './components/DecisionNode';
 import { TripPlanner } from './components/TripPlanner';
-import { SignUpPage } from './components/auth/SignUpPage';
+// import { SignUpPage } from './components/auth/SignUpPage'; // Removed
 import { LoginPage } from './components/auth/LoginPage';
 import { ForgotPasswordForm } from './components/auth/ForgotPasswordForm';
 import { LocalAuthPage } from './components/auth/LocalAuthPage';
@@ -94,11 +94,10 @@ function AppContent() {
     setCurrentStep(3);
   };
 
-  // Step 2: Sign‑Up Page
-  const handleSignUpSuccess = () => {
-    // After successful sign‑up, go to Budget Form
-    setCurrentStep(3);
-  };
+  // Step 2: Sign‑Up Page - REMOVED
+  // const handleSignUpSuccess = () => {
+  //   setCurrentStep(3);
+  // };
 
   // Step 3: Budget Form
   const handleFormSubmit = (data: BudgetFormData) => {
@@ -226,12 +225,13 @@ function AppContent() {
           />
         )}
 
-        {currentStep === 2 && (
+        {/* Step 2 Removed */}
+        {/* {currentStep === 2 && (
           <SignUpPage
             onSuccess={handleSignUpSuccess}
             onSwitchToLogin={() => setCurrentStep(11)}
           />
-        )}
+        )} */}
 
         {currentStep === 3 && (
           <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
@@ -319,7 +319,7 @@ function AppContent() {
         {currentStep === 11 && (
           <LoginPage
             onSuccess={handleLoginSuccess}
-            onSwitchToSignup={() => setCurrentStep(2)}
+            onSwitchToSignup={() => setCurrentStep(3)} // Go directly to form instead of signup
             onForgotPassword={handleForgotPassword}
           />
         )}
@@ -387,11 +387,11 @@ function AppContent() {
               My Trips
             </button>
           )}
-          {(currentStep === 2 || currentStep === 10 || currentStep === 11 || currentStep === 12 || currentStep === 13 || currentStep === 14) && (
+          {(currentStep === 10 || currentStep === 11 || currentStep === 12 || currentStep === 13 || currentStep === 14) && (
             <button
               onClick={() => {
-                if (currentStep === 2 || currentStep === 11) {
-                  // If on Sign Up or Login, go back to Landing
+                if (currentStep === 11) {
+                  // If on Login, go back to Landing
                   setCurrentStep(1);
                 } else if (currentStep === 10 && formData) {
                   // If on Dashboard and have data, go back to Summary (Step 9)

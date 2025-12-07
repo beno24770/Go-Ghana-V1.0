@@ -1,0 +1,60 @@
+{
+    "culture": {
+        "baseCost": 80,
+        "tierMultiplier": 1.0,
+        "popularRegions": [
+            "Greater Accra",
+            "Ashanti",
+            "Central"
+        ],
+        "description": "Museums, Castles, Cultural Centers"
+    },
+    "adventure": {
+        "baseCost": 150,
+        "tierMultiplier": 1.1,
+        "popularRegions": [
+            "Eastern",
+            "Volta",
+            "Northern"
+        ],
+        "description": "Hiking, Canopy Walk, Safari"
+    },
+    "nature": {
+        "baseCost": 100,
+        "tierMultiplier": 1.0,
+        "popularRegions": [
+            "Eastern",
+            "Volta",
+            "Western"
+        ],
+        "description": "Waterfalls, Gardens, Eco-tours"
+    },
+    "relaxation": {
+        "baseCost": 50,
+        "tierMultiplier": 2.0,
+        "popularRegions": [
+            "Greater Accra",
+            "Western",
+            "Volta"
+        ],
+        "description": "Beach clubs, Spa, Leisure"
+    },
+    "nightlife": {
+        "baseCost": 120,
+        "tierMultiplier": 2.5,
+        "popularRegions": [
+            "Greater Accra",
+            "Ashanti"
+        ],
+        "description": "Bars, Clubs, Concerts"
+    },
+    "food": {
+        "baseCost": 100,
+        "tierMultiplier": 1.8,
+        "popularRegions": [
+            "Greater Accra",
+            "Ashanti"
+        ],
+        "description": "Food tours, Cooking classes"
+    }
+}

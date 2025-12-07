@@ -411,10 +411,15 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                                         <span className="text-ghana-green">{formatCurrency(region.totalCost)}</span>
                                                     </CardTitle>
                                                 </CardHeader>
-                                                <CardContent>
+                                                <CardContent className="space-y-2">
                                                     <p className="text-sm text-gray-500">
-                                                        Daily: {formatCurrency(region.dailyCost)}
+                                                        Daily Est.: {formatCurrency(region.dailyCost)}
                                                     </p>
+                                                    {region.note && (
+                                                        <p className="text-xs text-amber-600 bg-amber-50 p-2 rounded border border-amber-100 italic">
+                                                            {region.note}
+                                                        </p>
+                                                    )}
                                                 </CardContent>
                                             </Card>
                                         ))}

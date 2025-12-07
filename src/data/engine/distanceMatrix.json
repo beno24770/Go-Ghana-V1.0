@@ -1,0 +1,74 @@
+{
+    "Accra": {
+        "Kumasi": 250,
+        "Cape Coast": 150,
+        "Takoradi": 230,
+        "Ho": 160,
+        "Tamale": 620,
+        "Sunyani": 400,
+        "Koforidua": 85
+    },
+    "Kumasi": {
+        "Accra": 250,
+        "Cape Coast": 200,
+        "Takoradi": 240,
+        "Ho": 320,
+        "Tamale": 390,
+        "Sunyani": 130,
+        "Koforidua": 190
+    },
+    "Cape Coast": {
+        "Accra": 150,
+        "Kumasi": 200,
+        "Takoradi": 80,
+        "Ho": 300,
+        "Tamale": 580,
+        "Sunyani": 320,
+        "Koforidua": 210
+    },
+    "Takoradi": {
+        "Accra": 230,
+        "Kumasi": 240,
+        "Cape Coast": 80,
+        "Ho": 380,
+        "Tamale": 650,
+        "Sunyani": 360,
+        "Koforidua": 290
+    },
+    "Ho": {
+        "Accra": 160,
+        "Kumasi": 320,
+        "Cape Coast": 300,
+        "Takoradi": 380,
+        "Tamale": 550,
+        "Sunyani": 450,
+        "Koforidua": 110
+    },
+    "Tamale": {
+        "Accra": 620,
+        "Kumasi": 390,
+        "Cape Coast": 580,
+        "Takoradi": 650,
+        "Ho": 550,
+        "Sunyani": 310,
+        "Koforidua": 570
+    },
+    "Sunyani": {
+        "Accra": 400,
+        "Kumasi": 130,
+        "Cape Coast": 320,
+        "Takoradi": 360,
+        "Ho": 450,
+        "Tamale": 310,
+        "Koforidua": 350
+    },
+    "Koforidua": {
+        "Accra": 85,
+        "Kumasi": 190,
+        "Cape Coast": 210,
+        "Takoradi": 290,
+        "Ho": 110,
+        "Tamale": 570,
+        "Sunyani": 350
+    }
+}

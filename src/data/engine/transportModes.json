@@ -1,0 +1,57 @@
+{
+    "bolt": {
+        "modeName": "Bolt / Uber",
+        "costPerKm": 5.0,
+        "baseFare": 25.0,
+        "maxPassengers": 3,
+        "recommendedTier": [
+            "mid-range",
+            "comfort"
+        ],
+        "reserveMultiplier": 1.0
+    },
+    "private_driver": {
+        "modeName": "Private Driver (SUV)",
+        "dailyRate": 1800,
+        "fuelIncluded": false,
+        "maxPassengers": 4,
+        "recommendedTier": [
+            "comfort",
+            "luxury"
+        ],
+        "reserveMultiplier": 1.1
+    },
+    "rental": {
+        "modeName": "Self-Drive Rental",
+        "dailyRate": 900,
+        "fuelIncluded": false,
+        "maxPassengers": 4,
+        "recommendedTier": [
+            "mid-range",
+            "comfort"
+        ],
+        "reserveMultiplier": 1.2
+    },
+    "public": {
+        "modeName": "Public Transport (Trotro/Bus)",
+        "costPerKm": 0.7,
+        "baseFare": 10.0,
+        "maxPassengers": 1,
+        "recommendedTier": [
+            "backpacker",
+            "budget"
+        ],
+        "reserveMultiplier": 1.0
+    },
+    "flight": {
+        "modeName": "Domestic Flight",
+        "baseFare": 1200,
+        "costPerKm": 0,
+        "maxPassengers": 1,
+        "recommendedTier": [
+            "comfort",
+            "luxury"
+        ],
+        "reserveMultiplier": 1.4
+    }
+}
