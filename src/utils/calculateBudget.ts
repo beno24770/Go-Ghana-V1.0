@@ -11,7 +11,7 @@ import visaRules from '../data/engine/visaRules.json';
 import internationalFlights from '../data/engine/internationalFlights.json';
 
 // Constants
-const USD_TO_GHS = 15.8; // Fallback or sync with CurrencyContext
+const DEFAULT_USD_TO_GHS = 15.87; // Updated fallback for 2024
 const TRAVELER_COUNTS: Record<string, number> = {
     solo: 1,
     couple: 2,
@@ -41,6 +41,9 @@ export function calculateBudget(data: BudgetFormData): BudgetBreakdown {
     const travelerCount = data.travelers || TRAVELER_COUNTS[data.travelerType] || 1;
     const duration = data.duration;
     const regions = (data.regions && data.regions.length > 0) ? data.regions : ['Greater Accra'];
+
+    // Dynamic Currency Exchange Rate
+    const USD_TO_GHS = data.exchangeRate || DEFAULT_USD_TO_GHS;
 
     // 1. Determine Month Index (0-11) for Seasonality
     const monthMap: Record<string, number> = {

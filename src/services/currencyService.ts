@@ -23,20 +23,15 @@ interface CachedRates {
 
 const CACHE_KEY = 'goghana_exchange_rates';
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-const API_BASE_URL = 'https://api.frankfurter.app';
+const API_BASE_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
 /**
- * Fetch latest exchange rates from Frankfurter API
- * Base currency is USD (Frankfurter doesn't support GHS)
- * We calculate GHS rates from USD base
+ * Fetch latest exchange rates from ExchangeRate-API
+ * Base currency is USD
  */
 export async function fetchExchangeRates(): Promise<ExchangeRates> {
     try {
-        // Frankfurter API endpoint: /latest?from=USD&to=EUR,GBP
-        // Note: GHS is not supported by Frankfurter, so we use approximate rate
-        const response = await fetch(
-            `${API_BASE_URL}/latest?from=USD&to=EUR,GBP`
-        );
+        const response = await fetch(API_BASE_URL);
 
         if (!response.ok) {
             throw new Error(`API request failed: ${response.status}`);
@@ -44,18 +39,18 @@ export async function fetchExchangeRates(): Promise<ExchangeRates> {
 
         const data = await response.json();
 
-        // Approximate USD to GHS rate (1 USD ≈ 15.87 GHS as of 2024)
-        const USD_TO_GHS = 15.87;
-
         // Transform API response to our format with GHS as base
+        // API returns rates relative to USD (base)
+        const usdToGhs = data.rates.GHS;
+
         const rates: ExchangeRates = {
             base: 'GHS',
             date: data.date,
             rates: {
-                GHS: 1, // Base currency
-                USD: 1 / USD_TO_GHS, // Convert USD base to GHS base
-                EUR: data.rates.EUR / USD_TO_GHS, // EUR rate relative to GHS
-                GBP: data.rates.GBP / USD_TO_GHS, // GBP rate relative to GHS
+                GHS: 1, // Base
+                USD: 1 / usdToGhs, // Inverse
+                EUR: (data.rates.EUR) / usdToGhs, // Cross rate
+                GBP: (data.rates.GBP) / usdToGhs, // Cross rate
             },
         };
 

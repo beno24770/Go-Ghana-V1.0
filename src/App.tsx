@@ -17,7 +17,7 @@ import { TripSummary } from './components/TripSummary';
 import { Dashboard } from './components/Dashboard';
 import { LocalEstimator } from './components/local/LocalEstimator';
 import { calculateBudget } from './utils/calculateBudget';
-import { CurrencyProvider } from './contexts/CurrencyContext';
+import { CurrencyProvider, useCurrency } from './contexts/CurrencyContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ChatProvider } from './contexts/ChatContext';
 import { ChatWidget } from './components/chat/ChatWidget';
@@ -27,6 +27,7 @@ import type { BudgetFormData, BudgetBreakdown, Tour } from './types';
 import type { SelectedRecommendations } from './types/recommendations';
 
 function AppContent() {
+  const { exchangeRates } = useCurrency();
   // Auth context is available but not currently needed in this component
   useAuth();
   const [currentStep, setCurrentStep] = useState(1);
@@ -108,7 +109,11 @@ function AppContent() {
   // Step 4: Loading Screen
   const handleLoadingComplete = () => {
     if (formData) {
-      const result = calculateBudget(formData);
+      // Inject current exchange rate into calculation
+      const result = calculateBudget({
+        ...formData,
+        exchangeRate: exchangeRates?.rates.USD ? (1 / exchangeRates.rates.USD) : undefined
+      });
       setBudgetResult(result);
       setCurrentStep(5); // Go to budget result
     }

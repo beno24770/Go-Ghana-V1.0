@@ -141,4 +141,33 @@ describe('Budget Engine V3', () => {
         // Compare daily costs derived from total
         expect(accraResult.total).toBeGreaterThan(northResult.total);
     });
+
+    test('Dynamic Exchange Rate Application', () => {
+        // Verify that exchange rate affects USD-denominated costs (e.g. Flights)
+        const baseData = createBaseData();
+        const flightCostUSD = 100;
+
+        const rate1 = 10.0;
+        const data1 = {
+            ...baseData,
+            includeFlights: true,
+            flightCost: flightCostUSD,
+            exchangeRate: rate1
+        };
+        const result1 = calculateBudget(data1);
+
+        const rate2 = 20.0;
+        const data2 = {
+            ...baseData,
+            includeFlights: true,
+            flightCost: flightCostUSD,
+            exchangeRate: rate2
+        };
+        const result2 = calculateBudget(data2);
+
+        // Flight cost in GHS should double if rate doubles
+        expect(result1.flights).toBe(1000); // 100 * 10
+        expect(result2.flights).toBe(2000); // 100 * 20
+        expect(result2.flights).toBeGreaterThan(result1.flights);
+    });
 });

@@ -18,6 +18,7 @@ export interface BudgetFormData {
     includeFlights?: boolean;
     flightCost?: number;
     includeInsurance?: boolean;
+    exchangeRate?: number; // USD to GHS exchange rate
 
     // V3 Revamp fields
     roomSharing?: 'private' | 'shared' | 'family';
