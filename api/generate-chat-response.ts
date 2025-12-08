@@ -1,5 +1,3 @@
-import { NextRequest, NextResponse } from 'next/server';
-
 export const config = {
     runtime: 'edge',
 };
@@ -9,12 +7,12 @@ interface ChatRequest {
     context?: Record<string, unknown>;
 }
 
-export default async function handler(req: NextRequest) {
+export default async function handler(req: Request) {
     // Only allow POST requests
     if (req.method !== 'POST') {
-        return NextResponse.json(
-            { error: 'Method not allowed' },
-            { status: 405 }
+        return new Response(
+            JSON.stringify({ error: 'Method not allowed' }),
+            { status: 405, headers: { 'Content-Type': 'application/json' } }
         );
     }
 
@@ -22,9 +20,9 @@ export default async function handler(req: NextRequest) {
         const { userMessage, context = {} }: ChatRequest = await req.json();
 
         if (!userMessage) {
-            return NextResponse.json(
-                { error: 'userMessage is required' },
-                { status: 400 }
+            return new Response(
+                JSON.stringify({ error: 'userMessage is required' }),
+                { status: 400, headers: { 'Content-Type': 'application/json' } }
             );
         }
 
@@ -33,9 +31,9 @@ export default async function handler(req: NextRequest) {
 
         if (!GEMINI_API_KEY) {
             console.error('GEMINI_API_KEY not configured');
-            return NextResponse.json(
-                { error: 'AI service not configured' },
-                { status: 500 }
+            return new Response(
+                JSON.stringify({ error: 'AI service not configured' }),
+                { status: 500, headers: { 'Content-Type': 'application/json' } }
             );
         }
 
@@ -82,20 +80,23 @@ Response style:
         const responseData = await response.json();
         const content = responseData.candidates?.[0]?.content?.parts?.[0]?.text || "I'm sorry, I couldn't generate a response.";
 
-        return NextResponse.json({
+        return new Response(JSON.stringify({
             content,
             usage: {
                 promptTokens: 0,
                 completionTokens: 0,
                 totalTokens: 0
             }
+        }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
         });
 
     } catch (error) {
         console.error('Chat generation error:', error);
-        return NextResponse.json(
-            { error: 'Failed to generate response' },
-            { status: 500 }
+        return new Response(
+            JSON.stringify({ error: 'Failed to generate response' }),
+            { status: 500, headers: { 'Content-Type': 'application/json' } }
         );
     }
 }

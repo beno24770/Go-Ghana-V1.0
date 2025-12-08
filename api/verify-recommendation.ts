@@ -1,5 +1,3 @@
-import { NextRequest, NextResponse } from 'next/server';
-
 export const config = {
     runtime: 'edge',
 };
@@ -12,11 +10,11 @@ interface VerificationRequest {
     };
 }
 
-export default async function handler(req: NextRequest) {
+export default async function handler(req: Request) {
     if (req.method !== 'POST') {
-        return NextResponse.json(
-            { error: 'Method not allowed' },
-            { status: 405 }
+        return new Response(
+            JSON.stringify({ error: 'Method not allowed' }),
+            { status: 405, headers: { 'Content-Type': 'application/json' } }
         );
     }
 
@@ -24,18 +22,18 @@ export default async function handler(req: NextRequest) {
         const { recommendation }: VerificationRequest = await req.json();
 
         if (!recommendation || !recommendation.name || !recommendation.location) {
-            return NextResponse.json(
-                { error: 'Invalid recommendation data' },
-                { status: 400 }
+            return new Response(
+                JSON.stringify({ error: 'Invalid recommendation data' }),
+                { status: 400, headers: { 'Content-Type': 'application/json' } }
             );
         }
 
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
         if (!GEMINI_API_KEY) {
-            return NextResponse.json(
-                { error: 'AI service not configured' },
-                { status: 500 }
+            return new Response(
+                JSON.stringify({ error: 'AI service not configured' }),
+                { status: 500, headers: { 'Content-Type': 'application/json' } }
             );
         }
 
@@ -89,7 +87,7 @@ If information is not available, omit that field.`;
         const cleanContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
         const verificationData = JSON.parse(cleanContent);
 
-        return NextResponse.json({
+        return new Response(JSON.stringify({
             recommendation,
             currentPrice: verificationData.currentPrice,
             availability: verificationData.availability || 'unknown',
@@ -98,15 +96,21 @@ If information is not available, omit that field.`;
             bookingLinks: verificationData.bookingLinks || [],
             lastChecked: new Date().toISOString(),
             sources: verificationData.sources || []
+        }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
         });
 
     } catch (error) {
         console.error('Verification error:', error);
-        return NextResponse.json({
-            recommendation: (req as any).recommendation,
+        return new Response(JSON.stringify({
+            recommendation: (req as any).recommendation || {},
             availability: 'unknown',
             lastChecked: new Date().toISOString(),
             sources: []
+        }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' }
         });
     }
 }

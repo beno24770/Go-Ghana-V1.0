@@ -1,5 +1,3 @@
-import { NextRequest, NextResponse } from 'next/server';
-
 export const config = {
     runtime: 'edge',
 };
@@ -12,11 +10,11 @@ interface ItineraryRequest {
     availableActivities?: unknown[];
 }
 
-export default async function handler(req: NextRequest) {
+export default async function handler(req: Request) {
     if (req.method !== 'POST') {
-        return NextResponse.json(
-            { error: 'Method not allowed' },
-            { status: 405 }
+        return new Response(
+            JSON.stringify({ error: 'Method not allowed' }),
+            { status: 405, headers: { 'Content-Type': 'application/json' } }
         );
     }
 
@@ -26,9 +24,9 @@ export default async function handler(req: NextRequest) {
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
         if (!GEMINI_API_KEY) {
-            return NextResponse.json(
-                { error: 'AI service not configured' },
-                { status: 500 }
+            return new Response(
+                JSON.stringify({ error: 'AI service not configured' }),
+                { status: 500, headers: { 'Content-Type': 'application/json' } }
             );
         }
 
@@ -89,7 +87,7 @@ IMPORTANT: Return ONLY the JSON object, no additional text or markdown formattin
         const cleanContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
         const itineraryData = JSON.parse(cleanContent);
 
-        return NextResponse.json({
+        return new Response(JSON.stringify({
             id: `itinerary-ai-${Date.now()}`,
             budget,
             formData,
@@ -98,13 +96,16 @@ IMPORTANT: Return ONLY the JSON object, no additional text or markdown formattin
             updatedAt: new Date().toISOString(),
             generatedBy: 'ai',
             aiModel: 'gemini-1.5-flash',
+        }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
         });
 
     } catch (error) {
         console.error('Itinerary generation error:', error);
-        return NextResponse.json(
-            { error: 'Failed to generate itinerary' },
-            { status: 500 }
+        return new Response(
+            JSON.stringify({ error: 'Failed to generate itinerary' }),
+            { status: 500, headers: { 'Content-Type': 'application/json' } }
         );
     }
 }
