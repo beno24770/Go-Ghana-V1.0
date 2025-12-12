@@ -1,0 +1,41 @@
+import { Card } from '../../ui/Card';
+
+interface TripHeaderWidgetProps {
+    userName?: string;
+    destination?: string;
+    days?: number;
+    className?: string; // Allow positioning overrides (e.g., col-span-2)
+}
+
+export function TripHeaderWidget({ userName = "Traveler", destination = "Ghana", days = 10, className = "" }: TripHeaderWidgetProps) {
+    return (
+        <Card className={`relative overflow-hidden group border-none shadow-lg ${className}`}>
+            {/* Background Image */}
+            <div className="absolute inset-0">
+                <img
+                    src="/hero-bg.jpg" // Fallback to hero-bg for now
+                    alt={destination}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+            </div>
+
+            {/* Content */}
+            <div className="relative h-full flex flex-col justify-end p-6 text-white">
+                <div className="inline-flex items-center gap-2 mb-2">
+                    <span className="px-2 py-1 bg-white/20 backdrop-blur-md rounded-lg text-xs font-medium border border-white/10">
+                        Current Trip
+                    </span>
+                    <span className="px-2 py-1 bg-[#CE1126] rounded-lg text-xs font-bold">
+                        {days} Days
+                    </span>
+                </div>
+
+                <h2 className="text-3xl font-bold mb-1">Hey {userName}! 👋</h2>
+                <p className="text-lg text-white/90">
+                    Welcome to your <span className="text-[#FCD116] font-bold">{destination}</span> Adventure.
+                </p>
+            </div>
+        </Card>
+    );
+}

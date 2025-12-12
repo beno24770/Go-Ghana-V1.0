@@ -2,32 +2,22 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import * as firestoreService from '../services/firestoreService';
 import type { SavedTrip } from '../types/user';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
 import { Button } from './ui/Button';
-import { MapPin, DollarSign, Loader2, Calendar, CheckCircle } from 'lucide-react';
-import { useCurrency } from '../contexts/CurrencyContext';
-import type { BudgetBreakdown, BudgetFormData } from '../types';
-
-interface Consultation {
-    id: string;
-    userId: string;
-    tripId: string | null;
-    status: string;
-    budgetSummary: BudgetBreakdown | null;
-    formData: BudgetFormData | null;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    createdAt: any; // Firestore timestamp - using any to avoid complex Firestore type imports
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    updatedAt: any; // Firestore timestamp - using any to avoid complex Firestore type imports
-}
+import { Loader2, Plus, MapPin } from 'lucide-react';
+import { DashboardLayout } from './dashboard/DashboardLayout';
+import { TripHeaderWidget } from './dashboard/widgets/TripHeaderWidget';
+import { BudgetOverviewWidget } from './dashboard/widgets/BudgetOverviewWidget';
+import { ItineraryTimelineWidget } from './dashboard/widgets/ItineraryTimelineWidget';
+import { PackingListWidget } from './dashboard/widgets/PackingListWidget';
+import { WeatherWidget } from './dashboard/widgets/WeatherWidget';
+import { FlightWidget } from './dashboard/widgets/FlightWidget';
 
 export function Dashboard() {
     const { currentUser } = useAuth();
-    const { convertAndFormat } = useCurrency();
     const [trips, setTrips] = useState<SavedTrip[]>([]);
-    const [consultations, setConsultations] = useState<Consultation[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [activeTripId, setActiveTripId] = useState<string | null>(null);
 
     useEffect(() => {
         async function fetchData() {
@@ -35,22 +25,15 @@ export function Dashboard() {
 
             try {
                 setLoading(true);
-                const [tripsData, consultationsData] = await Promise.all([
-                    firestoreService.getUserTrips(currentUser.uid),
-                    firestoreService.getUserConsultations(currentUser.uid)
-                ]);
+                const tripsData = await firestoreService.getUserTrips(currentUser.uid);
                 setTrips(tripsData);
-                setConsultations(consultationsData);
+                if (tripsData.length > 0) {
+                    setActiveTripId(tripsData[0].id);
+                }
             } catch (err: unknown) {
                 console.error('Error fetching data:', err);
                 const error = err as { code?: string; message?: string };
-                if (error.code === 'permission-denied') {
-                    setError('Access Denied: Missing or insufficient permissions. Please check your Firestore Security Rules.');
-                } else if (error.code === 'failed-precondition') {
-                    setError('Missing Index: Please check the browser console for a link to create the required index.');
-                } else {
-                    setError(error.message || 'Failed to load your data');
-                }
+                setError(error.message || 'Failed to load your data');
             } finally {
                 setLoading(false);
             }
@@ -58,6 +41,8 @@ export function Dashboard() {
 
         fetchData();
     }, [currentUser]);
+
+    const activeTrip = trips.find(t => t.id === activeTripId) || trips[0];
 
     if (loading) {
         return (
@@ -67,131 +52,135 @@ export function Dashboard() {
         );
     }
 
-    return (
-        <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
-            <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">My Dashboard</h1>
+    if (!activeTrip) {
+        return (
+            <div className="container mx-auto px-4 py-12 text-center">
+                <div className="max-w-md mx-auto bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <MapPin className="h-8 w-8 text-[#006B3F]" />
+                    </div>
+                    <h2 className="text-2xl font-bold mb-2">No trips yet</h2>
+                    <p className="text-muted-foreground mb-8">Start planning your Ghana adventure to see your dashboard.</p>
+                    <Button
+                        onClick={() => window.location.reload()}
+                        className="w-full bg-[#006B3F] hover:bg-[#005030]"
+                    >
+                        <Plus className="mr-2 h-4 w-4" /> Plan a Trip
+                    </Button>
+                </div>
+            </div>
+        );
+    }
 
-            {error && (
-                <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6">
-                    {error}
+    return (
+        <div className="min-h-screen bg-gray-50/50 pb-12">
+            {/* Navigation Tabs (Mock) */}
+            <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-200 mb-6">
+                <div className="container mx-auto px-4 overflow-x-auto">
+                    <div className="flex items-center gap-1 h-14">
+                        <Button variant="ghost" className="bg-[#006B3F]/10 text-[#006B3F] hover:bg-[#006B3F]/20 rounded-full px-4 h-9 text-sm font-medium">
+                            Dashboard
+                        </Button>
+                        <Button variant="ghost" className="text-gray-600 hover:text-gray-900 rounded-full px-4 h-9 text-sm font-medium">
+                            My Trips
+                        </Button>
+                        <Button variant="ghost" className="text-gray-600 hover:text-gray-900 rounded-full px-4 h-9 text-sm font-medium">
+                            Wallet
+                        </Button>
+                    </div>
+                </div>
+            </div>
+
+            <DashboardLayout>
+                {/* 1. Hero Widget (Full Width / Large) */}
+                <div className="col-span-1 md:col-span-2 lg:col-span-2 row-span-2">
+                    <TripHeaderWidget
+                        userName={currentUser?.displayName?.split(' ')[0] || 'Traveler'}
+                        destination="Ghana"
+                        days={activeTrip.formData.duration}
+                        className="h-full min-h-[300px]"
+                    />
+                </div>
+
+                {/* 2. Budget Widget */}
+                <div className="col-span-1 md:col-span-1 lg:col-span-1 row-span-1">
+                    <BudgetOverviewWidget
+                        totalBudget={activeTrip.breakdown.total}
+                        breakdown={activeTrip.breakdown}
+                        className="h-full"
+                    />
+                </div>
+
+                {/* 3. Weather Widget */}
+                <div className="col-span-1 md:col-span-1 lg:col-span-1 row-span-1">
+                    <WeatherWidget className="h-full" />
+                </div>
+
+                {/* 4. Flight Widget */}
+                <div className="col-span-1 md:col-span-2 lg:col-span-1 row-span-1">
+                    <FlightWidget
+                        origin={activeTrip.formData.origin}
+                        budget={activeTrip.breakdown.flights} // Using logic from breakdown
+                        className="h-full"
+                    />
+                </div>
+
+                {/* 5. Packing List */}
+                <div className="col-span-1 md:col-span-1 lg:col-span-1 row-span-2">
+                    <PackingListWidget className="h-full" />
+                </div>
+
+                {/* 6. Itinerary Timeline (Tall) */}
+                <div className="col-span-1 md:col-span-1 lg:col-span-1 row-span-2 lg:row-span-2">
+                    <ItineraryTimelineWidget
+                        days={
+                            // Mock itinerary if specific format missing, or use actual
+                            // Just simpler to mock for now as itinerary might be complex obj
+                            Array.from({ length: activeTrip.formData.duration }).map((_, i) => ({
+                                day: i + 1,
+                                theme: `Day ${i + 1} Adventure`,
+                                activities: {
+                                    morning: 'City Tour',
+                                    afternoon: 'Cultural Market'
+                                }
+                            }))
+                        }
+                        className="h-full"
+                    />
+                </div>
+
+                {/* 7. Quick Action / Placeholder */}
+                <div className="col-span-1 md:col-span-2 lg:col-span-1 row-span-1">
+                    <div className="bg-[#FCD116] rounded-lg p-6 h-full flex flex-col justify-center items-start text-[#1F2937]">
+                        <h3 className="font-bold text-lg mb-2">Ready for your trip?</h3>
+                        <p className="text-sm mb-4 opacity-80">Check your visa requirements and vaccinations.</p>
+                        <Button variant="outline" className="w-full bg-white/20 border-black/10 hover:bg-white/30 text-black border-none">
+                            View Checklist
+                        </Button>
+                    </div>
+                </div>
+
+            </DashboardLayout>
+
+            {/* Simple Trip Selector for verification/switching */}
+            {trips.length > 1 && (
+                <div className="container mx-auto px-4 mt-8">
+                    <h3 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">Your Other Trips</h3>
+                    <div className="flex gap-4 overflow-x-auto pb-4">
+                        {trips.filter(t => t.id !== activeTripId).map(trip => (
+                            <button
+                                key={trip.id}
+                                onClick={() => setActiveTripId(trip.id)}
+                                className="min-w-[200px] p-4 bg-white rounded-lg border border-gray-200 hover:border-[#006B3F] transition-colors text-left"
+                            >
+                                <div className="font-bold text-gray-800">{trip.formData.duration} Days in Ghana</div>
+                                <div className="text-xs text-gray-500 mt-1">{new Date(trip.createdAt.seconds * 1000).toLocaleDateString()}</div>
+                            </button>
+                        ))}
+                    </div>
                 </div>
             )}
-
-            {/* My Trips Section */}
-            <div className="mb-12">
-                <h2 className="text-xl sm:text-2xl font-bold mb-4 flex items-center gap-2">
-                    <MapPin className="h-6 w-6 text-[#CE1126]" />
-                    My Trips
-                </h2>
-                {trips.length === 0 ? (
-                    <div className="text-center py-12 bg-muted/30 rounded-lg">
-                        <div className="max-w-md mx-auto">
-                            <div className="mb-6">
-                                <div className="text-6xl mb-4">✈️</div>
-                                <h3 className="text-xl font-semibold mb-2">No trips saved yet</h3>
-                                <p className="text-muted-foreground mb-6">Start planning your dream trip to Ghana!</p>
-                            </div>
-                            <Button
-                                onClick={() => window.location.reload()}
-                                className="bg-[#CE1126] hover:bg-[#A00E1E] text-white px-8 py-3"
-                                size="lg"
-                            >
-                                Plan New Trip
-                            </Button>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {trips.map((trip) => (
-                            <Card key={trip.id} className="hover:shadow-lg transition-shadow">
-                                <CardHeader>
-                                    <CardTitle className="flex justify-between items-start">
-                                        <span>{trip.formData.duration} Days in Ghana</span>
-                                        <span className="text-sm font-normal text-muted-foreground">
-                                            {trip.createdAt?.toDate().toLocaleDateString()}
-                                        </span>
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <div className="flex items-center gap-2 text-sm">
-                                        <MapPin className="h-4 w-4 text-[#CE1126]" />
-                                        <span>{trip.formData.regions?.length || 1} Regions</span>
-                                    </div>
-                                    <div className="flex items-center gap-2 text-sm">
-                                        <DollarSign className="h-4 w-4 text-[#006B3F]" />
-                                        <span className="font-bold text-[#006B3F]">
-                                            {convertAndFormat(trip.breakdown.total)}
-                                        </span>
-                                    </div>
-                                    {trip.selectedTour && (
-                                        <div className="pt-2 border-t">
-                                            <p className="text-xs text-muted-foreground mb-1">Selected Tour:</p>
-                                            <p className="text-sm font-medium truncate">{trip.selectedTour.title}</p>
-                                        </div>
-                                    )}
-                                    <Button className="w-full mt-4" variant="outline">
-                                        View Details
-                                    </Button>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
-                )}
-            </div>
-
-            {/* My Consultations Section */}
-            <div>
-                <h2 className="text-xl sm:text-2xl font-bold mb-4 flex items-center gap-2">
-                    <Calendar className="h-6 w-6 text-[#006B3F]" />
-                    My Consultations
-                </h2>
-                {consultations.length === 0 ? (
-                    <div className="text-center py-12 bg-muted/30 rounded-lg">
-                        <div className="max-w-md mx-auto">
-                            <div className="mb-6">
-                                <div className="text-6xl mb-4">📅</div>
-                                <h3 className="text-xl font-semibold mb-2">No consultations booked</h3>
-                                <p className="text-muted-foreground">Book a free consultation to get expert advice!</p>
-                            </div>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {consultations.map((consultation) => (
-                            <Card key={consultation.id} className="hover:shadow-lg transition-shadow">
-                                <CardHeader>
-                                    <CardTitle className="flex justify-between items-start">
-                                        <span className="flex items-center gap-2">
-                                            <CheckCircle className="h-5 w-5 text-[#006B3F]" />
-                                            Consultation
-                                        </span>
-                                        <span className={`text-xs px-2 py-1 rounded-full ${consultation.status === 'requested' ? 'bg-yellow-100 text-yellow-800' :
-                                            consultation.status === 'scheduled' ? 'bg-blue-100 text-blue-800' :
-                                                consultation.status === 'completed' ? 'bg-green-100 text-green-800' :
-                                                    'bg-gray-100 text-gray-800'
-                                            }`}>
-                                            {consultation.status}
-                                        </span>
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-2">
-                                    <p className="text-sm text-muted-foreground">
-                                        Requested: {consultation.createdAt?.toDate().toLocaleDateString()}
-                                    </p>
-                                    {consultation.budgetSummary && (
-                                        <div className="flex items-center gap-2 text-sm">
-                                            <DollarSign className="h-4 w-4 text-[#006B3F]" />
-                                            <span className="font-bold text-[#006B3F]">
-                                                {convertAndFormat(consultation.budgetSummary.total)}
-                                            </span>
-                                        </div>
-                                    )}
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
-                )}
-            </div>
         </div>
     );
 }
+
