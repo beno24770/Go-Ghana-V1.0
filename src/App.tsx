@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import { ProgressIndicator } from './components/ProgressIndicator';
 import { StepTransition } from './components/StepTransition';
 import { LandingScreen } from './components/LandingScreen';
@@ -9,16 +10,17 @@ import { BudgetRecommendations } from './components/BudgetRecommendations';
 import { TourRecommendations } from './components/TourRecommendations';
 import { DecisionNode } from './components/DecisionNode';
 import { TripPlanner } from './components/TripPlanner';
-// import { SignUpPage } from './components/auth/SignUpPage'; // Removed
+import { SignUpPage } from './components/auth/SignUpPage';
 import { LoginPage } from './components/auth/LoginPage';
-import { ForgotPasswordForm } from './components/auth/ForgotPasswordForm';
+import { ForgotPasswordPage } from './components/auth/ForgotPasswordPage';
+import { CheckEmailPage } from './components/auth/CheckEmailPage';
 import { LocalAuthPage } from './components/auth/LocalAuthPage';
 import { TripSummary } from './components/TripSummary';
 import { Dashboard } from './components/Dashboard';
 import { LocalEstimator } from './components/local/LocalEstimator';
 import { calculateBudget } from './utils/calculateBudget';
 import { CurrencyProvider, useCurrency } from './contexts/CurrencyContext';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { AuthProvider, useAuth, ProtectedRoute } from './contexts/AuthContext';
 import { ChatProvider } from './contexts/ChatContext';
 import { ChatWidget } from './components/chat/ChatWidget';
 import { PWAInstallPrompt } from './components/PWAInstallPrompt';
@@ -99,6 +101,10 @@ function AppContent() {
   // Step 15: Offline Pocket Guide (HANDLER ADDED)
   const handleOpenOfflineGuide = () => {
     setCurrentStep(15);
+  };
+
+  const handleLocalModeToggle = (enabled: boolean) => {
+    setIsLocalMode(enabled);
   };
 
   // Step 2: Sign‑Up Page - REMOVED
@@ -182,27 +188,6 @@ function AppContent() {
     // Actually, if they start over, they probably want to start fresh.
   };
 
-  // Step 11: Login Page
-  const handleLoginSuccess = () => {
-    setCurrentStep(3); // Go to Budget Form for better UX
-  };
-
-  const handleForgotPassword = () => {
-    setCurrentStep(14); // Go to Forgot Password
-  };
-
-  // Local Mode Toggle Handler
-  const handleLocalModeToggle = (enabled: boolean) => {
-    setIsLocalMode(enabled);
-    if (enabled) {
-      // Skip authentication for Local Mode (temporary fix for Firebase issue)
-      // TODO: Re-enable authentication once Firebase is properly configured
-      setCurrentStep(12); // Go directly to Local Estimator
-    } else {
-      setCurrentStep(1);
-    }
-  };
-
   // Local Auth Success
   const handleLocalAuthSuccess = () => {
     setCurrentStep(12); // Proceed to Local Estimator
@@ -217,152 +202,167 @@ function AppContent() {
 
   return (
     <div className="min-h-screen font-sans text-foreground">
-      {/* Progress Indicator - Show from step 2 onwards */}
-      {currentStep > 1 && currentStep < 8 && (
-        <ProgressIndicator
-          currentStep={currentStep - 1} // Adjust for display (1-7 instead of 2-8)
-          totalSteps={7}
-          onStepClick={(step) => goToStep(step + 1)}
+      {/* Routes for New Auth System */}
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/check-email" element={<CheckEmailPage />} />
+        <Route path="/offline" element={<OfflineGuide />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
         />
-      )}
+        {/* Default Route for App Content (Steps) */}
+        <Route path="*" element={
+          <>
+            {/* Progress Indicator - Show from step 2 onwards */}
+            {currentStep > 1 && currentStep < 8 && (
+              <ProgressIndicator
+                currentStep={currentStep - 1} // Adjust for display (1-7 instead of 2-8)
+                totalSteps={7}
+                onStepClick={(step) => goToStep(step + 1)}
+              />
+            )}
 
-      {/* Step Content */}
-      <StepTransition direction={currentStep > 1 ? 'forward' : 'backward'}>
-        {currentStep === 1 && (
-          <LandingScreen
-            onStart={handleStart}
-            isLocalMode={isLocalMode}
-            onLocalModeToggle={handleLocalModeToggle}
-            onOpenOfflineGuide={handleOpenOfflineGuide} // PROP PASSED
-          />
-        )}
+            {/* Step Content */}
+            <StepTransition direction={currentStep > 1 ? 'forward' : 'backward'}>
+              {currentStep === 1 && (
+                <LandingScreen
+                  onStart={handleStart}
+                  isLocalMode={isLocalMode}
+                  onLocalModeToggle={handleLocalModeToggle}
+                  onOpenOfflineGuide={handleOpenOfflineGuide} // PROP PASSED
+                />
+              )}
 
-        {/* Step 2 Removed */}
-        {/* {currentStep === 2 && (
-          <SignUpPage
-            onSuccess={handleSignUpSuccess}
-            onSwitchToLogin={() => setCurrentStep(11)}
-          />
-        )} */}
+              {/* Step 2 Removed */}
+              {/* {currentStep === 2 && (
+                <SignUpPage
+                  onSuccess={handleSignUpSuccess}
+                  onSwitchToLogin={() => setCurrentStep(11)}
+                />
+              )} */}
 
-        {currentStep === 3 && (
-          <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
-            <div className="max-w-4xl mx-auto">
-              <div className="text-center space-y-4 mb-12">
-                <h2 className="text-4xl font-extrabold tracking-tight">
-                  Tell Us About Your Trip
-                </h2>
-                <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                  Answer a few questions to get your personalized budget estimate
-                </p>
-              </div>
-              <BudgetForm onSubmit={handleFormSubmit} initialStep={budgetFormInitialStep} />
-            </div>
-          </div>
-        )}
+              {currentStep === 3 && (
+                <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+                  <div className="max-w-4xl mx-auto">
+                    <div className="text-center space-y-4 mb-12">
+                      <h2 className="text-4xl font-extrabold tracking-tight">
+                        Tell Us About Your Trip
+                      </h2>
+                      <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                        Answer a few questions to get your personalized budget estimate
+                      </p>
+                    </div>
+                    <BudgetForm onSubmit={handleFormSubmit} initialStep={budgetFormInitialStep} />
+                  </div>
+                </div>
+              )}
 
-        {currentStep === 4 && (
-          <LoadingScreen onComplete={handleLoadingComplete} />
-        )}
+              {currentStep === 4 && (
+                <LoadingScreen onComplete={handleLoadingComplete} />
+              )}
 
-        {currentStep === 5 && budgetResult && formData && (
-          <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
-            <BudgetResult
-              breakdown={budgetResult}
-              formData={formData}
-              onContinue={handleContinueToRecommendations}
-              onEditBudget={handleEditBudget}
-            />
-          </div>
-        )}
+              {currentStep === 5 && budgetResult && formData && (
+                <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+                  <BudgetResult
+                    breakdown={budgetResult}
+                    formData={formData}
+                    onContinue={handleContinueToRecommendations}
+                    onEditBudget={handleEditBudget}
+                  />
+                </div>
+              )}
 
-        {currentStep === 6 && budgetResult && formData && (
-          <BudgetRecommendations
-            breakdown={budgetResult}
-            formData={formData}
-            selectedRecommendations={selectedRecommendations}
-            onSelectionsChange={setSelectedRecommendations}
-            onContinue={handleContinueToTours}
-            onBack={() => setCurrentStep(5)}
-          />
-        )}
+              {currentStep === 6 && budgetResult && formData && (
+                <BudgetRecommendations
+                  breakdown={budgetResult}
+                  formData={formData}
+                  selectedRecommendations={selectedRecommendations}
+                  onSelectionsChange={setSelectedRecommendations}
+                  onContinue={handleContinueToTours}
+                  onBack={() => setCurrentStep(5)}
+                />
+              )}
 
-        {currentStep === 7 && formData && budgetResult && (
-          <TourRecommendations
-            interests={formData.activities}
-            budget={budgetResult.total}
-            regions={formData.regions}
-            month={formData.month}
-            onSelectTour={handleSelectTour}
-            onSkip={handleSkipTours}
-          />
-        )}
+              {currentStep === 7 && formData && budgetResult && (
+                <TourRecommendations
+                  interests={formData.activities}
+                  budget={budgetResult.total}
+                  regions={formData.regions}
+                  month={formData.month}
+                  onSelectTour={handleSelectTour}
+                  onSkip={handleSkipTours}
+                />
+              )}
 
-        {currentStep === 8 && (
-          <DecisionNode
-            selectedTour={selectedTour}
-            onSelectTour={handleBackToTours}
-            onPlanTrip={handlePlanTrip}
-          />
-        )}
+              {currentStep === 8 && (
+                <DecisionNode
+                  selectedTour={selectedTour}
+                  onSelectTour={handleBackToTours}
+                  onPlanTrip={handlePlanTrip}
+                />
+              )}
 
-        {currentStep === 9 && formData && budgetResult && (
-          <TripPlanner
-            formData={formData}
-            budgetTotal={budgetResult.total}
-            selectedTour={selectedTour}
-            onContinue={handleContinueToSummary}
-          />
-        )}
+              {currentStep === 9 && formData && budgetResult && (
+                <TripPlanner
+                  formData={formData}
+                  budgetTotal={budgetResult.total}
+                  selectedTour={selectedTour}
+                  onContinue={handleContinueToSummary}
+                />
+              )}
 
-        {currentStep === 10 && formData && budgetResult && (
-          <TripSummary
-            formData={formData}
-            budgetBreakdown={budgetResult}
-            selectedTour={selectedTour}
-            onStartOver={handleStartOver}
-          />
-        )}
+              {currentStep === 10 && formData && budgetResult && (
+                <TripSummary
+                  formData={formData}
+                  budgetBreakdown={budgetResult}
+                  selectedTour={selectedTour}
+                  onStartOver={handleStartOver}
+                />
+              )}
 
-        {currentStep === 10 && (
-          <Dashboard />
-        )}
+              {currentStep === 10 && (
+                <Dashboard />
+              )}
 
-        {currentStep === 11 && (
-          <LoginPage
-            onSuccess={handleLoginSuccess}
-            onSwitchToSignup={() => setCurrentStep(3)} // Go directly to form instead of signup
-            onForgotPassword={handleForgotPassword}
-          />
-        )}
+              {currentStep === 11 && (
+                <LoginPage
 
-        {currentStep === 12 && (
-          <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
-            <div className="max-w-4xl mx-auto">
-              <LocalEstimator />
-            </div>
-          </div>
-        )}
+                />
+              )}
 
-        {currentStep === 13 && (
-          <LocalAuthPage
-            onSuccess={handleLocalAuthSuccess}
-            onCancel={() => handleLocalModeToggle(false)}
-          />
-        )}
+              {currentStep === 12 && (
+                <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+                  <div className="max-w-4xl mx-auto">
+                    <LocalEstimator />
+                  </div>
+                </div>
+              )}
 
-        {currentStep === 14 && (
-          <ForgotPasswordForm
-            onBack={() => setCurrentStep(11)}
-          />
-        )}
+              {currentStep === 13 && (
+                <LocalAuthPage
+                  onSuccess={handleLocalAuthSuccess}
+                  onCancel={() => handleLocalModeToggle(false)}
+                />
+              )}
 
-        {/* Step 15: Offline Guide */}
-        {currentStep === 15 && (
-          <OfflineGuide onBack={() => setCurrentStep(1)} />
-        )}
 
-      </StepTransition>
+
+              {/* Step 15: Offline Guide */}
+              {currentStep === 15 && (
+                <OfflineGuide onBack={() => setCurrentStep(1)} />
+              )}
+
+            </StepTransition>
+          </>
+        } />
+      </Routes>
 
       {/* Navigation Bar */}
       <div className="fixed top-2 sm:top-4 left-2 right-2 sm:left-auto sm:right-4 z-50">

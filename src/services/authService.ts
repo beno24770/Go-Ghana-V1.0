@@ -6,6 +6,8 @@ import {
     signOut as firebaseSignOut,
     sendPasswordResetEmail,
     updateProfile,
+    sendEmailVerification as firebaseSendEmailVerification,
+    OAuthProvider,
     type User,
     type UserCredential,
 } from 'firebase/auth';
@@ -18,6 +20,9 @@ import { auth } from './firebase';
 
 // Google OAuth provider
 const googleProvider = new GoogleAuthProvider();
+
+// Apple OAuth provider
+const appleProvider = new OAuthProvider('apple.com');
 
 /**
  * Sign up with email and password
@@ -38,6 +43,13 @@ export async function signUp(
 }
 
 /**
+ * Send email verification
+ */
+export async function sendVerificationEmail(user: User): Promise<void> {
+    return firebaseSendEmailVerification(user);
+}
+
+/**
  * Sign in with email and password
  */
 export async function signIn(email: string, password: string): Promise<UserCredential> {
@@ -49,6 +61,13 @@ export async function signIn(email: string, password: string): Promise<UserCrede
  */
 export async function signInWithGoogle(): Promise<UserCredential> {
     return signInWithPopup(auth, googleProvider);
+}
+
+/**
+ * Sign in with Apple
+ */
+export async function signInWithApple(): Promise<UserCredential> {
+    return signInWithPopup(auth, appleProvider);
 }
 
 /**

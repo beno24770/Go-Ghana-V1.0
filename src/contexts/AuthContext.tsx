@@ -10,8 +10,10 @@ interface AuthContextType {
     signUp: (email: string, password: string, displayName?: string, phoneNumber?: string) => Promise<void>;
     signIn: (email: string, password: string) => Promise<void>;
     signInWithGoogle: () => Promise<void>;
+    signInWithApple: () => Promise<void>;
     signOut: () => Promise<void>;
     resetPassword: (email: string) => Promise<void>;
+    sendVerificationEmail: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -56,7 +58,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const signIn = useCallback(async (email: string, password: string) => {
         setLoading(true);
         try {
-            await authService.signIn(email, password);
+            const userCredential = await authService.signIn(email, password);
+
+            // Check for email verification
+            if (userCredential.user && !userCredential.user.emailVerified) {
+                await authService.signOut();
+                throw new Error('Please verify your email address before logging in.');
+            }
         } finally {
             setLoading(false);
         }
@@ -68,6 +76,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             await authService.signInWithGoogle();
         } finally {
             setLoading(false);
+        }
+    }, []);
+
+    const signInWithApple = useCallback(async () => {
+        setLoading(true);
+        try {
+            await authService.signInWithApple();
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    const sendVerificationEmail = useCallback(async () => {
+        if (authService.getCurrentUser()) {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            await authService.sendVerificationEmail(authService.getCurrentUser()!);
         }
     }, []);
 
@@ -91,8 +115,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signUp,
         signIn,
         signInWithGoogle,
+        signInWithApple,
         signOut,
         resetPassword,
+        sendVerificationEmail,
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -123,14 +149,29 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
         );
     }
 
-    if (!user) {
+    if (!user || !user.emailVerified) {
         return (
             <div className="flex items-center justify-center min-h-screen">
                 <div className="text-center max-w-md p-8">
-                    <h2 className="text-2xl font-bold mb-4">Authentication Required</h2>
+                    <h2 className="text-2xl font-bold mb-4">
+                        {!user ? 'Authentication Required' : 'Email Verification Required'}
+                    </h2>
                     <p className="text-muted-foreground mb-6">
-                        Please sign in to access this feature.
+                        {!user
+                            ? 'Please sign in to access this feature.'
+                            : 'Please verify your email address to continue.'}
                     </p>
+                    {user && !user.emailVerified && (
+                        <button
+                            onClick={async () => {
+                                await authService.signOut();
+                                window.location.href = '/login';
+                            }}
+                            className="bg-[#006B3F] text-white px-4 py-2 rounded-md hover:bg-[#005030]"
+                        >
+                            Back to Login
+                        </button>
+                    )}
                 </div>
             </div>
         );
