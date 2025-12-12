@@ -94,3 +94,15 @@ export interface LocalItinerary {
     highlights: string[];
 }
 
+export interface SavedTrip {
+    id: string;
+    title: string;
+    createdAt: string;
+    budgetResult: BudgetBreakdown;
+    itinerary?: {
+        days: any[];
+        generatedBy?: string;
+    };
+    formData: BudgetFormData;
+}
+

@@ -61,8 +61,8 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,jpg,svg,webp}'],
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/api\.frankfurter\.app\/.*/i,
-            handler: 'CacheFirst',
+            urlPattern: /^https:\/\/api\.exchangerate-api\.com\/.*/i,
+            handler: 'NetworkFirst', // NetworkFirst is better for rates, falling back to cache
             options: {
               cacheName: 'currency-api-cache',
               expiration: {
@@ -71,7 +71,8 @@ export default defineConfig({
               },
               cacheableResponse: {
                 statuses: [0, 200]
-              }
+              },
+              networkTimeoutSeconds: 5 // Fallback quickly if offline
             }
           },
           {

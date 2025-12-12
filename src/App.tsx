@@ -23,6 +23,7 @@ import { ChatProvider } from './contexts/ChatContext';
 import { ChatWidget } from './components/chat/ChatWidget';
 import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 import { knowledgeService } from './services/knowledgeService';
+import { OfflineGuide } from './components/offline/OfflineGuide'; // IMPORT ADDED
 import type { BudgetFormData, BudgetBreakdown, Tour } from './types';
 import type { SelectedRecommendations } from './types/recommendations';
 
@@ -93,6 +94,11 @@ function AppContent() {
   const handleStart = () => {
     // Go to Budget Form directly (Bypass Auth for Testing)
     setCurrentStep(3);
+  };
+
+  // Step 15: Offline Pocket Guide (HANDLER ADDED)
+  const handleOpenOfflineGuide = () => {
+    setCurrentStep(15);
   };
 
   // Step 2: Sign‑Up Page - REMOVED
@@ -227,6 +233,7 @@ function AppContent() {
             onStart={handleStart}
             isLocalMode={isLocalMode}
             onLocalModeToggle={handleLocalModeToggle}
+            onOpenOfflineGuide={handleOpenOfflineGuide} // PROP PASSED
           />
         )}
 
@@ -349,6 +356,12 @@ function AppContent() {
             onBack={() => setCurrentStep(11)}
           />
         )}
+
+        {/* Step 15: Offline Guide */}
+        {currentStep === 15 && (
+          <OfflineGuide onBack={() => setCurrentStep(1)} />
+        )}
+
       </StepTransition>
 
       {/* Navigation Bar */}
@@ -384,7 +397,7 @@ function AppContent() {
               <span>🏠</span> <span className="hidden sm:inline">Home</span>
             </button>
           )}
-          {currentStep !== 1 && currentStep !== 10 && currentStep !== 11 && currentStep !== 12 && currentStep !== 13 && currentStep !== 14 && (
+          {currentStep !== 1 && currentStep !== 10 && currentStep !== 11 && currentStep !== 12 && currentStep !== 13 && currentStep !== 14 && currentStep !== 15 && (
             <button
               onClick={() => setCurrentStep(10)}
               className="px-3 sm:px-4 py-1.5 sm:py-2 bg-white/90 backdrop-blur shadow-md rounded-full text-xs sm:text-sm font-medium hover:bg-white transition-colors min-h-[44px] whitespace-nowrap"
@@ -392,7 +405,7 @@ function AppContent() {
               My Trips
             </button>
           )}
-          {(currentStep === 10 || currentStep === 11 || currentStep === 12 || currentStep === 13 || currentStep === 14) && (
+          {(currentStep === 10 || currentStep === 11 || currentStep === 12 || currentStep === 13 || currentStep === 14 || currentStep === 15) && (
             <button
               onClick={() => {
                 if (currentStep === 11) {

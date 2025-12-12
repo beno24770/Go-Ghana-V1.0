@@ -1,0 +1,75 @@
+[
+    {
+        "category": "National Emergency",
+        "contacts": [
+            {
+                "name": "Police / Fire / Ambulance",
+                "number": "112",
+                "description": "Unified Emergency Number"
+            },
+            {
+                "name": "Police (Direct)",
+                "number": "191"
+            },
+            {
+                "name": "Fire Service",
+                "number": "192"
+            },
+            {
+                "name": "Ambulance",
+                "number": "193"
+            }
+        ]
+    },
+    {
+        "category": "Tourism Support",
+        "contacts": [
+            {
+                "name": "Ghana Tourism Authority",
+                "number": "+233 302 682 601"
+            },
+            {
+                "name": "Tourist Information (Accra)",
+                "number": "+233 302 682 608"
+            }
+        ]
+    },
+    {
+        "category": "Hospitals (Major)",
+        "contacts": [
+            {
+                "name": "Korle Bu Teaching Hospital (Accra)",
+                "number": "+233 302 665 401"
+            },
+            {
+                "name": "Ridge Hospital (Accra)",
+                "number": "+233 302 228 315"
+            },
+            {
+                "name": "Komfo Anokye Teaching Hospital (Kumasi)",
+                "number": "+233 322 022 301"
+            },
+            {
+                "name": "Tamale Teaching Hospital (North)",
+                "number": "+233 372 022 491"
+            }
+        ]
+    },
+    {
+        "category": "Consular Assistance",
+        "contacts": [
+            {
+                "name": "US Embassy",
+                "number": "+233 302 741 000"
+            },
+            {
+                "name": "British High Commission",
+                "number": "+233 302 213 200"
+            },
+            {
+                "name": "Canadian High Commission",
+                "number": "+233 302 211 521"
+            }
+        ]
+    }
+]

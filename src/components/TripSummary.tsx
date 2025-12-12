@@ -157,7 +157,7 @@ export function TripSummary({ formData, budgetBreakdown, selectedTour, onStartOv
 
                     {/* Save Action */}
                     {currentUser && !saveSuccess && (
-                        <div className="flex justify-center">
+                        <div className="flex flex-col gap-3 justify-center items-center w-full md:w-auto mx-auto">
                             <Button
                                 onClick={handleSaveTrip}
                                 disabled={saving}
@@ -177,6 +177,27 @@ export function TripSummary({ formData, budgetBreakdown, selectedTour, onStartOv
                             </Button>
                         </div>
                     )}
+
+                    {/* Offline Save Button - Always visible */}
+                    <div className="flex justify-center mt-2">
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                                import('../services/offlineStorage').then(({ offlineStorage }) => {
+                                    offlineStorage.saveTrip({
+                                        title: `Trip to Ghana (${formData.duration} days)`,
+                                        budgetResult: budgetBreakdown,
+                                        formData: formData
+                                    });
+                                    alert('Trip saved to Offline Pocket Guide!');
+                                });
+                            }}
+                            className="w-full md:w-auto border-[#006B3F] text-[#006B3F] hover:bg-[#006B3F] hover:text-white"
+                        >
+                            <Download className="mr-2 h-5 w-5" />
+                            Save for Offline (Pocket Guide)
+                        </Button>
+                    </div>
 
 
 

@@ -7,9 +7,10 @@ interface LandingScreenProps {
     onStart: () => void;
     isLocalMode?: boolean;
     onLocalModeToggle?: (isLocalMode: boolean) => void;
+    onOpenOfflineGuide?: () => void;
 }
 
-export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle }: LandingScreenProps) {
+export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle, onOpenOfflineGuide }: LandingScreenProps) {
 
     return (
         <div className="min-h-screen relative font-sans text-white overflow-x-hidden">
@@ -43,6 +44,15 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle 
                     <div className="hidden md:flex items-center gap-8 text-sm font-medium text-white/90">
                         <a href="#features" className="hover:text-ghana-yellow transition-colors drop-shadow-sm">Features</a>
                         <a href="#how-it-works" className="hover:text-ghana-yellow transition-colors drop-shadow-sm">How It Works</a>
+                        {onOpenOfflineGuide && (
+                            <button
+                                onClick={onOpenOfflineGuide}
+                                className="hover:text-ghana-yellow transition-colors drop-shadow-sm flex items-center gap-1"
+                            >
+                                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                Pocket Guide
+                            </button>
+                        )}
                         <button
                             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                             className="hover:text-ghana-yellow transition-colors drop-shadow-sm"
