@@ -1,53 +1,41 @@
+import { useLocation, Link } from 'react-router-dom';
 import { AuthLayout } from './AuthLayout';
-import { Button } from '../ui/Button';
-import { Mail } from 'lucide-react';
-import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import { useState } from 'react';
+import { Mail, ArrowLeft } from 'lucide-react';
 
 export function CheckEmailPage() {
-    const { state } = useLocation();
-    const email = state?.email || 'your email';
-    const { sendVerificationEmail } = useAuth();
-    const [resent, setResent] = useState(false);
-    const [sending, setSending] = useState(false);
-
-    const handleResend = async () => {
-        setSending(true);
-        try {
-            await sendVerificationEmail();
-            setResent(true);
-        } catch (e) {
-            console.error(e);
-        } finally {
-            setSending(false);
-        }
-    };
+    const location = useLocation();
+    const email = location.state?.email || 'your email';
 
     return (
-        <AuthLayout title="Check your inbox">
-            <div className="text-center py-8">
-                <div className="w-16 h-16 bg-green-100 text-[#006B3F] rounded-full flex items-center justify-center mx-auto mb-6">
-                    <Mail className="w-8 h-8" />
+        <AuthLayout title="Check your email" subtitle="">
+            <div className="text-center space-y-6">
+                <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                    <Mail className="w-10 h-10 text-green-600" />
                 </div>
-                <p className="text-gray-600 mb-8 text-lg">
-                    We've sent a verification link to <span className="font-semibold text-gray-900">{email}</span>. Please click the link to verify your account before logging in.
-                </p>
 
-                <div className="space-y-4">
-                    <Link to="/login">
-                        <Button className="w-full bg-[#006B3F] hover:bg-[#005030] h-11">
-                            Back to Login
-                        </Button>
-                    </Link>
+                <div className="space-y-2">
+                    <h3 className="text-xl font-semibold text-gray-900">Verify your email</h3>
+                    <p className="text-gray-600">
+                        We've sent a verification link to<br />
+                        <strong className="text-gray-900">{email}</strong>
+                    </p>
+                </div>
 
-                    <button
-                        onClick={handleResend}
-                        disabled={resent || sending}
-                        className="text-sm text-gray-500 hover:text-gray-900 underline disabled:opacity-50"
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-800">
+                    <p>
+                        <strong>Didn't receive the email?</strong><br />
+                        Check your spam folder or wait a few minutes.
+                    </p>
+                </div>
+
+                <div className="pt-4 space-y-3">
+                    <Link
+                        to="/login"
+                        className="text-[#006B3F] font-medium hover:underline inline-flex items-center gap-1"
                     >
-                        {resent ? 'Email Sent!' : sending ? 'Sending...' : "Didn't receive the email? Resend"}
-                    </button>
+                        <ArrowLeft size={16} />
+                        Back to login
+                    </Link>
                 </div>
             </div>
         </AuthLayout>

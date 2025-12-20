@@ -1,8 +1,16 @@
 // Category-specific knowledge and suggested questions for Adepa
 
+interface GreetingContext {
+    amount: number;
+    formattedAmount: string;
+    duration: number;
+    travelers: number;
+    regions?: string[];
+}
+
 export interface CategoryKnowledge {
     suggestedQuestions: string[];
-    greetingTemplate: (context: any) => string;
+    greetingTemplate: (context: GreetingContext) => string;
     knowledgePoints: string[];
 }
 

@@ -1,18 +1,18 @@
 import { useState } from 'react';
 import { AuthLayout } from './AuthLayout';
-import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { Label } from '../ui/Label';
-import { Loader2, ArrowLeft, Mail } from 'lucide-react';
+import { Loader2, CheckCircle2, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+
 export function ForgotPasswordPage() {
-    const { resetPassword } = useAuth();
     const [email, setEmail] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [submitted, setSubmitted] = useState(false);
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -20,36 +20,42 @@ export function ForgotPasswordPage() {
         setIsLoading(true);
 
         try {
-            await resetPassword(email);
-            setSubmitted(true);
-        } catch (err: unknown) {
-            console.error(err);
-            const errorObj = err as { code?: string };
-            if (errorObj.code === 'auth/user-not-found') {
-                setError('No account found with this email.');
-            } else {
-                setError('Failed to send reset email. Please try again.');
+            const response = await fetch(`${API_BASE}/auth/forgot-password`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Failed to send reset email');
             }
+
+            setSuccess(true);
+        } catch (err: unknown) {
+            console.error('Reset password error:', err);
+            const errorObj = err as { message?: string };
+            setError(errorObj.message || 'Failed to send reset email. Please try again.');
         } finally {
             setIsLoading(false);
         }
     };
 
-    if (submitted) {
+    if (success) {
         return (
-            <AuthLayout title="Check your inbox">
-                <div className="text-center py-8">
-                    <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <Mail className="w-8 h-8" />
+            <AuthLayout title="Check your email" subtitle="">
+                <div className="text-center space-y-4">
+                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                        <CheckCircle2 className="w-8 h-8 text-green-600" />
                     </div>
-                    <p className="text-gray-600 mb-8 text-lg">
-                        We've sent password reset instructions to <span className="font-semibold text-gray-900">{email}</span>.
+                    <h3 className="text-lg font-medium text-gray-900">Reset link sent!</h3>
+                    <p className="text-gray-600">
+                        If an account exists for <strong>{email}</strong>, you'll receive a password reset link shortly.
                     </p>
-
-                    <Link to="/login">
-                        <Button className="w-full bg-gray-900 hover:bg-gray-800 h-11">
-                            Back to Login
-                        </Button>
+                    <Link to="/login" className="text-[#006B3F] font-medium hover:underline inline-flex items-center gap-1">
+                        <ArrowLeft size={16} />
+                        Back to login
                     </Link>
                 </div>
             </AuthLayout>
@@ -57,10 +63,10 @@ export function ForgotPasswordPage() {
     }
 
     return (
-        <AuthLayout title="Reset Password" subtitle="Enter your email to receive reset instructions">
-            <form onSubmit={handleSubmit} className="space-y-6">
+        <AuthLayout title="Reset your password" subtitle="Enter your email and we'll send you a reset link.">
+            <form onSubmit={handleSubmit} className="space-y-5">
                 {error && (
-                    <div className="p-3 text-sm text-red-600 bg-red-50 rounded-md">
+                    <div className="p-3 text-sm text-red-600 bg-red-50 rounded-md border border-red-200">
                         {error}
                     </div>
                 )}
@@ -74,6 +80,7 @@ export function ForgotPasswordPage() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
+                        disabled={isLoading}
                     />
                 </div>
 
@@ -85,13 +92,14 @@ export function ForgotPasswordPage() {
                     {isLoading ? <Loader2 className="animate-spin mr-2" /> : null}
                     Send Reset Link
                 </Button>
-            </form>
 
-            <div className="mt-6 text-center">
-                <Link to="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900 flex items-center justify-center gap-2">
-                    <ArrowLeft className="w-4 h-4" /> Back to Login
-                </Link>
-            </div>
+                <div className="text-center">
+                    <Link to="/login" className="text-sm text-[#006B3F] font-medium hover:underline inline-flex items-center gap-1">
+                        <ArrowLeft size={14} />
+                        Back to login
+                    </Link>
+                </div>
+            </form>
         </AuthLayout>
     );
 }

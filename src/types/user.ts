@@ -1,7 +1,11 @@
-import type { Timestamp } from 'firebase/firestore';
 import type { BudgetBreakdown, BudgetFormData, Tour } from './index';
 import type { ChatMessage } from './chat';
 import type { SupportedCurrency } from '../services/currencyService';
+
+export interface Timestamp {
+    seconds: number;
+    nanoseconds: number;
+}
 
 export interface UserProfile {
     uid: string;
@@ -27,6 +31,10 @@ export interface SavedTrip {
     chatHistory?: ChatMessage[];
     createdAt: Timestamp;
     updatedAt: Timestamp;
+    itinerary?: {
+        days: Record<string, unknown>[];
+        generatedBy?: string;
+    };
     isFavorite: boolean;
     selectedTour?: Tour;
 }

@@ -23,7 +23,7 @@ export function getRecommendations(
     formData: BudgetFormData,
     options: MatchingOptions = {}
 ): RecommendationSet {
-    const { maxResults = 5, preferredRegions, travelStyle } = options;
+    const { maxResults = 5, preferredRegions } = options;
 
     // Calculate daily budgets
     const dailyAccommodation = breakdown.accommodation / formData.duration;
@@ -38,7 +38,7 @@ export function getRecommendations(
         accommodation: matchAccommodations(dailyAccommodation, regions, maxResults),
         activities: matchActivities(totalActivities, regions, formData.interests || [], maxResults),
         food: matchRestaurants(dailyFood, regions, maxResults),
-        transport: matchTransport(dailyTransport, formData.transportMode, maxResults)
+        transport: matchTransport(dailyTransport, formData.transportMode || 'public', maxResults)
     };
 }
 
@@ -95,7 +95,7 @@ function matchActivities(
     const maxPrice = perActivityBudget * 2;
 
     let matches = ACTIVITY_RECOMMENDATIONS.filter(activity => {
-        const inPriceRange = activity.priceRange.min <= maxPrice;
+        const inPriceRange = activity.priceRange.min <= maxPrice && activity.priceRange.min >= minPrice;
         const inRegion = regions.some(region =>
             activity.region.toLowerCase().includes(region.toLowerCase()) ||
             region.toLowerCase().includes(activity.region.toLowerCase())
@@ -185,8 +185,8 @@ function matchTransport(
     const minPrice = dailyBudget * 0.5;
     const maxPrice = dailyBudget * 1.5;
 
-    let matches = TRANSPORT_RECOMMENDATIONS.filter(transport => {
-        const inPriceRange = transport.priceRange.min <= maxPrice;
+    const matches = TRANSPORT_RECOMMENDATIONS.filter(transport => {
+        const inPriceRange = transport.priceRange.min <= maxPrice && transport.priceRange.min >= minPrice;
 
         // Match transport mode preference
         const modeMatch =

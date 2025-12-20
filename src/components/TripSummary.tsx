@@ -3,7 +3,7 @@ import { Button } from './ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
 import { useCurrency } from '../contexts/CurrencyContext';
 import { useAuth } from '../contexts/AuthContext';
-import * as firestoreService from '../services/firestoreService';
+// import * as firestoreService from '../services/firestoreService';
 import type { BudgetFormData, BudgetBreakdown, Tour } from '../types';
 import { useState } from 'react';
 
@@ -41,13 +41,14 @@ export function TripSummary({ formData, budgetBreakdown, selectedTour, onStartOv
         setSaveError('');
 
         try {
-            await firestoreService.saveTrip(currentUser.uid, {
-                name: `Trip to Ghana (${formData.duration} days)`,
-                description: `A ${formData.accommodationLevel} trip for ${travelerCount} people.`,
-                formData,
-                breakdown: budgetBreakdown,
-                selectedTour: selectedTour || undefined
-            });
+            // await firestoreService.saveTrip(currentUser.uid, {
+            //     name: `Trip to Ghana (${formData.duration} days)`,
+            //     description: `A ${formData.accommodationLevel} trip for ${travelerCount} people.`,
+            //     formData,
+            //     breakdown: budgetBreakdown,
+            //     selectedTour: selectedTour || undefined
+            // });
+            console.warn('Save trip functionality temporarily disabled pending backend integration');
             setSaveSuccess(true);
         } catch (err) {
             console.error('Error saving trip:', err);

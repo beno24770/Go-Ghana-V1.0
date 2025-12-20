@@ -1,5 +1,5 @@
 import { Card } from '../../ui/Card';
-import { Plane, MoreHorizontal, ArrowRight } from 'lucide-react';
+import { Plane, MoreHorizontal } from 'lucide-react';
 
 interface FlightWidgetProps {
     origin?: string;

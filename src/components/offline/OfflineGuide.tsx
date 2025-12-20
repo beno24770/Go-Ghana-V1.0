@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { SavedTrip } from '../../types';
+import type { SavedTrip } from '../../types';
 import { offlineStorage } from '../../services/offlineStorage';
 import emergencyContacts from '../../data/static/emergencyContacts.json';
-import { Phone, MapPin, Trash2, ArrowLeft } from 'lucide-react';
-import { BudgetResult } from '../BudgetResult'; // Reusing budget result view
-import { format } from 'date-fns'; // Assumption: date-fns might be used, if not we use native
+import { Phone, Trash2, ArrowLeft } from 'lucide-react';
 
 export const OfflineGuide: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     const [activeTab, setActiveTab] = useState<'trips' | 'emergency'>('trips');
@@ -77,17 +75,19 @@ export const OfflineGuide: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                     {selectedTrip.itinerary?.days && (
                         <div className="space-y-4">
                             <h3 className="font-bold text-xl text-[#006B3F]">Itinerary</h3>
-                            {selectedTrip.itinerary.days.map((day: any, idx: number) => (
-                                <div key={idx} className="bg-white p-4 rounded-xl shadow-sm border-l-4 border-[#FCD116]">
-                                    <h4 className="font-bold">Day {day.day}</h4>
-                                    <p className="text-sm text-gray-600 mb-2">{day.theme || 'Exploration'}</p>
-                                    <div className="space-y-2">
-                                        {day.activities?.morning && <p className="text-sm mt-1">☀️ {day.activities.morning}</p>}
-                                        {day.activities?.afternoon && <p className="text-sm mt-1">🌤️ {day.activities.afternoon}</p>}
-                                        {day.activities?.evening && <p className="text-sm mt-1">🌙 {day.activities.evening}</p>}
+                            {
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                selectedTrip.itinerary.days.map((day: any, idx: number) => (
+                                    <div key={idx} className="bg-white p-4 rounded-xl shadow-sm border-l-4 border-[#FCD116]">
+                                        <h4 className="font-bold">Day {day.day}</h4>
+                                        <p className="text-sm text-gray-600 mb-2">{day.theme || 'Exploration'}</p>
+                                        <div className="space-y-2">
+                                            {day.activities?.morning && <p className="text-sm mt-1">☀️ {day.activities.morning}</p>}
+                                            {day.activities?.afternoon && <p className="text-sm mt-1">🌤️ {day.activities.afternoon}</p>}
+                                            {day.activities?.evening && <p className="text-sm mt-1">🌙 {day.activities.evening}</p>}
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
                         </div>
                     )}
                 </div>

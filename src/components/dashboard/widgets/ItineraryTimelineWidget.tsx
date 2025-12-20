@@ -2,6 +2,7 @@ import { Card } from '../../ui/Card';
 import { Calendar, MoreHorizontal, Clock, MapPin } from 'lucide-react';
 
 interface ItineraryTimelineWidgetProps {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     days?: any[]; // Using flexible type for now as itinerary structure can vary
     className?: string;
 }

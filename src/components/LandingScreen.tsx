@@ -77,6 +77,13 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle,
                             </div>
                         )}
                         <Button
+                            onClick={() => window.location.href = '/login'}
+                            variant="ghost" 
+                            className="text-white hover:text-ghana-yellow hover:bg-white/10"
+                        >
+                            Login
+                        </Button>
+                        <Button
                             onClick={onStart}
                             size="sm"
                             className="bg-white text-black hover:bg-ghana-yellow hover:text-white rounded-full px-6 font-semibold transition-all shadow-lg hover:shadow-ghana-yellow/50"

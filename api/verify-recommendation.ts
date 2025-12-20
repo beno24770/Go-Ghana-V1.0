@@ -104,6 +104,7 @@ If information is not available, omit that field.`;
     } catch (error) {
         console.error('Verification error:', error);
         return new Response(JSON.stringify({
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             recommendation: (req as any).recommendation || {},
             availability: 'unknown',
             lastChecked: new Date().toISOString(),

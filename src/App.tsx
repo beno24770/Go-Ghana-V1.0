@@ -14,6 +14,7 @@ import { SignUpPage } from './components/auth/SignUpPage';
 import { LoginPage } from './components/auth/LoginPage';
 import { ForgotPasswordPage } from './components/auth/ForgotPasswordPage';
 import { CheckEmailPage } from './components/auth/CheckEmailPage';
+import { VerifyEmailPage } from './components/auth/VerifyEmailPage';
 import { LocalAuthPage } from './components/auth/LocalAuthPage';
 import { TripSummary } from './components/TripSummary';
 import { Dashboard } from './components/Dashboard';
@@ -25,7 +26,8 @@ import { ChatProvider } from './contexts/ChatContext';
 import { ChatWidget } from './components/chat/ChatWidget';
 import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 import { knowledgeService } from './services/knowledgeService';
-import { OfflineGuide } from './components/offline/OfflineGuide'; // IMPORT ADDED
+import { OfflineGuide } from './components/offline/OfflineGuide';
+import { SharedTripPage } from './components/sharing/SharedTripPage';
 import type { BudgetFormData, BudgetBreakdown, Tour } from './types';
 import type { SelectedRecommendations } from './types/recommendations';
 
@@ -208,7 +210,9 @@ function AppContent() {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/check-email" element={<CheckEmailPage />} />
-        <Route path="/offline" element={<OfflineGuide />} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
+        <Route path="/offline" element={<OfflineGuide onBack={() => window.history.back()} />} />
+        <Route path="/plan/:userId/:tripId" element={<SharedTripPage />} />
         <Route
           path="/dashboard"
           element={

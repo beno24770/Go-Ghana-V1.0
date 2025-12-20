@@ -1,19 +1,23 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import type { User } from 'firebase/auth';
-import * as authService from '../services/authService';
-import { createUserProfile } from '../services/firestoreService';
+import * as authApi from '../services/authApiService';
+
+interface User {
+    id: string;
+    email: string;
+    displayName: string | null;
+    emailVerified: boolean;
+}
 
 interface AuthContextType {
     user: User | null;
-    currentUser: User | null; // Alias for compatibility
+    currentUser: User | null;
     loading: boolean;
-    signUp: (email: string, password: string, displayName?: string, phoneNumber?: string) => Promise<void>;
+    signUp: (email: string, password: string, displayName?: string) => Promise<void>;
     signIn: (email: string, password: string) => Promise<void>;
-    signInWithGoogle: () => Promise<void>;
-    signInWithApple: () => Promise<void>;
+    signInWithGoogle: () => void;
+    signInWithApple: () => void;
     signOut: () => Promise<void>;
     resetPassword: (email: string) => Promise<void>;
-    sendVerificationEmail: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,34 +26,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
 
+    // Check auth status on mount
     useEffect(() => {
-        // Subscribe to auth state changes
-        const unsubscribe = authService.onAuthStateChanged(async (user) => {
-            setUser(user);
-            setLoading(false);
-
-            // Create user profile in Firestore if new user
-            // Note: This automatic creation might miss the phone number if it's not passed here
-            // Ideally, we handle profile creation explicitly in signUp
-        });
-
-        return unsubscribe;
+        const checkAuth = async () => {
+            try {
+                const currentUser = await authApi.checkAuthStatus();
+                setUser(currentUser);
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                setUser(null);
+            } finally {
+                setLoading(false);
+            }
+        };
+        checkAuth();
     }, []);
 
-    const signUp = useCallback(async (email: string, password: string, displayName?: string, phoneNumber?: string) => {
+    const signUp = useCallback(async (email: string, password: string, displayName?: string) => {
         setLoading(true);
         try {
-            const userCredential = await authService.signUp(email, password, displayName);
-            // Explicitly create profile with phone number
-            if (userCredential.user) {
-                await createUserProfile(
-                    userCredential.user.uid,
-                    email,
-                    displayName,
-                    null,
-                    phoneNumber
-                );
-            }
+            await authApi.signUp(email, password, displayName);
+            // User needs to verify email, don't set user yet
         } finally {
             setLoading(false);
         }
@@ -58,59 +55,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const signIn = useCallback(async (email: string, password: string) => {
         setLoading(true);
         try {
-            const userCredential = await authService.signIn(email, password);
-
-            // Check for email verification
-            if (userCredential.user && !userCredential.user.emailVerified) {
-                await authService.signOut();
-                throw new Error('Please verify your email address before logging in.');
-            }
+            const { user: loggedInUser } = await authApi.signIn(email, password);
+            setUser(loggedInUser);
         } finally {
             setLoading(false);
         }
     }, []);
 
-    const signInWithGoogle = useCallback(async () => {
-        setLoading(true);
-        try {
-            await authService.signInWithGoogle();
-        } finally {
-            setLoading(false);
-        }
+    const signInWithGoogle = useCallback(() => {
+        authApi.signInWithGoogle();
     }, []);
 
-    const signInWithApple = useCallback(async () => {
-        setLoading(true);
-        try {
-            await authService.signInWithApple();
-        } finally {
-            setLoading(false);
-        }
-    }, []);
-
-    const sendVerificationEmail = useCallback(async () => {
-        if (authService.getCurrentUser()) {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            await authService.sendVerificationEmail(authService.getCurrentUser()!);
-        }
+    const signInWithApple = useCallback(() => {
+        authApi.signInWithApple();
     }, []);
 
     const signOut = useCallback(async () => {
         setLoading(true);
         try {
-            await authService.signOut();
+            await authApi.signOut();
+            setUser(null);
         } finally {
             setLoading(false);
         }
     }, []);
 
     const resetPassword = useCallback(async (email: string) => {
-        await authService.resetPassword(email);
+        await authApi.resetPassword(email);
     }, []);
 
     const value: AuthContextType = {
         user,
-        currentUser: user, // Alias for compatibility
+        currentUser: user,
         loading,
         signUp,
         signIn,
@@ -118,13 +94,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signInWithApple,
         signOut,
         resetPassword,
-        sendVerificationEmail,
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-// Custom hook to use auth context
 // eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
     const context = useContext(AuthContext);
@@ -134,7 +108,6 @@ export function useAuth() {
     return context;
 }
 
-// Protected route wrapper component
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     const { user, loading } = useAuth();
 
@@ -149,29 +122,35 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
         );
     }
 
-    if (!user || !user.emailVerified) {
+    if (!user) {
         return (
             <div className="flex items-center justify-center min-h-screen">
                 <div className="text-center max-w-md p-8">
-                    <h2 className="text-2xl font-bold mb-4">
-                        {!user ? 'Authentication Required' : 'Email Verification Required'}
-                    </h2>
-                    <p className="text-muted-foreground mb-6">
-                        {!user
-                            ? 'Please sign in to access this feature.'
-                            : 'Please verify your email address to continue.'}
-                    </p>
-                    {user && !user.emailVerified && (
-                        <button
-                            onClick={async () => {
-                                await authService.signOut();
-                                window.location.href = '/login';
-                            }}
-                            className="bg-[#006B3F] text-white px-4 py-2 rounded-md hover:bg-[#005030]"
-                        >
-                            Back to Login
-                        </button>
-                    )}
+                    <h2 className="text-2xl font-bold mb-4">Authentication Required</h2>
+                    <p className="text-muted-foreground mb-6">Please sign in to access this feature.</p>
+                    <a
+                        href="/login"
+                        className="bg-[#006B3F] text-white px-6 py-2 rounded-md hover:bg-[#005030] inline-block"
+                    >
+                        Go to Login
+                    </a>
+                </div>
+            </div>
+        );
+    }
+
+    if (!user.emailVerified) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-center max-w-md p-8">
+                    <h2 className="text-2xl font-bold mb-4">Email Verification Required</h2>
+                    <p className="text-muted-foreground mb-6">Please verify your email address to continue.</p>
+                    <a
+                        href="/login"
+                        className="bg-[#006B3F] text-white px-6 py-2 rounded-md hover:bg-[#005030] inline-block"
+                    >
+                        Back to Login
+                    </a>
                 </div>
             </div>
         );

@@ -1,4 +1,4 @@
-import { SavedTrip, BudgetBreakdown, BudgetFormData } from '../types';
+import type { SavedTrip, BudgetBreakdown, BudgetFormData } from '../types';
 
 const STORAGE_KEY = 'go_ghana_saved_trips';
 
@@ -7,7 +7,7 @@ export const offlineStorage = {
         title: string;
         budgetResult: BudgetBreakdown;
         formData: BudgetFormData;
-        itinerary?: { days: any[] };
+        itinerary?: { days: Record<string, unknown>[] };
     }): SavedTrip => {
         const newTrip: SavedTrip = {
             id: crypto.randomUUID(),

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Wallet, Utensils, Car, Map as MapIcon, Plane, Shield, MessageCircle, Phone, Download, Loader2, Sparkles, Edit2, ChevronDown, ChevronUp, Save } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
 import { Button } from './ui/Button';
@@ -8,9 +9,8 @@ import { CurrencySelector } from './ui/CurrencySelector';
 import { useCurrency } from '../contexts/CurrencyContext';
 import { useChat } from '../contexts/ChatContext';
 import { useAuth } from '../contexts/AuthContext';
-import { AuthModal } from './auth/AuthModal';
 import { generateBudgetPDF } from '../utils/pdfGenerator';
-import * as firestoreService from '../services/firestoreService';
+
 import { CATEGORY_KNOWLEDGE } from '../data/categoryKnowledge';
 import type { BudgetBreakdown, BudgetFormData } from '../types';
 
@@ -33,9 +33,8 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
     const { convertAndFormat, selectedCurrency } = useCurrency();
     const { toggleChat, setCategoryContext } = useChat();
     const { user } = useAuth();
+    const navigate = useNavigate();
 
-    const [showAuthModal, setShowAuthModal] = useState(false);
-    const [pendingAction, setPendingAction] = useState<'pdf' | 'save' | null>(null);
     const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [isBooking, setIsBooking] = useState(false);
@@ -166,8 +165,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
     // Action handlers
     const handleAction = (action: 'pdf' | 'save') => {
         if (!user) {
-            setPendingAction(action);
-            setShowAuthModal(true);
+            navigate('/login');
         } else {
             executeAction(action);
         }
@@ -190,12 +188,14 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
             setIsSaving(true);
             try {
                 if (user) {
-                    await firestoreService.saveTrip(user.uid, {
-                        name: `Ghana Trip - ${new Date().toLocaleDateString()}`,
-                        description: `Budget estimate for ${formData.duration} days`,
-                        formData,
-                        breakdown
-                    });
+                    // TODO: Implement save trip with new backend
+                    console.warn('Save trip functionality temporarily disabled pending backend integration');
+                    // await firestoreService.saveTrip(user.uid, {
+                    //     name: `Ghana Trip - ${new Date().toLocaleDateString()}`,
+                    //     description: `Budget estimate for ${formData.duration} days`,
+                    //     formData,
+                    //     breakdown
+                    // });
                 }
             } catch (error) {
                 console.error("Error saving trip:", error);
@@ -205,22 +205,16 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
         }
     };
 
-    const handleAuthSuccess = () => {
-        setShowAuthModal(false);
-        if (pendingAction) {
-            executeAction(pendingAction);
-            setPendingAction(null);
-        }
-    };
-
     const handleConsultation = async () => {
         setIsBooking(true);
         try {
             if (user && formData) {
-                await firestoreService.saveConsultationRequest(user.uid, {
-                    budgetSummary: breakdown,
-                    formData: formData
-                });
+                // TODO: Implement consultation request with new backend
+                console.warn('Consultation request functionality temporarily disabled pending backend integration');
+                // await firestoreService.saveConsultationRequest(user.uid, {
+                //     budgetSummary: breakdown,
+                //     formData: formData
+                // });
             }
             window.open('https://calendly.com/weareitv98/30min', '_blank');
         } catch (error) {
@@ -515,14 +509,6 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                     </div>
                 </div>
             </div>
-
-            {/* Auth Modal */}
-            <AuthModal
-                isOpen={showAuthModal}
-                onClose={() => setShowAuthModal(false)}
-                onSuccess={handleAuthSuccess}
-                initialView="login"
-            />
         </div>
     );
 }

@@ -1,8 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { BudgetForm } from './BudgetForm';
-import * as delayModule from '../utils/delay';
 
 // Mock the sleep function to return immediately in tests
 vi.mock('../utils/delay', () => ({
@@ -22,7 +21,6 @@ describe('BudgetForm', () => {
     });
 
     it('calculates duration from dates', async () => {
-        const user = userEvent.setup();
         render(<BudgetForm onSubmit={vi.fn()} isLoading={false} />);
 
         const startDateInput = screen.getByLabelText(/Start Date/i);

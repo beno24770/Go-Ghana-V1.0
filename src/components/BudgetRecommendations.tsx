@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ArrowLeft, Save, Sparkles, Check } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
+import { Card, CardContent } from './ui/Card';
 import { Button } from './ui/Button';
 import { RecommendationCard } from './RecommendationCard';
 import { useCurrency } from '../contexts/CurrencyContext';
@@ -33,7 +33,7 @@ export function BudgetRecommendations({
     const recommendations: RecommendationSet = getRecommendations(breakdown, formData, {
         maxResults: 5,
         preferredRegions: formData.regions,
-        travelStyle: formData.travelStyle
+        travelStyle: formData.travelerType
     });
 
     const handleToggleSelection = (category: string, recommendationId: string) => {

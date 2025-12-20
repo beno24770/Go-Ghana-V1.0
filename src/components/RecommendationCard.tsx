@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { Check, MapPin, Star, Tag, Phone, Globe, ExternalLink } from 'lucide-react';
+import { Check, MapPin, Star, Tag, Phone, Globe } from 'lucide-react';
 import { Card, CardContent } from './ui/Card';
-import { Button } from './ui/Button';
 import { AdepaVerifyButton } from './AdepaVerifyButton';
 import { useCurrency } from '../contexts/CurrencyContext';
 import type { Recommendation } from '../types/recommendations';
@@ -21,7 +20,7 @@ export function RecommendationCard({
     const { convertAndFormat } = useCurrency();
     const [imageError, setImageError] = useState(false);
 
-    const { name, description, priceRange, location, rating, amenities, tags, contactInfo, bookingUrl } = recommendation;
+    const { name, description, priceRange, location, rating, amenities, contactInfo, bookingUrl } = recommendation;
 
     return (
         <Card className={cn(

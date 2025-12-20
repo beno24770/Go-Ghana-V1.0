@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import * as firestoreService from '../services/firestoreService';
+// import * as firestoreService from '../services/firestoreService';
 import type { SavedTrip } from '../types/user';
 import { Button } from './ui/Button';
 import { Loader2, Plus, MapPin } from 'lucide-react';
@@ -11,6 +11,7 @@ import { ItineraryTimelineWidget } from './dashboard/widgets/ItineraryTimelineWi
 import { PackingListWidget } from './dashboard/widgets/PackingListWidget';
 import { WeatherWidget } from './dashboard/widgets/WeatherWidget';
 import { FlightWidget } from './dashboard/widgets/FlightWidget';
+import { ShareModal } from './sharing/ShareModal';
 
 export function Dashboard() {
     const { currentUser } = useAuth();
@@ -18,6 +19,7 @@ export function Dashboard() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [activeTripId, setActiveTripId] = useState<string | null>(null);
+    const [shareModalOpen, setShareModalOpen] = useState(false);
 
     useEffect(() => {
         async function fetchData() {
@@ -25,11 +27,12 @@ export function Dashboard() {
 
             try {
                 setLoading(true);
-                const tripsData = await firestoreService.getUserTrips(currentUser.uid);
-                setTrips(tripsData);
-                if (tripsData.length > 0) {
-                    setActiveTripId(tripsData[0].id);
-                }
+                // const tripsData = await firestoreService.getUserTrips(currentUser.uid);
+                // setTrips(tripsData);
+                setTrips([]); // Mock empty trips for now
+                // if (tripsData.length > 0) {
+                //     setActiveTripId(tripsData[0].id);
+                // }
             } catch (err: unknown) {
                 console.error('Error fetching data:', err);
                 const error = err as { code?: string; message?: string };
@@ -59,6 +62,7 @@ export function Dashboard() {
                     <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <MapPin className="h-8 w-8 text-[#006B3F]" />
                     </div>
+                    {error && <p className="text-red-500 mb-4">{error}</p>}
                     <h2 className="text-2xl font-bold mb-2">No trips yet</h2>
                     <p className="text-muted-foreground mb-8">Start planning your Ghana adventure to see your dashboard.</p>
                     <Button
@@ -99,6 +103,7 @@ export function Dashboard() {
                         destination="Ghana"
                         days={activeTrip.formData.duration}
                         className="h-full min-h-[300px]"
+                        onShare={() => setShareModalOpen(true)}
                     />
                 </div>
 
@@ -179,6 +184,17 @@ export function Dashboard() {
                         ))}
                     </div>
                 </div>
+            )}
+
+            {/* ShareModal */}
+            {activeTripId && (
+                <ShareModal
+                    isOpen={shareModalOpen}
+                    onClose={() => setShareModalOpen(false)}
+                    tripId={activeTripId}
+                    tripName={`${activeTrip.formData.duration}-Day Ghana Adventure`}
+                    userId={currentUser?.id || ''}
+                />
             )}
         </div>
     );

@@ -10,7 +10,7 @@ import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 
 export function SignUpPage() {
-    const { signUp, signInWithGoogle, signInWithApple, sendVerificationEmail } = useAuth();
+    const { signUp, signInWithGoogle, signInWithApple } = useAuth();
     const navigate = useNavigate();
 
     const [firstName, setFirstName] = useState('');
@@ -20,35 +20,27 @@ export function SignUpPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
+    const [agreedToTerms, setAgreedToTerms] = useState(false);
 
     const handleSignUp = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
+
+        if (!agreedToTerms) {
+            setError('Please agree to the Terms and Privacy Policy.');
+            return;
+        }
+
         setIsLoading(true);
 
         try {
             const fullName = `${firstName} ${lastName}`.trim();
             await signUp(email, password, fullName);
-
-            // Send verification email logic
-            try {
-                await sendVerificationEmail();
-            } catch (verErr) {
-                console.warn("Failed to send verification email", verErr);
-                // Continue anyway, user can resend later
-            }
-
             navigate('/check-email', { state: { email } });
         } catch (err: unknown) {
-            console.error(err);
-            const errorObj = err as { code?: string };
-            if (errorObj.code === 'auth/email-already-in-use') {
-                setError('This email is already registered. Please sign in.');
-            } else if (errorObj.code === 'auth/weak-password') {
-                setError('Password should be at least 6 characters.');
-            } else {
-                setError('Failed to create account. Please try again.');
-            }
+            console.error('Signup error:', err);
+            const errorObj = err as { message?: string };
+            setError(errorObj.message || 'Failed to create account. Please try again.');
         } finally {
             setIsLoading(false);
         }
@@ -56,8 +48,7 @@ export function SignUpPage() {
 
     const handleGoogle = async () => {
         try {
-            await signInWithGoogle();
-            navigate('/dashboard');
+            signInWithGoogle();
         } catch (error) {
             console.error(error);
             setError('Failed to sign up with Google.');
@@ -66,11 +57,10 @@ export function SignUpPage() {
 
     const handleApple = async () => {
         try {
-            await signInWithApple();
-            navigate('/dashboard');
+            signInWithApple();
         } catch (error) {
             console.error(error);
-            setError('Apple Sign In is not set up fully yet (needs configuration).');
+            setError('Apple Sign In is not available yet.');
         }
     };
 
@@ -78,7 +68,7 @@ export function SignUpPage() {
         <AuthLayout title="Create your account" subtitle="Join thousands of travelers planning their dream trip to Ghana.">
             <form onSubmit={handleSignUp} className="space-y-5">
                 {error && (
-                    <div className="p-3 text-sm text-red-600 bg-red-50 rounded-md">
+                    <div className="p-3 text-sm text-red-600 bg-red-50 rounded-md border border-red-200">
                         {error}
                     </div>
                 )}
@@ -92,6 +82,7 @@ export function SignUpPage() {
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
                             required
+                            disabled={isLoading}
                         />
                     </div>
                     <div className="space-y-2">
@@ -102,6 +93,7 @@ export function SignUpPage() {
                             value={lastName}
                             onChange={(e) => setLastName(e.target.value)}
                             required
+                            disabled={isLoading}
                         />
                     </div>
                 </div>
@@ -115,6 +107,7 @@ export function SignUpPage() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
+                        disabled={isLoading}
                     />
                 </div>
 
@@ -124,11 +117,12 @@ export function SignUpPage() {
                         <Input
                             id="password"
                             type={showPassword ? "text" : "password"}
-                            placeholder="Min. 8 characters"
+                            placeholder="Min. 6 characters"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
                             minLength={6}
+                            disabled={isLoading}
                         />
                         <button
                             type="button"
@@ -141,9 +135,13 @@ export function SignUpPage() {
                 </div>
 
                 <div className="flex items-center space-x-2">
-                    <Checkbox id="terms" required />
-                    <label htmlFor="terms" className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                        I agree to the <a href="#" className="underline">Terms</a> and <a href="#" className="underline">Privacy Policy</a>
+                    <Checkbox
+                        id="terms"
+                        checked={agreedToTerms}
+                        onCheckedChange={(checked) => setAgreedToTerms(checked === true)}
+                    />
+                    <label htmlFor="terms" className="text-sm text-gray-600 leading-none">
+                        I agree to the <a href="#" className="underline text-[#006B3F]">Terms</a> and <a href="#" className="underline text-[#006B3F]">Privacy Policy</a>
                     </label>
                 </div>
 

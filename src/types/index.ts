@@ -100,7 +100,7 @@ export interface SavedTrip {
     createdAt: string;
     budgetResult: BudgetBreakdown;
     itinerary?: {
-        days: any[];
+        days: Record<string, unknown>[];
         generatedBy?: string;
     };
     formData: BudgetFormData;

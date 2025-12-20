@@ -11,14 +11,23 @@ interface BudgetChartProps {
 export function BudgetChart({ data }: BudgetChartProps) {
     const RADIAN = Math.PI / 180;
 
+    interface LabelProps {
+        cx: number;
+        cy: number;
+        midAngle?: number;
+        innerRadius?: number;
+        outerRadius?: number;
+        percent?: number;
+    }
+
     const renderCustomizedLabel = ({
         cx,
         cy,
-        midAngle,
-        innerRadius,
-        outerRadius,
-        percent,
-    }: any) => {
+        midAngle = 0,
+        innerRadius = 0,
+        outerRadius = 0,
+        percent = 0,
+    }: LabelProps) => {
         const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
         const x = cx + radius * Math.cos(-midAngle * RADIAN);
         const y = cy + radius * Math.sin(-midAngle * RADIAN);

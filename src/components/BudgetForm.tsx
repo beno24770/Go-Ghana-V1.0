@@ -11,14 +11,11 @@ import { Button } from './ui/Button';
 import { Label } from './ui/Label';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './ui/Card';
 import { ProgressIndicator } from './ProgressIndicator';
+import { RegionMapSelector } from './map/RegionMapSelector';
 import { cn } from '../lib/utils';
 import type { BudgetFormData, ActivityInterest, TravelerType, AccommodationLevel } from '../types';
 
-const regionsList = [
-    'Greater Accra', 'Central', 'Volta', 'Ashanti', 'Western',
-    'Northern', 'Savannah', 'Upper East', 'Upper West', 'Eastern',
-    'Western North', 'Bono', 'Bono East', 'Ahafo', 'Oti', 'North East'
-];
+
 
 const months = [
     { name: 'January', season: 'Peak', isPeak: true },
@@ -104,7 +101,7 @@ export interface BudgetFormProps {
 export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: BudgetFormProps) {
     const [step, setStep] = useState(initialStep);
     const totalSteps = 7; // Now includes Review & Confirm step
-    console.log("BudgetForm loaded - v7.0 (Review Step Added)");
+
 
     useEffect(() => {
         setStep(initialStep);
@@ -169,7 +166,7 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
     };
 
     const onFormSubmit = (data: FormSchema) => {
-        console.log('🎯 Form submitted! Data:', data);
+
 
         let travelerType: TravelerType = 'solo';
         if (data.travelers === 2) travelerType = 'couple';
@@ -195,7 +192,7 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
 
         const finalRegions = data.regions.length > 0 ? data.regions : ['Greater Accra', 'Central', 'Ashanti'];
 
-        console.log('✅ Calling parent onSubmit with transformed data');
+
         onSubmit({
             duration: data.duration,
             travelers: data.travelers,
@@ -505,35 +502,19 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
                             </div>
                         </div>
                     </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                        {regionsList.map((region) => (
-                            <label
-                                key={region}
-                                className={cn(
-                                    "flex items-center space-x-3 p-3 rounded-lg border-2 cursor-pointer text-sm font-medium transition-all duration-200",
-                                    watchedValues.regions?.includes(region)
-                                        ? "bg-ghana-green text-white border-ghana-green shadow-md transform scale-105"
-                                        : "bg-white text-gray-700 border-gray-100 hover:border-ghana-green/30 hover:bg-gray-50"
-                                )}
-                            >
-                                <input
-                                    type="checkbox"
-                                    value={region}
-                                    checked={watchedValues.regions?.includes(region)}
-                                    onChange={(e) => {
-                                        const current = watchedValues.regions || [];
-                                        if (e.target.checked) {
-                                            setValue('regions', [...current, region]);
-                                            setValue('isNewToGhana', false); // Uncheck auto-rec if manual select
-                                        } else {
-                                            setValue('regions', current.filter(r => r !== region));
-                                        }
-                                    }}
-                                    className="hidden"
-                                />
-                                <span>{region}</span>
-                            </label>
-                        ))}
+                    <div className="space-y-4">
+                        <RegionMapSelector
+                            selectedRegions={watchedValues.regions || []}
+                            onToggleRegion={(region) => {
+                                const current = watchedValues.regions || [];
+                                if (current.includes(region)) {
+                                    setValue('regions', current.filter(r => r !== region));
+                                } else {
+                                    setValue('regions', [...current, region]);
+                                    setValue('isNewToGhana', false); // Uncheck auto-rec if manual select
+                                }
+                            }}
+                        />
                     </div>
                 </div>
             </div>
