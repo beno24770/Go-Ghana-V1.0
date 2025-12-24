@@ -42,6 +42,7 @@ export const registerUser = async (email: string, password: string, displayName?
             displayName,
             verifyToken,
             provider: 'email',
+            emailVerified: true, // Auto-verify for development
         },
     });
 

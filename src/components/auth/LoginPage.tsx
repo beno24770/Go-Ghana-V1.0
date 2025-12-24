@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AuthLayout } from './AuthLayout';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/Button';
@@ -7,11 +7,12 @@ import { Label } from '../ui/Label';
 import { Checkbox } from '../ui/Checkbox';
 import { GoogleButton, AppleButton } from './OAuthButtons';
 import { Eye, EyeOff, Loader2, CheckCircle2 } from 'lucide-react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 
 export function LoginPage() {
     const { signIn, signInWithGoogle, signInWithApple } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -19,6 +20,14 @@ export function LoginPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+
+    useEffect(() => {
+        if (location.state?.message) {
+            setSuccess(location.state.message);
+            // Clear message from history state
+            window.history.replaceState({}, document.title);
+        }
+    }, [location]);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();

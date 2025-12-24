@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 // import * as firestoreService from '../services/firestoreService';
 import type { SavedTrip } from '../types/user';
@@ -15,6 +16,7 @@ import { ShareModal } from './sharing/ShareModal';
 
 export function Dashboard() {
     const { currentUser } = useAuth();
+    const navigate = useNavigate();
     const [trips, setTrips] = useState<SavedTrip[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -66,7 +68,7 @@ export function Dashboard() {
                     <h2 className="text-2xl font-bold mb-2">No trips yet</h2>
                     <p className="text-muted-foreground mb-8">Start planning your Ghana adventure to see your dashboard.</p>
                     <Button
-                        onClick={() => window.location.reload()}
+                        onClick={() => navigate('/?start=true')}
                         className="w-full bg-[#006B3F] hover:bg-[#005030]"
                     >
                         <Plus className="mr-2 h-4 w-4" /> Plan a Trip

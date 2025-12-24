@@ -36,7 +36,7 @@ export function SignUpPage() {
         try {
             const fullName = `${firstName} ${lastName}`.trim();
             await signUp(email, password, fullName);
-            navigate('/check-email', { state: { email } });
+            navigate('/login', { state: { message: 'Account created! You can now sign in.' } });
         } catch (err: unknown) {
             console.error('Signup error:', err);
             const errorObj = err as { message?: string };

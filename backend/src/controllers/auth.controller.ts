@@ -121,3 +121,39 @@ export const getMe = catchAsync(async (req: AuthRequest, res: Response, next: Ne
         },
     });
 });
+
+export const googleAuth = catchAsync(async (_req: Request, res: Response) => {
+    // For now, return a message or redirect if you had the URL
+    // In a real implementation, this would redirect to Google OAuth
+    const googleClientId = process.env.GOOGLE_CLIENT_ID;
+
+    if (!googleClientId || googleClientId === 'your_google_client_id') {
+        return res.status(400).json({
+            status: 'error',
+            message: 'Google OAuth is not configured on the server.'
+        });
+    }
+
+    // Placeholder redirect URL
+    const redirectUri = `${process.env.FRONTEND_URL}/auth/callback`;
+    const googleUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${googleClientId}&redirect_uri=${redirectUri}&response_type=code&scope=email%20profile`;
+
+    res.redirect(googleUrl);
+});
+
+export const appleAuth = catchAsync(async (_req: Request, res: Response) => {
+    const appleClientId = process.env.APPLE_CLIENT_ID;
+
+    if (!appleClientId || appleClientId === 'your_apple_client_id') {
+        return res.status(400).json({
+            status: 'error',
+            message: 'Apple OAuth is not configured on the server.'
+        });
+    }
+
+    // Apple OAuth redirect placeholder
+    res.status(200).json({
+        status: 'success',
+        message: 'Apple OAuth redirection logic would go here.'
+    });
+});

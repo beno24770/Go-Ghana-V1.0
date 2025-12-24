@@ -13,18 +13,13 @@ export const errorHandler = (err: any, _req: Request, res: Response, _next: Next
             stack: err.stack,
         });
     } else {
-        // Production: Don't leak stack traces
-        if (err.isOperational) {
-            res.status(err.statusCode).json({
-                status: err.status,
-                message: err.message,
-            });
-        } else {
-            console.error('ERROR 💥', err);
-            res.status(500).json({
-                status: 'error',
-                message: 'Something went very wrong!',
-            });
-        }
+        // Production: Temporarily leak errors for debugging "Something went very wrong"
+        console.error('ERROR 💥', err);
+        res.status(err.statusCode || 500).json({
+            status: 'error',
+            message: err.message || 'Something went very wrong!',
+            // Add a hint if it's likely a DB issue
+            hint: err.code ? `Prisma Error Code: ${err.code}` : undefined
+        });
     }
 };

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useSearchParams } from 'react-router-dom';
 import { ProgressIndicator } from './components/ProgressIndicator';
 import { StepTransition } from './components/StepTransition';
 import { LandingScreen } from './components/LandingScreen';
@@ -33,6 +33,7 @@ import type { SelectedRecommendations } from './types/recommendations';
 
 function AppContent() {
   const { exchangeRates } = useCurrency();
+  const [searchParams, setSearchParams] = useSearchParams();
   // Auth context is available but not currently needed in this component
   useAuth();
   const [currentStep, setCurrentStep] = useState(1);
@@ -42,6 +43,17 @@ function AppContent() {
   const [isLocalMode, setIsLocalMode] = useState(false);
   const [budgetFormInitialStep, setBudgetFormInitialStep] = useState(1);
   const [selectedRecommendations, setSelectedRecommendations] = useState<SelectedRecommendations>({});
+
+  // Handle ?start=true from Dashboard
+  useEffect(() => {
+    if (searchParams.get('start') === 'true') {
+      setCurrentStep(3);
+      // Clean up the URL
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete('start');
+      setSearchParams(newParams, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   // Initialize Knowledge Service with mock data
   useEffect(() => {
