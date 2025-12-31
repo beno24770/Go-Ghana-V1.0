@@ -34,15 +34,15 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle,
             {/* Navigation */}
             <nav className="relative z-50 container mx-auto px-6 py-6">
                 <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="relative w-10 h-10 overflow-hidden rounded-xl border-2 border-white/20 shadow-lg">
+                    <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                        <div className="relative w-8 h-8 sm:w-10 sm:h-10 overflow-hidden rounded-xl border-2 border-white/20 shadow-lg shrink-0">
                             <img
                                 src={`${import.meta.env.BASE_URL}goghana-logo.jpg`}
                                 alt="GoGhana Logo"
                                 className="w-full h-full object-cover"
                             />
                         </div>
-                        <span className="text-xl font-bold tracking-tight text-white drop-shadow-md">Go Ghana AI</span>
+                        <span className="text-base sm:text-xl font-bold tracking-tight text-white drop-shadow-md whitespace-nowrap">Go Ghana AI</span>
                     </div>
 
                     <div className="hidden md:flex items-center gap-8 text-sm font-medium text-white/90">
@@ -65,20 +65,20 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle,
                         </button>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                        {/* Mobile Menu Button */}
+                    <div className="flex items-center gap-1 sm:gap-2">
+                        {/* Mobile Menu Button - Moved to left of start planning for ergonomics */}
                         <button
-                            className="md:hidden p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
+                            className="md:hidden p-1.5 text-white hover:bg-white/10 rounded-lg transition-colors"
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
                             aria-label="Toggle Menu"
                         >
-                            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                            {isMenuOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6" />}
                         </button>
 
-                        <div className="flex items-center gap-3">
-                            {/* Local Mode Toggle - Hidden on small mobile to save space */}
+                        <div className="flex items-center gap-2">
+                            {/* Local Mode Toggle - Only show on desktop (md) */}
                             {onLocalModeToggle && (
-                                <div className="hidden sm:flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
+                                <div className="hidden md:flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
                                     <span className="text-xs font-medium text-white/90 hidden lg:inline">Local Mode</span>
                                     <button
                                         onClick={() => onLocalModeToggle(!isLocalMode)}
@@ -93,14 +93,14 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle,
                             <Button
                                 onClick={() => navigate('/login')}
                                 variant="ghost"
-                                className="text-white hover:text-ghana-yellow hover:bg-white/10 hidden sm:flex"
+                                className="text-white hover:text-ghana-yellow hover:bg-white/10 hidden md:flex"
                             >
                                 Login
                             </Button>
                             <Button
                                 onClick={onStart}
                                 size="sm"
-                                className="bg-white text-black hover:bg-ghana-yellow hover:text-white rounded-full px-4 sm:px-6 font-semibold transition-all shadow-lg hover:shadow-ghana-yellow/50 text-xs sm:text-sm"
+                                className="bg-white text-black hover:bg-ghana-yellow hover:text-white rounded-full px-3 sm:px-6 font-bold transition-all shadow-lg hover:shadow-ghana-yellow/50 text-[10px] sm:text-xs md:text-sm h-8 sm:h-10"
                             >
                                 Start Planning
                             </Button>
@@ -172,19 +172,19 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle,
             </nav>
 
             {/* Hero Section */}
-            <div className="relative z-10 container mx-auto px-6 pt-12 pb-32 md:pt-20 md:pb-40 flex flex-col items-center justify-center min-h-[90vh] text-center">
+            <div className="relative z-10 container mx-auto px-4 sm:px-6 pt-8 pb-20 md:pt-20 md:pb-40 flex flex-col items-center justify-center min-h-[90vh] text-center">
                 <div className="max-w-6xl mx-auto space-y-6">
 
                     {/* Badge */}
-                    <div className="inline-flex items-center gap-2 px-5 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full shadow-lg mb-2 animate-fade-in-up opacity-0 delay-100">
-                        <Star className="w-4 h-4 text-ghana-yellow fill-current" />
-                        <span className="text-sm font-semibold tracking-wide text-white">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-full shadow-lg mb-2 animate-fade-in-up opacity-0 delay-100 mx-auto max-w-[90%] sm:max-w-none">
+                        <Star className="w-3 h-3 sm:w-4 sm:h-4 text-ghana-yellow fill-current" />
+                        <span className="text-[10px] sm:text-sm font-semibold tracking-wide text-white line-clamp-1 sm:line-clamp-none">
                             Ghana's First Budget-First AI Travel Planner
                         </span>
                     </div>
 
                     {/* Main Headline */}
-                    <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight drop-shadow-2xl animate-fade-in-up opacity-0 delay-200 px-2 mt-4 sm:mt-0">
+                    <h1 className="text-2xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight drop-shadow-2xl animate-fade-in-up opacity-0 delay-200 px-2 mt-2 sm:mt-0">
                         PLAN YOUR GHANA TRIP<br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-ghana-yellow via-yellow-300 to-ghana-green">
                             ON ANY BUDGET
