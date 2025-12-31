@@ -10,7 +10,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'adepa-avatar.jpg', 'goghana-logo.png', 'pwa-icon.png', 'robots.txt'],
+      includeAssets: ['favicon.ico', 'adepa-avatar.jpg', 'goghana-logo.png', 'pwa-icon.png', 'icon-192.png', 'icon-512.png', 'robots.txt'],
       manifest: {
         name: 'Go Ghana AI',
         short_name: 'Go Ghana AI',
@@ -23,19 +23,19 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
-            src: '/pwa-icon.png',
+            src: '/icon-192.png',
             sizes: '192x192',
             type: 'image/png',
             purpose: 'any'
           },
           {
-            src: '/pwa-icon.png',
+            src: '/icon-512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any'
           },
           {
-            src: '/pwa-icon.png',
+            src: '/icon-512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable'
