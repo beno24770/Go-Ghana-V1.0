@@ -96,10 +96,9 @@ export interface BudgetFormProps {
     onSubmit: (data: BudgetFormData) => void;
     isLoading?: boolean;
     initialStep?: number;
-    onBackHome?: () => void;
 }
 
-export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1, onBackHome }: BudgetFormProps) {
+export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: BudgetFormProps) {
     const [step, setStep] = useState(initialStep);
     const totalSteps = 7; // Now includes Review & Confirm step
 
@@ -961,12 +960,12 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1, onBac
                 <CardFooter className="flex flex-col-reverse sm:flex-row justify-between p-6 bg-secondary/5 border-t gap-3 sm:gap-0">
                     <Button
                         type="button"
-                        variant="ghost"
-                        onClick={step === 1 ? onBackHome : handleBack}
-                        disabled={isNavigating}
-                        className="gap-2 w-full sm:w-auto h-12 sm:h-10 border-gray-200 text-gray-600 font-medium"
+                        variant="outline"
+                        onClick={handleBack}
+                        disabled={step === 1 || isNavigating}
+                        className={cn("gap-2 w-full sm:w-auto h-12 sm:h-10 border-gray-200 text-gray-600 font-medium", step === 1 && "invisible")}
                     >
-                        <ArrowLeft className="h-4 w-4" /> {step === 1 ? 'Home' : (returnToReview ? 'Cancel Edit' : 'Back')}
+                        <ArrowLeft className="h-4 w-4" /> {returnToReview ? 'Cancel Edit' : 'Back'}
                     </Button>
 
                     {step < totalSteps ? (
