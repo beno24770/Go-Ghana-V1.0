@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/Button';
-import { ArrowRight, Check, Play, Star, MapPin, DollarSign } from 'lucide-react';
+import { ArrowRight, Check, Play, Star, MapPin, DollarSign, Menu, X } from 'lucide-react';
 import { AnimatedSection } from './ui/AnimatedSection';
 
 
@@ -13,6 +14,7 @@ interface LandingScreenProps {
 
 export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle, onOpenOfflineGuide }: LandingScreenProps) {
     const navigate = useNavigate();
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
         <div className="min-h-screen relative font-sans text-white overflow-x-hidden">
@@ -63,37 +65,110 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle,
                         </button>
                     </div>
 
-                    <div className="flex items-center gap-4">
-                        {/* Local Mode Toggle */}
-                        {onLocalModeToggle && (
-                            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
-                                <span className="text-xs font-medium text-white/90 hidden lg:inline">Local Mode</span>
-                                <button
-                                    onClick={() => onLocalModeToggle(!isLocalMode)}
-                                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-ghana-yellow focus:ring-offset-2 focus:ring-offset-black ${isLocalMode ? 'bg-ghana-green' : 'bg-white/30'}`}
-                                >
-                                    <span
-                                        className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${isLocalMode ? 'translate-x-5' : 'translate-x-1'}`}
-                                    />
-                                </button>
-                            </div>
-                        )}
-                        <Button
-                            onClick={() => navigate('/login')}
-                            variant="ghost"
-                            className="text-white hover:text-ghana-yellow hover:bg-white/10"
+                    <div className="flex items-center gap-2">
+                        {/* Mobile Menu Button */}
+                        <button
+                            className="md:hidden p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            aria-label="Toggle Menu"
                         >
-                            Login
-                        </Button>
-                        <Button
-                            onClick={onStart}
-                            size="sm"
-                            className="bg-white text-black hover:bg-ghana-yellow hover:text-white rounded-full px-6 font-semibold transition-all shadow-lg hover:shadow-ghana-yellow/50"
-                        >
-                            Start Planning
-                        </Button>
+                            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                        </button>
+
+                        <div className="flex items-center gap-3">
+                            {/* Local Mode Toggle - Hidden on small mobile to save space */}
+                            {onLocalModeToggle && (
+                                <div className="hidden sm:flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
+                                    <span className="text-xs font-medium text-white/90 hidden lg:inline">Local Mode</span>
+                                    <button
+                                        onClick={() => onLocalModeToggle(!isLocalMode)}
+                                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-ghana-yellow focus:ring-offset-2 focus:ring-offset-black ${isLocalMode ? 'bg-ghana-green' : 'bg-white/30'}`}
+                                    >
+                                        <span
+                                            className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${isLocalMode ? 'translate-x-5' : 'translate-x-1'}`}
+                                        />
+                                    </button>
+                                </div>
+                            )}
+                            <Button
+                                onClick={() => navigate('/login')}
+                                variant="ghost"
+                                className="text-white hover:text-ghana-yellow hover:bg-white/10 hidden sm:flex"
+                            >
+                                Login
+                            </Button>
+                            <Button
+                                onClick={onStart}
+                                size="sm"
+                                className="bg-white text-black hover:bg-ghana-yellow hover:text-white rounded-full px-4 sm:px-6 font-semibold transition-all shadow-lg hover:shadow-ghana-yellow/50 text-xs sm:text-sm"
+                            >
+                                Start Planning
+                            </Button>
+                        </div>
                     </div>
                 </div>
+
+                {/* Mobile Navigation Overlay */}
+                {isMenuOpen && (
+                    <div className="md:hidden absolute top-20 left-4 right-4 bg-black/95 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl animate-in fade-in zoom-in duration-200">
+                        <div className="flex flex-col gap-6 text-lg font-medium">
+                            <a
+                                href="#features"
+                                onClick={() => setIsMenuOpen(false)}
+                                className="text-white/90 hover:text-ghana-yellow flex items-center gap-3"
+                            >
+                                <Star className="w-5 h-5 text-ghana-yellow" /> Features
+                            </a>
+                            <a
+                                href="#how-it-works"
+                                onClick={() => setIsMenuOpen(false)}
+                                className="text-white/90 hover:text-ghana-yellow flex items-center gap-3"
+                            >
+                                <Play className="w-5 h-5 text-ghana-yellow" /> How It Works
+                            </a>
+                            {onOpenOfflineGuide && (
+                                <button
+                                    onClick={() => {
+                                        onOpenOfflineGuide();
+                                        setIsMenuOpen(false);
+                                    }}
+                                    className="text-white/90 hover:text-ghana-yellow flex items-center gap-3"
+                                >
+                                    <div className="w-5 h-5 flex items-center justify-center">
+                                        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                    </div>
+                                    Pocket Guide
+                                </button>
+                            )}
+                            <a
+                                href="/login"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    navigate('/login');
+                                    setIsMenuOpen(false);
+                                }}
+                                className="text-white/90 hover:text-ghana-yellow sm:hidden flex items-center gap-3"
+                            >
+                                <ArrowRight className="w-5 h-5 text-ghana-yellow" /> Login
+                            </a>
+
+                            {/* Mobile Local Mode Toggle */}
+                            {onLocalModeToggle && (
+                                <div className="sm:hidden flex items-center justify-between py-2 border-t border-white/10">
+                                    <span className="text-white/90">Local Mode</span>
+                                    <button
+                                        onClick={() => onLocalModeToggle(!isLocalMode)}
+                                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isLocalMode ? 'bg-ghana-green' : 'bg-white/30'}`}
+                                    >
+                                        <span
+                                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${isLocalMode ? 'translate-x-6' : 'translate-x-1'}`}
+                                        />
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
             </nav>
 
             {/* Hero Section */}
@@ -109,7 +184,7 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle,
                     </div>
 
                     {/* Main Headline */}
-                    <h1 className="text-2xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight drop-shadow-2xl animate-fade-in-up opacity-0 delay-200 px-2">
+                    <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight drop-shadow-2xl animate-fade-in-up opacity-0 delay-200 px-2 mt-4 sm:mt-0">
                         PLAN YOUR GHANA TRIP<br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-ghana-yellow via-yellow-300 to-ghana-green">
                             ON ANY BUDGET
@@ -181,7 +256,7 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle,
                     </div>
 
                     {/* 3-Step Cards */}
-                    <div className="grid md:grid-cols-3 gap-6 md:gap-8 max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-8 max-w-7xl mx-auto">
                         {[
                             {
                                 step: "01",

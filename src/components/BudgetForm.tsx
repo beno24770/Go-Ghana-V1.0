@@ -231,7 +231,7 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
                         <Label className="text-lg font-bold text-gray-900">Trip Dates</Label>
                         <span className="text-2xl font-bold text-ghana-green">{watchedValues.duration} <span className="text-sm font-medium text-gray-500">days</span></span>
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="startDate" className="text-sm font-medium text-gray-500">Start Date</Label>
                             <input

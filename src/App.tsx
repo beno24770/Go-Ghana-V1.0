@@ -1,24 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { Routes, Route, useSearchParams } from 'react-router-dom';
 import { ProgressIndicator } from './components/ProgressIndicator';
 import { StepTransition } from './components/StepTransition';
 import { LandingScreen } from './components/LandingScreen';
-import { BudgetForm } from './components/BudgetForm';
 import { LoadingScreen } from './components/LoadingScreen';
-import { BudgetResult } from './components/BudgetResult';
-import { BudgetRecommendations } from './components/BudgetRecommendations';
-import { TourRecommendations } from './components/TourRecommendations';
-import { DecisionNode } from './components/DecisionNode';
-import { TripPlanner } from './components/TripPlanner';
-import { SignUpPage } from './components/auth/SignUpPage';
-import { LoginPage } from './components/auth/LoginPage';
-import { ForgotPasswordPage } from './components/auth/ForgotPasswordPage';
-import { CheckEmailPage } from './components/auth/CheckEmailPage';
-import { VerifyEmailPage } from './components/auth/VerifyEmailPage';
-import { LocalAuthPage } from './components/auth/LocalAuthPage';
-import { TripSummary } from './components/TripSummary';
-import { Dashboard } from './components/Dashboard';
-import { LocalEstimator } from './components/local/LocalEstimator';
 import { calculateBudget } from './utils/calculateBudget';
 import { CurrencyProvider, useCurrency } from './contexts/CurrencyContext';
 import { AuthProvider, useAuth, ProtectedRoute } from './contexts/AuthContext';
@@ -27,9 +12,26 @@ import { ChatWidget } from './components/chat/ChatWidget';
 import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 import { knowledgeService } from './services/knowledgeService';
 import { OfflineGuide } from './components/offline/OfflineGuide';
-import { SharedTripPage } from './components/sharing/SharedTripPage';
 import type { BudgetFormData, BudgetBreakdown, Tour } from './types';
 import type { SelectedRecommendations } from './types/recommendations';
+
+// Lazy load non-critical components
+const BudgetForm = lazy(() => import('./components/BudgetForm').then(m => ({ default: m.BudgetForm })));
+const BudgetResult = lazy(() => import('./components/BudgetResult').then(m => ({ default: m.BudgetResult })));
+const BudgetRecommendations = lazy(() => import('./components/BudgetRecommendations').then(m => ({ default: m.BudgetRecommendations })));
+const TourRecommendations = lazy(() => import('./components/TourRecommendations').then(m => ({ default: m.TourRecommendations })));
+const DecisionNode = lazy(() => import('./components/DecisionNode').then(m => ({ default: m.DecisionNode })));
+const TripPlanner = lazy(() => import('./components/TripPlanner').then(m => ({ default: m.TripPlanner })));
+const SignUpPage = lazy(() => import('./components/auth/SignUpPage').then(m => ({ default: m.SignUpPage })));
+const LoginPage = lazy(() => import('./components/auth/LoginPage').then(m => ({ default: m.LoginPage })));
+const ForgotPasswordPage = lazy(() => import('./components/auth/ForgotPasswordPage').then(m => ({ default: m.ForgotPasswordPage })));
+const CheckEmailPage = lazy(() => import('./components/auth/CheckEmailPage').then(m => ({ default: m.CheckEmailPage })));
+const VerifyEmailPage = lazy(() => import('./components/auth/VerifyEmailPage').then(m => ({ default: m.VerifyEmailPage })));
+const LocalAuthPage = lazy(() => import('./components/auth/LocalAuthPage').then(m => ({ default: m.LocalAuthPage })));
+const TripSummary = lazy(() => import('./components/TripSummary').then(m => ({ default: m.TripSummary })));
+const Dashboard = lazy(() => import('./components/Dashboard').then(m => ({ default: m.Dashboard })));
+const LocalEstimator = lazy(() => import('./components/local/LocalEstimator').then(m => ({ default: m.LocalEstimator })));
+const SharedTripPage = lazy(() => import('./components/sharing/SharedTripPage').then(m => ({ default: m.SharedTripPage })));
 
 function AppContent() {
   const { exchangeRates } = useCurrency();
@@ -217,168 +219,170 @@ function AppContent() {
   return (
     <div className="min-h-screen font-sans text-foreground">
       {/* Routes for New Auth System */}
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/check-email" element={<CheckEmailPage />} />
-        <Route path="/verify-email" element={<VerifyEmailPage />} />
-        <Route path="/offline" element={<OfflineGuide onBack={() => window.history.back()} />} />
-        <Route path="/plan/:userId/:tripId" element={<SharedTripPage />} />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-        {/* Default Route for App Content (Steps) */}
-        <Route path="*" element={
-          <>
-            {/* Progress Indicator - Show from step 2 onwards */}
-            {currentStep > 1 && currentStep < 8 && (
-              <ProgressIndicator
-                currentStep={currentStep - 1} // Adjust for display (1-7 instead of 2-8)
-                totalSteps={7}
-                onStepClick={(step) => goToStep(step + 1)}
-              />
-            )}
-
-            {/* Step Content */}
-            <StepTransition direction={currentStep > 1 ? 'forward' : 'backward'}>
-              {currentStep === 1 && (
-                <LandingScreen
-                  onStart={handleStart}
-                  isLocalMode={isLocalMode}
-                  onLocalModeToggle={handleLocalModeToggle}
-                  onOpenOfflineGuide={handleOpenOfflineGuide} // PROP PASSED
+      <Suspense fallback={<LoadingScreen onComplete={() => { }} />}>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/check-email" element={<CheckEmailPage />} />
+          <Route path="/verify-email" element={<VerifyEmailPage />} />
+          <Route path="/offline" element={<OfflineGuide onBack={() => window.history.back()} />} />
+          <Route path="/plan/:userId/:tripId" element={<SharedTripPage />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          {/* Default Route for App Content (Steps) */}
+          <Route path="*" element={
+            <>
+              {/* Progress Indicator - Show from step 2 onwards */}
+              {currentStep > 1 && currentStep < 8 && (
+                <ProgressIndicator
+                  currentStep={currentStep - 1} // Adjust for display (1-7 instead of 2-8)
+                  totalSteps={7}
+                  onStepClick={(step) => goToStep(step + 1)}
                 />
               )}
 
-              {/* Step 2 Removed */}
-              {/* {currentStep === 2 && (
-                <SignUpPage
-                  onSuccess={handleSignUpSuccess}
-                  onSwitchToLogin={() => setCurrentStep(11)}
-                />
-              )} */}
+              {/* Step Content */}
+              <StepTransition direction={currentStep > 1 ? 'forward' : 'backward'}>
+                {currentStep === 1 && (
+                  <LandingScreen
+                    onStart={handleStart}
+                    isLocalMode={isLocalMode}
+                    onLocalModeToggle={handleLocalModeToggle}
+                    onOpenOfflineGuide={handleOpenOfflineGuide} // PROP PASSED
+                  />
+                )}
 
-              {currentStep === 3 && (
-                <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
-                  <div className="max-w-4xl mx-auto">
-                    <div className="text-center space-y-4 mb-12">
-                      <h2 className="text-4xl font-extrabold tracking-tight">
-                        Tell Us About Your Trip
-                      </h2>
-                      <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                        Answer a few questions to get your personalized budget estimate
-                      </p>
+                {/* Step 2 Removed */}
+                {/* {currentStep === 2 && (
+                  <SignUpPage
+                    onSuccess={handleSignUpSuccess}
+                    onSwitchToLogin={() => setCurrentStep(11)}
+                  />
+                )} */}
+
+                {currentStep === 3 && (
+                  <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+                    <div className="max-w-4xl mx-auto">
+                      <div className="text-center space-y-4 mb-12">
+                        <h2 className="text-4xl font-extrabold tracking-tight">
+                          Tell Us About Your Trip
+                        </h2>
+                        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                          Answer a few questions to get your personalized budget estimate
+                        </p>
+                      </div>
+                      <BudgetForm onSubmit={handleFormSubmit} initialStep={budgetFormInitialStep} />
                     </div>
-                    <BudgetForm onSubmit={handleFormSubmit} initialStep={budgetFormInitialStep} />
                   </div>
-                </div>
-              )}
+                )}
 
-              {currentStep === 4 && (
-                <LoadingScreen onComplete={handleLoadingComplete} />
-              )}
+                {currentStep === 4 && (
+                  <LoadingScreen onComplete={handleLoadingComplete} />
+                )}
 
-              {currentStep === 5 && budgetResult && formData && (
-                <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
-                  <BudgetResult
+                {currentStep === 5 && budgetResult && formData && (
+                  <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+                    <BudgetResult
+                      breakdown={budgetResult}
+                      formData={formData}
+                      onContinue={handleContinueToRecommendations}
+                      onEditBudget={handleEditBudget}
+                    />
+                  </div>
+                )}
+
+                {currentStep === 6 && budgetResult && formData && (
+                  <BudgetRecommendations
                     breakdown={budgetResult}
                     formData={formData}
-                    onContinue={handleContinueToRecommendations}
-                    onEditBudget={handleEditBudget}
+                    selectedRecommendations={selectedRecommendations}
+                    onSelectionsChange={setSelectedRecommendations}
+                    onContinue={handleContinueToTours}
+                    onBack={() => setCurrentStep(5)}
                   />
-                </div>
-              )}
+                )}
 
-              {currentStep === 6 && budgetResult && formData && (
-                <BudgetRecommendations
-                  breakdown={budgetResult}
-                  formData={formData}
-                  selectedRecommendations={selectedRecommendations}
-                  onSelectionsChange={setSelectedRecommendations}
-                  onContinue={handleContinueToTours}
-                  onBack={() => setCurrentStep(5)}
-                />
-              )}
+                {currentStep === 7 && formData && budgetResult && (
+                  <TourRecommendations
+                    interests={formData.activities}
+                    budget={budgetResult.total}
+                    regions={formData.regions}
+                    month={formData.month}
+                    onSelectTour={handleSelectTour}
+                    onSkip={handleSkipTours}
+                  />
+                )}
 
-              {currentStep === 7 && formData && budgetResult && (
-                <TourRecommendations
-                  interests={formData.activities}
-                  budget={budgetResult.total}
-                  regions={formData.regions}
-                  month={formData.month}
-                  onSelectTour={handleSelectTour}
-                  onSkip={handleSkipTours}
-                />
-              )}
+                {currentStep === 8 && (
+                  <DecisionNode
+                    selectedTour={selectedTour}
+                    onSelectTour={handleBackToTours}
+                    onPlanTrip={handlePlanTrip}
+                  />
+                )}
 
-              {currentStep === 8 && (
-                <DecisionNode
-                  selectedTour={selectedTour}
-                  onSelectTour={handleBackToTours}
-                  onPlanTrip={handlePlanTrip}
-                />
-              )}
+                {currentStep === 9 && formData && budgetResult && (
+                  <TripPlanner
+                    formData={formData}
+                    budgetTotal={budgetResult.total}
+                    selectedTour={selectedTour}
+                    onContinue={handleContinueToSummary}
+                  />
+                )}
 
-              {currentStep === 9 && formData && budgetResult && (
-                <TripPlanner
-                  formData={formData}
-                  budgetTotal={budgetResult.total}
-                  selectedTour={selectedTour}
-                  onContinue={handleContinueToSummary}
-                />
-              )}
+                {currentStep === 10 && formData && budgetResult && (
+                  <TripSummary
+                    formData={formData}
+                    budgetBreakdown={budgetResult}
+                    selectedTour={selectedTour}
+                    onStartOver={handleStartOver}
+                  />
+                )}
 
-              {currentStep === 10 && formData && budgetResult && (
-                <TripSummary
-                  formData={formData}
-                  budgetBreakdown={budgetResult}
-                  selectedTour={selectedTour}
-                  onStartOver={handleStartOver}
-                />
-              )}
+                {currentStep === 10 && (
+                  <Dashboard />
+                )}
 
-              {currentStep === 10 && (
-                <Dashboard />
-              )}
+                {currentStep === 11 && (
+                  <LoginPage
 
-              {currentStep === 11 && (
-                <LoginPage
+                  />
+                )}
 
-                />
-              )}
-
-              {currentStep === 12 && (
-                <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
-                  <div className="max-w-4xl mx-auto">
-                    <LocalEstimator />
+                {currentStep === 12 && (
+                  <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+                    <div className="max-w-4xl mx-auto">
+                      <LocalEstimator />
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {currentStep === 13 && (
-                <LocalAuthPage
-                  onSuccess={handleLocalAuthSuccess}
-                  onCancel={() => handleLocalModeToggle(false)}
-                />
-              )}
-
+                {currentStep === 13 && (
+                  <LocalAuthPage
+                    onSuccess={handleLocalAuthSuccess}
+                    onCancel={() => handleLocalModeToggle(false)}
+                  />
+                )}
 
 
-              {/* Step 15: Offline Guide */}
-              {currentStep === 15 && (
-                <OfflineGuide onBack={() => setCurrentStep(1)} />
-              )}
 
-            </StepTransition>
-          </>
-        } />
-      </Routes>
+                {/* Step 15: Offline Guide */}
+                {currentStep === 15 && (
+                  <OfflineGuide onBack={() => setCurrentStep(1)} />
+                )}
+
+              </StepTransition>
+            </>
+          } />
+        </Routes>
+      </Suspense>
 
       {/* Navigation Bar */}
       <div className="fixed top-2 sm:top-4 left-2 right-2 sm:left-auto sm:right-4 z-50">
