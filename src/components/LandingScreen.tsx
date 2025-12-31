@@ -242,6 +242,9 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle,
                         <p className="text-xs md:text-sm font-bold text-ghana-yellow uppercase tracking-widest mb-4">
                             Trusted by travelers from the US, UK, Germany & Ghana
                         </p>
+                        <p className="text-[8px] text-white/30 uppercase tracking-[0.2em] mt-10">
+                            Build v1.1.2 - Mobile Form Optimization
+                        </p>
                     </div>
                 </div>
             </div>
