@@ -40,7 +40,7 @@ export const ChatWindow: React.FC = () => {
                                 onError={(e) => {
                                     // Fallback if image fails to load
                                     (e.target as HTMLImageElement).style.display = 'none';
-                                    (e.target as HTMLImageElement).parentElement!.innerText = '🇬🇭';
+                                    (e.target as HTMLImageElement).parentElement!.innerText = 'GH';
                                 }}
                             />
                         </div>

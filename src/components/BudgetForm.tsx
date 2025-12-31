@@ -943,7 +943,7 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
             </CardHeader>
 
             <form onSubmit={handleSubmit(onFormSubmit, (errors) => {
-                console.error("❌ Form validation failed:", errors);
+                console.error("Form validation failed:", errors);
                 // Alert the user if there are errors
                 alert("Please check your entries. Some required fields are missing or invalid.");
             })}>

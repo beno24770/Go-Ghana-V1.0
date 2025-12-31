@@ -28,12 +28,12 @@ export function SplashIntro({ onComplete }: SplashIntroProps) {
                 <div
                     className={cn(
                         "w-48 h-48 sm:w-64 sm:h-64 transition-all duration-1000 ease-in-out",
-                        phase === 'walking' ? "translate-y-20 opacity-0" : "translate-y-0 opacity-100",
+                        phase === 'walking' ? "scale-95 opacity-0" : "scale-100 opacity-100",
                         phase === 'revealed' ? "scale-105" : "scale-100"
                     )}
                     style={{
                         animation: phase === 'walking'
-                            ? 'walking-cycle 1.5s ease-in-out infinite, slide-in-realistic 2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards'
+                            ? 'slide-in-realistic 2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards'
                             : 'settle-glow 3s ease-in-out infinite'
                     }}
                 >

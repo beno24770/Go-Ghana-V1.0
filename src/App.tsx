@@ -422,7 +422,7 @@ function AppContent() {
               }}
               className="px-3 sm:px-4 py-1.5 sm:py-2 bg-white/90 backdrop-blur shadow-md rounded-full text-xs sm:text-sm font-medium hover:bg-white transition-colors flex items-center gap-1 sm:gap-2 min-h-[44px] whitespace-nowrap"
             >
-              <span>🏠</span> <span className="hidden sm:inline">Home</span>
+              <span className="sm:inline">Home</span>
             </button>
           )}
           {currentStep !== 1 && currentStep !== 10 && currentStep !== 11 && currentStep !== 12 && currentStep !== 13 && currentStep !== 14 && currentStep !== 15 && (
