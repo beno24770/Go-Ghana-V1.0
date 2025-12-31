@@ -37,7 +37,7 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle,
                     <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                         <div className="relative w-8 h-8 sm:w-10 sm:h-10 overflow-hidden rounded-xl border-2 border-white/20 shadow-lg shrink-0">
                             <img
-                                src={`${import.meta.env.BASE_URL}goghana-logo.jpg`}
+                                src={`${import.meta.env.BASE_URL}goghana-logo.png`}
                                 alt="GoGhana Logo"
                                 className="w-full h-full object-cover"
                             />

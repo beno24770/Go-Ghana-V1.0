@@ -14,7 +14,7 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
                 <div className="w-full max-w-md mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
                     {/* Logo Area */}
                     <div className="mb-12 flex items-center gap-2">
-                        <img src="/goghana-logo.jpg" alt="GoGhana Logo" className="w-10 h-10 rounded-xl object-cover" />
+                        <img src="/goghana-logo.png" alt="Go Ghana AI" className="w-full h-full object-cover" />
                         <span className="text-xl font-bold text-gray-900 tracking-tight">GoGhana</span>
                     </div>
 

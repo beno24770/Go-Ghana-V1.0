@@ -36,7 +36,7 @@ export function SplashIntro({ onComplete }: SplashIntroProps) {
                     }}
                 >
                     <img
-                        src="/goghana-logo.jpg"
+                        src="/goghana-logo.png"
                         alt="Go Ghana Logo"
                         className="w-full h-full object-contain rounded-2xl shadow-lg"
                     />
