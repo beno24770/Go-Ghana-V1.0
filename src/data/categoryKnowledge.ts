@@ -28,7 +28,7 @@ export const CATEGORY_KNOWLEDGE: Record<string, CategoryKnowledge> = {
             if (dailyRate > 800) tier = 'luxury';
             else if (dailyRate > 400) tier = 'comfortable mid-range';
 
-            return `Hi! I see you're budgeting **${ctx.formattedAmount}** for accommodation over **${ctx.duration} days**${ctx.regions ? ` in **${ctx.regions.join(' and ')}**` : ''}. That's about **GH₵${dailyRate}/night** per person - perfect for ${tier} hotels!\n\nWhat would you like to know about accommodation options?`;
+            return `Hi! I see you're budgeting **${ctx.formattedAmount}** for accommodation over **${ctx.duration} days**${ctx.regions ? ` in **${ctx.regions.join(' and ')}**` : ''}. That's about **GH₵${dailyRate}/night** per person - perfect for ${tier} hotels! 🏨\n\nWhat would you like to know about accommodation options?`;
         },
         knowledgePoints: [
             "Hotel recommendations by budget tier",
@@ -47,7 +47,7 @@ export const CATEGORY_KNOWLEDGE: Record<string, CategoryKnowledge> = {
             "Should I rent a car or hire a driver?"
         ],
         greetingTemplate: (ctx) => {
-            return `Hi! I see you've allocated **${ctx.formattedAmount}** for transport${ctx.regions ? ` to visit **${ctx.regions.join(', ')}**` : ''}. With your budget, you have great options for comfortable travel!\n\nWhat transport questions can I help with?`;
+            return `Hi! I see you've allocated **${ctx.formattedAmount}** for transport${ctx.regions ? ` to visit **${ctx.regions.join(', ')}**` : ''}. With your budget, you have great options for comfortable travel! 🚗\n\nWhat transport questions can I help with?`;
         },
         knowledgePoints: [
             "Bolt/Uber pricing and availability in major cities",
@@ -71,7 +71,7 @@ export const CATEGORY_KNOWLEDGE: Record<string, CategoryKnowledge> = {
             if (dailyFood > 200) style = 'fine dining and upscale restaurants';
             else if (dailyFood > 100) style = 'comfortable local restaurants and chop bars';
 
-            return `Hi! Your food budget of **${ctx.formattedAmount}** (about **GH₵${dailyFood}/day** per person) is perfect for enjoying ${style}!\n\nWhat would you like to know about dining in Ghana?`;
+            return `Hi! Your food budget of **${ctx.formattedAmount}** (about **GH₵${dailyFood}/day** per person) is perfect for enjoying ${style}! 🍽️\n\nWhat would you like to know about dining in Ghana?`;
         },
         knowledgePoints: [
             "Restaurant recommendations by budget tier",
@@ -90,7 +90,7 @@ export const CATEGORY_KNOWLEDGE: Record<string, CategoryKnowledge> = {
             "What are some hidden gems locals recommend?"
         ],
         greetingTemplate: (ctx) => {
-            return `Hi! With **${ctx.formattedAmount}** budgeted for activities${ctx.regions ? ` in **${ctx.regions.join(' and ')}**` : ''}, you'll have amazing experiences!\n\nWhat activities are you most interested in?`;
+            return `Hi! With **${ctx.formattedAmount}** budgeted for activities${ctx.regions ? ` in **${ctx.regions.join(' and ')}**` : ''}, you'll have amazing experiences! 🎭\n\nWhat activities are you most interested in?`;
         },
         knowledgePoints: [
             "Entrance fees and opening hours for major attractions",
@@ -109,7 +109,7 @@ export const CATEGORY_KNOWLEDGE: Record<string, CategoryKnowledge> = {
             "What about SIM cards and mobile data?"
         ],
         greetingTemplate: (ctx) => {
-            return `Hi! Your essentials budget of **${ctx.formattedAmount}** covers important items like visa, insurance, SIM cards, and airport transfers.\n\nWhat would you like to know about trip essentials?`;
+            return `Hi! Your essentials budget of **${ctx.formattedAmount}** covers important items like visa, insurance, SIM cards, and airport transfers. 🛡️\n\nWhat would you like to know about trip essentials?`;
         },
         knowledgePoints: [
             "Visa requirements and costs by nationality",
@@ -128,7 +128,7 @@ export const CATEGORY_KNOWLEDGE: Record<string, CategoryKnowledge> = {
             "What about baggage allowance for souvenirs?"
         ],
         greetingTemplate: (ctx) => {
-            return `Hi! I see you've budgeted **${ctx.formattedAmount}** for flights. Let me help you find the best options!\n\nWhat would you like to know about flights to Ghana?`;
+            return `Hi! I see you've budgeted **${ctx.formattedAmount}** for flights. Let me help you find the best options! ✈️\n\nWhat would you like to know about flights to Ghana?`;
         },
         knowledgePoints: [
             "Major airlines flying to Accra (KLM, British Airways, Delta, etc.)",
@@ -144,7 +144,7 @@ export const CATEGORY_KNOWLEDGE: Record<string, CategoryKnowledge> = {
 export const FALLBACK_RESPONSES = {
     medical: "I'm a travel planning assistant, not a medical professional. For health concerns, please consult your doctor or visit a clinic. I can help you find:\n• Travel insurance options\n• Recommended clinics in Ghana\n• General health tips for travelers\n\nWould you like information about any of these?",
 
-    political: "I focus on helping you plan an amazing trip to Ghana! While I don't provide political analysis, I can tell you that Ghana is one of the safest and most stable countries in West Africa for travelers.\n\nWhat I CAN help with:\n• Safe neighborhoods and areas\n• Travel safety tips\n• Cultural etiquette\n• Budget planning\n\nWhat would you like to know?",
+    political: "I focus on helping you plan an amazing trip to Ghana! While I don't provide political analysis, I can tell you that Ghana is one of the safest and most stable countries in West Africa for travelers. 🇬🇭\n\nWhat I CAN help with:\n• Safe neighborhoods and areas\n• Travel safety tips\n• Cultural etiquette\n• Budget planning\n\nWhat would you like to know?",
 
     legal: "I can't provide legal advice, but I can help with travel-related questions like visa requirements, customs regulations, and general travel guidelines.\n\nFor legal matters, please consult:\n• Your country's embassy in Ghana\n• A qualified legal professional\n\nHow else can I help with your trip planning?",
 

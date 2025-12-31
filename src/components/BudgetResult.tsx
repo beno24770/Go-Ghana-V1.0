@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Wallet, Utensils, Car, Map as MapIcon, Plane, Shield, MessageCircle, Phone, Download, Loader2, Edit2, ChevronDown, ChevronUp, Save } from 'lucide-react';
+import { Wallet, Utensils, Car, Map as MapIcon, Plane, Shield, MessageCircle, Phone, Download, Loader2, Sparkles, Edit2, ChevronDown, ChevronUp, Save } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
 import { Button } from './ui/Button';
 import { BudgetChart } from './BudgetChart';
@@ -438,6 +438,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                     onClick={onContinue}
                                     className="w-full bg-gradient-to-r from-[#FCD116] to-[#D97706] hover:from-[#D97706] hover:to-[#FCD116] text-gray-900 font-bold"
                                 >
+                                    <Sparkles className="mr-2 h-5 w-5" />
                                     See What My Budget Buys
                                 </Button>
 

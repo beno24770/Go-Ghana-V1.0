@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, Save, Check } from 'lucide-react';
+import { ArrowLeft, Save, Sparkles, Check } from 'lucide-react';
 import { Card, CardContent } from './ui/Card';
 import { Button } from './ui/Button';
 import { RecommendationCard } from './RecommendationCard';
@@ -69,6 +69,7 @@ export function BudgetRecommendations({
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
+                        <Sparkles className="h-8 w-8 text-ghana-green" />
                         What Your Budget Buys
                     </h1>
                     <p className="text-gray-600 mt-2">
@@ -190,6 +191,7 @@ export function BudgetRecommendations({
                         className="gap-2 bg-ghana-green hover:bg-green-800 text-white"
                     >
                         Continue to Itinerary
+                        <Sparkles className="h-4 w-4" />
                     </Button>
                 </div>
             </div>

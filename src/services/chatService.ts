@@ -253,7 +253,7 @@ export class ChatService {
         return {
             id: uuidv4(),
             role: 'assistant',
-            content: "Hello there! My name is Akua Adepa, your trusted AI guide for Ghana. I'm powered by advanced AI and have access to real-time data about accommodations, restaurants, transport, and activities across Ghana. Ask me anything about planning your trip!",
+            content: "Hello there! 🇬🇭 My name is Akua Adepa, your trusted AI guide for Ghana. I'm powered by advanced AI and have access to real-time data about accommodations, restaurants, transport, and activities across Ghana. Ask me anything about planning your trip!",
             timestamp: Date.now(),
             actions: [
                 { label: "Is it safe?", type: "NAVIGATE", payload: "safety" },

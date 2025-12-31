@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown, ChevronUp, MapPin, Clock, DollarSign, Star, Hotel, Utensils, Calendar } from 'lucide-react';
+import { ChevronDown, ChevronUp, MapPin, Clock, DollarSign, Star } from 'lucide-react';
 import type { ItineraryDay } from '../types/itinerary';
 
 interface ItineraryDayCardProps {
@@ -77,7 +77,7 @@ export function ItineraryDayCard({ day }: ItineraryDayCardProps) {
                     {/* Accommodation */}
                     <div className="bg-gray-50 rounded-xl p-4">
                         <h4 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                            <Hotel className="w-5 h-5 text-ghana-green" />
+                            <span className="text-lg">🏨</span>
                             Accommodation
                         </h4>
                         <div className="space-y-2">
@@ -114,7 +114,7 @@ export function ItineraryDayCard({ day }: ItineraryDayCardProps) {
                     {/* Meals */}
                     <div>
                         <h4 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                            <Utensils className="w-5 h-5 text-ghana-green" />
+                            <span className="text-lg">🍽️</span>
                             Meals
                         </h4>
                         <div className="grid sm:grid-cols-3 gap-4">
@@ -153,7 +153,7 @@ export function ItineraryDayCard({ day }: ItineraryDayCardProps) {
                     {/* Activities Timeline */}
                     <div>
                         <h4 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                            <Calendar className="w-5 h-5 text-ghana-green" />
+                            <span className="text-lg">📅</span>
                             Daily Schedule
                         </h4>
                         <div className="space-y-4">
