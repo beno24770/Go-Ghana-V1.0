@@ -278,15 +278,11 @@ function AppContent() {
                 {currentStep === 3 && (
                   <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-12">
                     <div className="max-w-4xl mx-auto">
-                      <div className="text-center space-y-3 mb-8 sm:mb-12">
-                        <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
-                          Tell Us About Your Trip
-                        </h2>
-                        <p className="text-base sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-                          Answer a few questions to get your personalized budget estimate
-                        </p>
-                      </div>
-                      <BudgetForm onSubmit={handleFormSubmit} initialStep={budgetFormInitialStep} />
+                      <BudgetForm
+                        onSubmit={handleFormSubmit}
+                        initialStep={budgetFormInitialStep}
+                        onBackHome={() => setCurrentStep(1)}
+                      />
                     </div>
                   </div>
                 )}
