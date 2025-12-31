@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/Button';
 import { ArrowRight, Check, Play, Star, MapPin, DollarSign } from 'lucide-react';
 import { AnimatedSection } from './ui/AnimatedSection';
@@ -11,6 +12,7 @@ interface LandingScreenProps {
 }
 
 export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle, onOpenOfflineGuide }: LandingScreenProps) {
+    const navigate = useNavigate();
 
     return (
         <div className="min-h-screen relative font-sans text-white overflow-x-hidden">
@@ -77,8 +79,8 @@ export function LandingScreen({ onStart, isLocalMode = false, onLocalModeToggle,
                             </div>
                         )}
                         <Button
-                            onClick={() => window.location.href = '/login'}
-                            variant="ghost" 
+                            onClick={() => navigate('/login')}
+                            variant="ghost"
                             className="text-white hover:text-ghana-yellow hover:bg-white/10"
                         >
                             Login
