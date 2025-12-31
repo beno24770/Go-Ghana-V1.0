@@ -228,8 +228,8 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
             <div className="space-y-6">
                 <div className="space-y-4">
                     <div className="flex justify-between items-end">
-                        <Label className="text-lg font-bold text-gray-900">Trip Dates</Label>
-                        <span className="text-2xl font-bold text-ghana-green">{watchedValues.duration} <span className="text-sm font-medium text-gray-500">days</span></span>
+                        <Label className="text-base sm:text-lg font-bold text-gray-900">Trip Dates</Label>
+                        <span className="text-xl sm:text-2xl font-bold text-ghana-green">{watchedValues.duration} <span className="text-xs sm:text-sm font-medium text-gray-500">days</span></span>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
@@ -281,8 +281,8 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
 
                 <div className="space-y-4 pt-4 border-t border-gray-100">
                     <div className="flex justify-between items-end">
-                        <Label className="text-lg font-bold text-gray-900">Travelers</Label>
-                        <span className="text-2xl font-bold text-ghana-green">{watchedValues.travelers} <span className="text-sm font-medium text-gray-500">{watchedValues.travelers === 1 ? 'person' : 'people'}</span></span>
+                        <Label className="text-base sm:text-lg font-bold text-gray-900">Travelers</Label>
+                        <span className="text-xl sm:text-2xl font-bold text-ghana-green">{watchedValues.travelers} <span className="text-xs sm:text-sm font-medium text-gray-500">{watchedValues.travelers === 1 ? 'person' : 'people'}</span></span>
                     </div>
                     <input
                         type="range"
@@ -295,7 +295,7 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
                 </div>
 
                 <div className="space-y-4 pt-4 border-t border-gray-100">
-                    <Label className="text-lg font-bold text-gray-900">Room Sharing Preference</Label>
+                    <Label className="text-base sm:text-lg font-bold text-gray-900">Room Sharing Preference</Label>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         {[
                             { id: 'private', label: 'Private Room', sub: 'One room per person' },
@@ -383,7 +383,7 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
         <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
             <div className="space-y-6">
                 <div className="space-y-4">
-                    <Label className="text-lg font-bold text-gray-900">Choose your style</Label>
+                    <Label className="text-base sm:text-lg font-bold text-gray-900">Choose your style</Label>
                     <div className="grid grid-cols-1 gap-4">
                         {travelStyles.map((style) => (
                             <label
@@ -405,7 +405,7 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
                                     />
                                     <div className="flex-1">
                                         <div className="flex flex-wrap justify-between items-center mb-1 gap-2">
-                                            <span className={cn("font-bold text-lg", watchedValues.travelStyle === style.id ? "text-ghana-green" : "text-gray-900")}>
+                                            <span className={cn("font-bold text-base sm:text-lg", watchedValues.travelStyle === style.id ? "text-ghana-green" : "text-gray-900")}>
                                                 {style.label}
                                             </span>
                                             <span className="text-xs font-bold text-ghana-green bg-ghana-green/10 px-3 py-1 rounded-full whitespace-nowrap">
@@ -483,7 +483,7 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
                         className="mt-1 accent-ghana-green h-5 w-5 rounded border-gray-300"
                     />
                     <div>
-                        <span className="font-bold text-lg text-gray-900 block mb-1">I’m new to Ghana — recommend for me</span>
+                        <span className="font-bold text-base sm:text-lg text-gray-900 block mb-1">I’m new to Ghana — recommend for me</span>
                         <span className="text-sm text-gray-500 leading-relaxed">We'll suggest the best regions based on your interests and travel style.</span>
                     </div>
                 </label>
@@ -493,7 +493,7 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
                     watchedValues.isNewToGhana ? "opacity-50 pointer-events-none grayscale" : "opacity-100"
                 )}>
                     <div className="flex items-center gap-2 mb-2">
-                        <Label className="text-lg font-bold text-gray-900">Or select regions manually:</Label>
+                        <Label className="text-base sm:text-lg font-bold text-gray-900">Or select regions manually:</Label>
                         <div className="group relative">
                             <Info className="h-5 w-5 text-gray-400 cursor-help hover:text-ghana-green transition-colors" />
                             <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-56 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-xl hidden group-hover:block z-10 text-center">
@@ -541,7 +541,7 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
                             {...register('transportMode')}
                         />
                         <div className="flex-1">
-                            <span className={cn("font-bold block text-lg mb-1", watchedValues.transportMode === option.id ? "text-ghana-green" : "text-gray-900")}>
+                            <span className={cn("font-bold block text-base sm:text-lg mb-1", watchedValues.transportMode === option.id ? "text-ghana-green" : "text-gray-900")}>
                                 {option.label}
                             </span>
                             <p className="text-sm text-gray-500 leading-relaxed">{option.desc}</p>
@@ -564,7 +564,7 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
             <div className="space-y-6">
                 <div className="flex items-center justify-between p-5 border-2 border-gray-100 rounded-xl bg-white hover:border-gray-200 transition-colors">
                     <div className="space-y-1">
-                        <Label className="text-lg font-bold text-gray-900">Include International Flights?</Label>
+                        <Label className="text-base sm:text-lg font-bold text-gray-900">Include International Flights?</Label>
                         <p className="text-sm text-gray-500">Add flight costs to your total budget estimate.</p>
                     </div>
                     <div className="flex items-center space-x-3">
@@ -635,7 +635,7 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
 
             <div className="flex items-center justify-between p-5 border-2 border-gray-100 rounded-xl bg-white hover:border-gray-200 transition-colors">
                 <div className="space-y-1">
-                    <Label className="text-lg font-bold text-gray-900">Include Travel Insurance?</Label>
+                    <Label className="text-base sm:text-lg font-bold text-gray-900">Include Travel Insurance?</Label>
                     <p className="text-sm text-gray-500">Add estimated travel insurance costs.</p>
                 </div>
                 <div className="flex items-center space-x-3">
@@ -658,8 +658,8 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
 
     const renderStep6 = () => (
         <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
-            <div className="text-center mb-6">
-                <p className="text-lg text-gray-600">Select what you're into to help us refine your itinerary.</p>
+            <div className="text-center mb-6 px-4">
+                <p className="text-base sm:text-lg text-gray-600">Select what you're into to help us refine your itinerary.</p>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {interestOptions.map((interest) => (
@@ -700,7 +700,7 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
             <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
                 <div className="bg-white rounded-2xl p-6 sm:p-8 space-y-6 border-2 border-gray-100 shadow-sm">
                     <div className="flex items-center justify-between border-b border-gray-100 pb-4">
-                        <h3 className="text-xl font-bold text-gray-900">Trip Overview</h3>
+                        <h3 className="text-lg sm:text-xl font-bold text-gray-900">Trip Overview</h3>
                         <span className="text-sm font-medium text-gray-500">Step 7 of 7 (v7.0.2)</span>
                     </div>
 
@@ -713,7 +713,7 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
                                 </div>
                                 <div>
                                     <span className="text-sm font-medium text-gray-500 block">Duration & Travelers</span>
-                                    <span className="text-base font-bold text-gray-900">
+                                    <span className="text-sm sm:text-base font-bold text-gray-900">
                                         {watchedValues.duration} days • {watchedValues.travelers} {watchedValues.travelers === 1 ? 'traveler' : 'travelers'}
                                     </span>
                                     <div className="text-xs text-gray-500 mt-1">
@@ -922,17 +922,17 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
                     }}
                 />
             </div>
-            <CardHeader className="pb-2 pt-6 px-6 sm:px-8 bg-white">
+            <CardHeader className="pb-2 pt-4 sm:pt-6 px-4 sm:px-8 bg-white">
                 <div className="flex justify-between items-start mb-6">
                     <div className="flex-1">
-                        <CardTitle className="flex items-center gap-2 text-2xl mb-2">
+                        <CardTitle className="flex items-center gap-2 text-xl sm:text-2xl mb-1 sm:mb-2">
                             {(() => {
                                 const Icon = stepTitles[step - 1].icon;
-                                return Icon && <span className="p-2 bg-primary/10 rounded-full text-primary"><Icon className="h-6 w-6" /></span>;
+                                return Icon && <span className="p-1.5 sm:p-2 bg-primary/10 rounded-full text-primary shrink-0"><Icon className="h-5 w-5 sm:h-6 sm:w-6" /></span>;
                             })()}
-                            {stepTitles[step - 1].title}
+                            <span className="leading-tight">{stepTitles[step - 1].title}</span>
                         </CardTitle>
-                        <p className="text-sm text-muted-foreground pl-14">
+                        <p className="text-xs sm:text-sm text-muted-foreground pl-11 sm:pl-14">
                             {stepTitles[step - 1].subtitle}
                         </p>
                     </div>
@@ -947,7 +947,7 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
                 // Alert the user if there are errors
                 alert("Please check your entries. Some required fields are missing or invalid.");
             })}>
-                <CardContent className="p-6 sm:p-8 min-h-[400px]">
+                <CardContent className="p-4 sm:p-8 min-h-[350px] sm:min-h-[400px]">
                     {step === 1 && renderStep1()}
                     {step === 2 && renderStep2()}
                     {step === 3 && renderStep3()}
@@ -960,10 +960,10 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
                 <CardFooter className="flex flex-col-reverse sm:flex-row justify-between p-6 bg-secondary/5 border-t gap-3 sm:gap-0">
                     <Button
                         type="button"
-                        variant="ghost"
+                        variant="outline"
                         onClick={handleBack}
                         disabled={step === 1 || isNavigating}
-                        className={cn("gap-2 w-full sm:w-auto", step === 1 && "invisible")}
+                        className={cn("gap-2 w-full sm:w-auto h-12 sm:h-10 border-gray-200 text-gray-600 font-medium", step === 1 && "invisible")}
                     >
                         <ArrowLeft className="h-4 w-4" /> {returnToReview ? 'Cancel Edit' : 'Back'}
                     </Button>

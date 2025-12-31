@@ -219,7 +219,11 @@ function AppContent() {
   return (
     <div className="min-h-screen font-sans text-foreground">
       {/* Routes for New Auth System */}
-      <Suspense fallback={<LoadingScreen onComplete={() => { }} />}>
+      <Suspense fallback={
+        <div className="min-h-screen flex items-center justify-center bg-ghana-black/5">
+          <div className="w-10 h-10 border-4 border-ghana-green/20 border-t-ghana-green rounded-full animate-spin"></div>
+        </div>
+      }>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
@@ -239,8 +243,8 @@ function AppContent() {
           {/* Default Route for App Content (Steps) */}
           <Route path="*" element={
             <>
-              {/* Progress Indicator - Show from step 2 onwards */}
-              {currentStep > 1 && currentStep < 8 && (
+              {/* Progress Indicator - Show from step 2 onwards, but hide on step 3 (BudgetForm has its own) */}
+              {currentStep > 1 && currentStep < 8 && currentStep !== 3 && (
                 <ProgressIndicator
                   currentStep={currentStep - 1} // Adjust for display (1-7 instead of 2-8)
                   totalSteps={7}
@@ -268,13 +272,13 @@ function AppContent() {
                 )} */}
 
                 {currentStep === 3 && (
-                  <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+                  <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-12">
                     <div className="max-w-4xl mx-auto">
-                      <div className="text-center space-y-4 mb-12">
-                        <h2 className="text-4xl font-extrabold tracking-tight">
+                      <div className="text-center space-y-3 mb-8 sm:mb-12">
+                        <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
                           Tell Us About Your Trip
                         </h2>
-                        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                        <p className="text-base sm:text-xl text-muted-foreground max-w-2xl mx-auto">
                           Answer a few questions to get your personalized budget estimate
                         </p>
                       </div>
