@@ -12,6 +12,7 @@ import { ChatWidget } from './components/chat/ChatWidget';
 import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 import { knowledgeService } from './services/knowledgeService';
 import { OfflineGuide } from './components/offline/OfflineGuide';
+import { SplashIntro } from './components/SplashIntro';
 import type { BudgetFormData, BudgetBreakdown, Tour } from './types';
 import type { SelectedRecommendations } from './types/recommendations';
 
@@ -45,6 +46,7 @@ function AppContent() {
   const [isLocalMode, setIsLocalMode] = useState(false);
   const [budgetFormInitialStep, setBudgetFormInitialStep] = useState(1);
   const [selectedRecommendations, setSelectedRecommendations] = useState<SelectedRecommendations>({});
+  const [showSplash, setShowSplash] = useState(true);
 
   // Handle ?start=true from Dashboard
   useEffect(() => {
@@ -218,6 +220,8 @@ function AppContent() {
 
   return (
     <div className="min-h-screen font-sans text-foreground">
+      {showSplash && <SplashIntro onComplete={() => setShowSplash(false)} />}
+
       {/* Routes for New Auth System */}
       <Suspense fallback={
         <div className="min-h-screen flex items-center justify-center bg-ghana-black/5">

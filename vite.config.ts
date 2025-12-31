@@ -13,7 +13,7 @@ export default defineConfig({
       includeAssets: ['favicon.ico', 'adepa-avatar.jpg', 'goghana-logo.jpg', 'pwa-icon.jpg', 'robots.txt'],
       manifest: {
         name: 'Go Ghana AI',
-        short_name: 'GoGhanaAI',
+        short_name: 'Go Ghana AI',
         description: 'Plan your perfect Ghana trip with AI-powered budget estimates and personalized tour recommendations from Akua Adepa.',
         theme_color: '#CE1126',
         background_color: '#ffffff',
