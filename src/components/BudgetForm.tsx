@@ -94,11 +94,12 @@ type FormSchema = z.infer<typeof formSchema>;
 
 export interface BudgetFormProps {
     onSubmit: (data: BudgetFormData) => void;
+    onBack?: () => void;
     isLoading?: boolean;
     initialStep?: number;
 }
 
-export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: BudgetFormProps) {
+export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 1 }: BudgetFormProps) {
     const [step, setStep] = useState(initialStep);
     const totalSteps = 7; // Now includes Review & Confirm step
 
@@ -922,7 +923,7 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
                     }}
                 />
             </div>
-            <CardHeader className="pb-2 pt-4 sm:pt-6 px-4 sm:px-8 bg-white">
+            <CardHeader className="pb-2 pt-3 sm:pt-6 px-3 sm:px-8 bg-white">
                 <div className="flex justify-between items-start mb-6">
                     <div className="flex-1">
                         <CardTitle className="flex items-center gap-2 text-xl sm:text-2xl mb-1 sm:mb-2">
@@ -947,7 +948,7 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
                 // Alert the user if there are errors
                 alert("Please check your entries. Some required fields are missing or invalid.");
             })}>
-                <CardContent className="p-4 sm:p-8 min-h-[350px] sm:min-h-[400px]">
+                <CardContent className="p-3 sm:p-8 min-h-[280px] sm:min-h-[350px]">
                     {step === 1 && renderStep1()}
                     {step === 2 && renderStep2()}
                     {step === 3 && renderStep3()}
@@ -957,15 +958,21 @@ export function BudgetForm({ onSubmit, isLoading = false, initialStep = 1 }: Bud
                     {step === 7 && renderStep7()}
                 </CardContent>
 
-                <CardFooter className="flex flex-col-reverse sm:flex-row justify-between p-6 bg-secondary/5 border-t gap-3 sm:gap-0">
+                <CardFooter className="flex flex-col-reverse sm:flex-row justify-between p-4 pb-6 sm:p-6 bg-secondary/5 border-t gap-3 sm:gap-0">
                     <Button
                         type="button"
                         variant="outline"
-                        onClick={handleBack}
-                        disabled={step === 1 || isNavigating}
-                        className={cn("gap-2 w-full sm:w-auto h-12 sm:h-10 border-gray-200 text-gray-600 font-medium", step === 1 && "invisible")}
+                        onClick={() => {
+                            if (step === 1 && onBack) {
+                                onBack();
+                            } else {
+                                handleBack();
+                            }
+                        }}
+                        disabled={isNavigating || (step === 1 && !onBack)}
+                        className={cn("gap-2 w-full sm:w-auto h-12 sm:h-10 border-gray-200 text-gray-600 font-medium", step === 1 && !onBack && "invisible")}
                     >
-                        <ArrowLeft className="h-4 w-4" /> {returnToReview ? 'Cancel Edit' : 'Back'}
+                        <ArrowLeft className="h-4 w-4" /> {step === 1 ? 'Back to Home' : (returnToReview ? 'Cancel Edit' : 'Back')}
                     </Button>
 
                     {step < totalSteps ? (
