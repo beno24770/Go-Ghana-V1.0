@@ -14,10 +14,16 @@ export function SplashIntro({ onComplete }: SplashIntroProps) {
         const timer2 = setTimeout(() => setPhase('revealed'), 2500); // 0.5s pause then reveal text
         const timer3 = setTimeout(() => onComplete(), 5000); // 5s total duration
 
+        // Fail-safe: Ensure onComplete is called even if phases stall
+        const failSafe = setTimeout(() => {
+            onComplete();
+        }, 6000);
+
         return () => {
             clearTimeout(timer1);
             clearTimeout(timer2);
             clearTimeout(timer3);
+            clearTimeout(failSafe);
         };
     }, [onComplete]);
 
@@ -33,15 +39,24 @@ export function SplashIntro({ onComplete }: SplashIntroProps) {
                     )}
                     style={{
                         animation: phase === 'walking'
-                            ? 'walking-cycle 1.5s ease-in-out infinite, slide-in-realistic 2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards'
+                            ? 'slide-in-realistic 2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards'
                             : 'settle-glow 3s ease-in-out infinite'
                     }}
                 >
-                    <img
-                        src="/goghana-logo.png"
-                        alt="Go Ghana Logo"
-                        className="w-full h-full object-contain filter drop-shadow-[0_20px_50px_rgba(0,0,0,0.15)]"
-                    />
+                    <div style={{
+                        animation: phase === 'walking' ? 'walking-cycle 1.2s ease-in-out infinite' : 'none',
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}>
+                        <img
+                            src="/goghana-logo.png"
+                            alt="Go Ghana Logo"
+                            className="w-full h-full object-contain filter drop-shadow-[0_20px_50px_rgba(0,0,0,0.15)]"
+                        />
+                    </div>
                 </div>
 
                 {/* Branding Text */}
@@ -69,16 +84,19 @@ export function SplashIntro({ onComplete }: SplashIntroProps) {
             </div>
 
             <style>{`
-                @keyframes slide-in-realistic {
-                    0% { transform: scale(0.8) translateY(100px) rotate(-5deg); opacity: 0; }
-                    100% { transform: scale(1) translateY(0) rotate(0); opacity: 1; }
+                @media (prefers-reduced-motion: no-preference) {
+                    @keyframes walking-cycle {
+                        0%, 100% { transform: translateY(0) rotate(0deg); }
+                        25% { transform: translateY(-3px) rotate(1deg); }
+                        50% { transform: translateY(0) rotate(0deg); }
+                        75% { transform: translateY(-3px) rotate(-1deg); }
+                    }
+                    @keyframes slide-in-realistic {
+                        0% { transform: scale(0.8) translateY(100px) rotate(-5deg); opacity: 0; }
+                        100% { transform: scale(1) translateY(0) rotate(0); opacity: 1; }
+                    }
                 }
-                @keyframes walking-cycle {
-                    0%, 100% { transform: translateY(0) rotate(0deg); }
-                    25% { transform: translateY(-20px) rotate(2deg); }
-                    50% { transform: translateY(0) rotate(0deg); }
-                    75% { transform: translateY(-20px) rotate(-2deg); }
-                }
+                
                 @keyframes settle-glow {
                     0%, 100% { filter: drop-shadow(0 20px 50px rgba(0,0,0,0.15)); }
                     50% { filter: drop-shadow(0 25px 60px rgba(21, 128, 61, 0.2)); }

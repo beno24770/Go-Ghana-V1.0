@@ -229,8 +229,8 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
             <div className="space-y-6">
                 <div className="space-y-4">
                     <div className="flex justify-between items-end">
-                        <Label className="text-base sm:text-lg font-bold text-gray-900">Trip Dates</Label>
-                        <span className="text-xl sm:text-2xl font-bold text-ghana-green">{watchedValues.duration} <span className="text-xs sm:text-sm font-medium text-gray-500">days</span></span>
+                        <Label className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">Trip Dates</Label>
+                        <span className="text-xl sm:text-2xl font-bold text-ghana-green">{watchedValues.duration} <span className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">days</span></span>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
@@ -238,7 +238,7 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
                             <input
                                 id="startDate"
                                 type="date"
-                                className="w-full h-12 px-4 rounded-xl border-2 border-gray-100 bg-white focus:outline-none focus:border-ghana-green focus:ring-0 transition-colors"
+                                className="w-full h-12 px-4 rounded-xl border-2 border-gray-100 bg-white dark:bg-gray-900 dark:border-gray-800 dark:text-white focus:outline-none focus:border-ghana-green focus:ring-0 transition-colors"
                                 {...register('startDate', {
                                     onChange: (e) => {
                                         const start = new Date(e.target.value);
@@ -262,7 +262,7 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
                             <input
                                 id="endDate"
                                 type="date"
-                                className="w-full h-12 px-4 rounded-xl border-2 border-gray-100 bg-white focus:outline-none focus:border-ghana-green focus:ring-0 transition-colors"
+                                className="w-full h-12 px-4 rounded-xl border-2 border-gray-100 bg-white dark:bg-gray-900 dark:border-gray-800 dark:text-white focus:outline-none focus:border-ghana-green focus:ring-0 transition-colors"
                                 {...register('endDate', {
                                     onChange: (e) => {
                                         const end = new Date(e.target.value);
@@ -280,23 +280,23 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
                     </div>
                 </div>
 
-                <div className="space-y-4 pt-4 border-t border-gray-100">
+                <div className="space-y-4 pt-4 border-t border-gray-100 dark:border-gray-800">
                     <div className="flex justify-between items-end">
-                        <Label className="text-base sm:text-lg font-bold text-gray-900">Travelers</Label>
-                        <span className="text-xl sm:text-2xl font-bold text-ghana-green">{watchedValues.travelers} <span className="text-xs sm:text-sm font-medium text-gray-500">{watchedValues.travelers === 1 ? 'person' : 'people'}</span></span>
+                        <Label className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">Travelers</Label>
+                        <span className="text-xl sm:text-2xl font-bold text-ghana-green">{watchedValues.travelers} <span className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">{watchedValues.travelers === 1 ? 'person' : 'people'}</span></span>
                     </div>
                     <input
                         type="range"
                         min="1"
                         max="10"
-                        className="w-full h-3 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-ghana-green focus:outline-none focus:ring-2 focus:ring-ghana-green/20"
+                        className="w-full h-3 bg-gray-100 dark:bg-gray-800 rounded-lg appearance-none cursor-pointer accent-ghana-green focus:outline-none focus:ring-2 focus:ring-ghana-green/20"
                         aria-label="Travelers"
                         {...register('travelers', { valueAsNumber: true })}
                     />
                 </div>
 
-                <div className="space-y-4 pt-4 border-t border-gray-100">
-                    <Label className="text-base sm:text-lg font-bold text-gray-900">Room Sharing Preference</Label>
+                <div className="space-y-4 pt-4 border-t border-gray-100 dark:border-gray-800">
+                    <Label className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">Room Sharing Preference</Label>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         {[
                             { id: 'private', label: 'Private Room', sub: 'One room per person' },
@@ -308,8 +308,8 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
                                 className={cn(
                                     "relative flex flex-col items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 hover:shadow-md",
                                     watchedValues.roomSharing === opt.id
-                                        ? "border-ghana-green bg-ghana-green/5 shadow-sm"
-                                        : "border-gray-100 hover:border-ghana-green/30 bg-white"
+                                        ? "border-ghana-green bg-ghana-green/5 dark:bg-ghana-green/10 shadow-sm"
+                                        : "border-gray-100 dark:border-gray-800 hover:border-ghana-green/30 bg-white dark:bg-gray-900"
                                 )}
                             >
                                 <input
@@ -318,8 +318,8 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
                                     className="hidden"
                                     {...register('roomSharing')}
                                 />
-                                <span className={cn("font-bold text-base mb-1", watchedValues.roomSharing === opt.id ? "text-ghana-green" : "text-gray-700")}>{opt.label}</span>
-                                <span className="text-xs text-gray-500 text-center">{opt.sub}</span>
+                                <span className={cn("font-bold text-base mb-1", watchedValues.roomSharing === opt.id ? "text-ghana-green" : "text-gray-700 dark:text-gray-300")}>{opt.label}</span>
+                                <span className="text-xs text-gray-500 dark:text-gray-400 text-center">{opt.sub}</span>
                                 {watchedValues.roomSharing === opt.id && (
                                     <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-ghana-green" />
                                 )}
@@ -328,12 +328,12 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-gray-100">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-gray-100 dark:border-gray-800">
                     <div className="space-y-2">
-                        <Label className="font-bold text-gray-900">Travel Month</Label>
+                        <Label className="font-bold text-gray-900 dark:text-white">Travel Month</Label>
                         <div className="relative">
                             <select
-                                className="flex h-12 w-full rounded-xl border-2 border-gray-100 bg-white px-4 py-2 text-base ring-offset-background focus:outline-none focus:border-ghana-green focus:ring-0 transition-colors appearance-none"
+                                className="flex h-12 w-full rounded-xl border-2 border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-2 text-base dark:text-white ring-offset-background focus:outline-none focus:border-ghana-green focus:ring-0 transition-colors appearance-none"
                                 {...register('month')}
                             >
                                 {months.map(m => (
@@ -346,10 +346,10 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
                         </div>
                     </div>
                     <div className="space-y-2">
-                        <Label className="font-bold text-gray-900">Arrival City</Label>
+                        <Label className="font-bold text-gray-900 dark:text-white">Arrival City</Label>
                         <div className="relative">
                             <select
-                                className="flex h-12 w-full rounded-xl border-2 border-gray-100 bg-white px-4 py-2 text-base ring-offset-background focus:outline-none focus:border-ghana-green focus:ring-0 transition-colors appearance-none"
+                                className="flex h-12 w-full rounded-xl border-2 border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-2 text-base dark:text-white ring-offset-background focus:outline-none focus:border-ghana-green focus:ring-0 transition-colors appearance-none"
                                 {...register('arrivalCity')}
                             >
                                 {['Accra', 'Kumasi', 'Takoradi', 'Tamale'].map(c => (
@@ -362,9 +362,9 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
                         </div>
                     </div>
                     <div className="space-y-2">
-                        <Label className="font-bold text-gray-900">Nationality (for Visa)</Label>
+                        <Label className="font-bold text-gray-900 dark:text-white">Nationality (for Visa)</Label>
                         <select
-                            className="flex h-12 w-full rounded-xl border-2 border-gray-100 bg-white px-4 py-2 text-base ring-offset-background focus:outline-none focus:border-ghana-green focus:ring-0 transition-colors appearance-none"
+                            className="flex h-12 w-full rounded-xl border-2 border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-2 text-base dark:text-white ring-offset-background focus:outline-none focus:border-ghana-green focus:ring-0 transition-colors appearance-none"
                             {...register('nationality')}
                         >
                             <option value="Other">Other / International</option>
@@ -384,7 +384,7 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
         <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
             <div className="space-y-6">
                 <div className="space-y-4">
-                    <Label className="text-base sm:text-lg font-bold text-gray-900">Choose your style</Label>
+                    <Label className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">Choose your style</Label>
                     <div className="grid grid-cols-1 gap-4">
                         {travelStyles.map((style) => (
                             <label
@@ -392,8 +392,8 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
                                 className={cn(
                                     "relative flex flex-col p-5 rounded-xl border-2 cursor-pointer transition-all duration-200 hover:shadow-md",
                                     watchedValues.travelStyle === style.id
-                                        ? "border-ghana-green bg-ghana-green/5 shadow-sm"
-                                        : "border-gray-100 hover:border-ghana-green/30 bg-white"
+                                        ? "border-ghana-green bg-ghana-green/5 dark:bg-ghana-green/10 shadow-sm"
+                                        : "border-gray-100 dark:border-gray-800 hover:border-ghana-green/30 bg-white dark:bg-gray-900"
                                 )}
                             >
                                 <div className="flex items-start space-x-4">
@@ -406,29 +406,29 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
                                     />
                                     <div className="flex-1">
                                         <div className="flex flex-wrap justify-between items-center mb-1 gap-2">
-                                            <span className={cn("font-bold text-base sm:text-lg", watchedValues.travelStyle === style.id ? "text-ghana-green" : "text-gray-900")}>
+                                            <span className={cn("font-bold text-base sm:text-lg", watchedValues.travelStyle === style.id ? "text-ghana-green" : "text-gray-900 dark:text-white")}>
                                                 {style.label}
                                             </span>
                                             <span className="text-xs font-bold text-ghana-green bg-ghana-green/10 px-3 py-1 rounded-full whitespace-nowrap">
                                                 {style.cost}
                                             </span>
                                         </div>
-                                        <p className="text-sm text-gray-500 leading-relaxed">{style.desc}</p>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{style.desc}</p>
                                     </div>
                                 </div>
 
                                 {/* Custom Budget Input - Only show for selected style */}
                                 {watchedValues.travelStyle === style.id && (
-                                    <div className="mt-4 pt-4 border-t border-gray-200/50 animate-in fade-in slide-in-from-top-2">
-                                        <Label className="text-sm font-bold text-gray-700 mb-2 block">
+                                    <div className="mt-4 pt-4 border-t border-gray-200/50 dark:border-gray-800 animate-in fade-in slide-in-from-top-2">
+                                        <Label className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 block">
                                             Want to set a specific daily budget? (USD)
                                         </Label>
                                         <div className="relative max-w-[200px]">
-                                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-bold">$</span>
+                                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 font-bold">$</span>
                                             <input
                                                 type="number"
                                                 placeholder="e.g. 45"
-                                                className="w-full h-10 pl-7 pr-3 rounded-lg border border-gray-300 focus:border-ghana-green focus:ring-1 focus:ring-ghana-green outline-none transition-all text-sm font-medium"
+                                                className="w-full h-10 pl-7 pr-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-ghana-green focus:ring-1 focus:ring-ghana-green outline-none transition-all text-sm font-medium"
                                                 {...register('customDailyBudget', { valueAsNumber: true })}
                                                 onClick={(e) => e.stopPropagation()}
                                             />
@@ -440,15 +440,15 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
                     </div>
                 </div>
 
-                <div className="space-y-4 pt-6 border-t border-gray-100">
-                    <Label className="text-lg font-bold text-gray-900">Accommodation Type</Label>
+                <div className="space-y-4 pt-6 border-t border-gray-100 dark:border-gray-800">
+                    <Label className="text-lg font-bold text-gray-900 dark:text-white">Accommodation Type</Label>
                     <div className="flex flex-wrap gap-3">
                         {['Hotels', 'Guesthouses', 'Airbnb'].map((type) => (
                             <label key={type} className={cn(
                                 "flex items-center space-x-2 px-5 py-2.5 rounded-full border-2 cursor-pointer transition-all duration-200",
                                 watchedValues.accommodationType === type
                                     ? "bg-ghana-green text-white border-ghana-green shadow-md transform scale-105"
-                                    : "bg-white text-gray-700 border-gray-200 hover:border-ghana-green hover:bg-white" // Changed hover bg to white to keep text visible
+                                    : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-800 hover:border-ghana-green hover:bg-white dark:hover:bg-gray-800" // Changed hover bg to white to keep text visible
                             )}>
                                 <input
                                     type="radio"
@@ -471,8 +471,8 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
                 <label className={cn(
                     "flex items-start space-x-4 p-5 rounded-xl border-2 cursor-pointer transition-all duration-200 hover:shadow-md",
                     watchedValues.isNewToGhana
-                        ? "border-ghana-green bg-ghana-green/5 shadow-sm"
-                        : "border-gray-100 hover:border-ghana-green/30 bg-white"
+                        ? "border-ghana-green bg-ghana-green/5 dark:bg-ghana-green/10 shadow-sm"
+                        : "border-gray-100 dark:border-gray-800 hover:border-ghana-green/30 bg-white dark:bg-gray-900"
                 )}>
                     <input
                         type="checkbox"
@@ -484,17 +484,17 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
                         className="mt-1 accent-ghana-green h-5 w-5 rounded border-gray-300"
                     />
                     <div>
-                        <span className="font-bold text-base sm:text-lg text-gray-900 block mb-1">I’m new to Ghana — recommend for me</span>
-                        <span className="text-sm text-gray-500 leading-relaxed">We'll suggest the best regions based on your interests and travel style.</span>
+                        <span className="font-bold text-base sm:text-lg text-gray-900 dark:text-white block mb-1">I’m new to Ghana — recommend for me</span>
+                        <span className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">We'll suggest the best regions based on your interests and travel style.</span>
                     </div>
                 </label>
 
                 <div className={cn(
-                    "space-y-4 transition-all duration-300 pt-6 border-t border-gray-100",
+                    "space-y-4 transition-all duration-300 pt-6 border-t border-gray-100 dark:border-gray-800",
                     watchedValues.isNewToGhana ? "opacity-50 pointer-events-none grayscale" : "opacity-100"
                 )}>
                     <div className="flex items-center gap-2 mb-2">
-                        <Label className="text-base sm:text-lg font-bold text-gray-900">Or select regions manually:</Label>
+                        <Label className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">Or select regions manually:</Label>
                         <div className="group relative">
                             <Info className="h-5 w-5 text-gray-400 cursor-help hover:text-ghana-green transition-colors" />
                             <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-56 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-xl hidden group-hover:block z-10 text-center">
@@ -531,8 +531,8 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
                         className={cn(
                             "flex items-start space-x-4 p-5 rounded-xl border-2 cursor-pointer transition-all duration-200 hover:shadow-md",
                             watchedValues.transportMode === option.id
-                                ? "border-ghana-green bg-ghana-green/5 shadow-sm"
-                                : "border-gray-100 hover:border-ghana-green/30 bg-white"
+                                ? "border-ghana-green bg-ghana-green/5 dark:bg-ghana-green/10 shadow-sm"
+                                : "border-gray-100 dark:border-gray-800 hover:border-ghana-green/30 bg-white dark:bg-gray-900"
                         )}
                     >
                         <input
@@ -542,7 +542,7 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
                             {...register('transportMode')}
                         />
                         <div className="flex-1">
-                            <span className={cn("font-bold block text-base sm:text-lg mb-1", watchedValues.transportMode === option.id ? "text-ghana-green" : "text-gray-900")}>
+                            <span className={cn("font-bold block text-base sm:text-lg mb-1", watchedValues.transportMode === option.id ? "text-ghana-green" : "text-gray-900 dark:text-white")}>
                                 {option.label}
                             </span>
                             <p className="text-sm text-gray-500 leading-relaxed">{option.desc}</p>
@@ -563,13 +563,13 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
     const renderStep5 = () => (
         <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
             <div className="space-y-6">
-                <div className="flex items-center justify-between p-5 border-2 border-gray-100 rounded-xl bg-white hover:border-gray-200 transition-colors">
+                <div className="flex items-center justify-between p-5 border-2 border-gray-100 dark:border-gray-800 rounded-xl bg-white dark:bg-gray-900 hover:border-gray-200 dark:hover:border-gray-700 transition-colors">
                     <div className="space-y-1">
-                        <Label className="text-base sm:text-lg font-bold text-gray-900">Include International Flights?</Label>
-                        <p className="text-sm text-gray-500">Add flight costs to your total budget estimate.</p>
+                        <Label className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">Include International Flights?</Label>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Add flight costs to your total budget estimate.</p>
                     </div>
                     <div className="flex items-center space-x-3">
-                        <span className={cn("text-sm font-bold", !watchedValues.includeFlights ? "text-gray-900" : "text-gray-400")}>No</span>
+                        <span className={cn("text-sm font-bold", !watchedValues.includeFlights ? "text-gray-900 dark:text-white" : "text-gray-400 dark:text-gray-500")}>No</span>
                         <label className="relative inline-flex items-center cursor-pointer">
                             <input
                                 type="checkbox"
@@ -578,33 +578,33 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
                                 onChange={(e) => setValue('includeFlights', e.target.checked)}
                                 aria-label="Include International Flights"
                             />
-                            <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-ghana-green/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-ghana-green"></div>
+                            <div className="w-14 h-7 bg-gray-200 dark:bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-ghana-green/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 dark:after:border-gray-600 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-ghana-green"></div>
                         </label>
-                        <span className={cn("text-sm font-bold", watchedValues.includeFlights ? "text-ghana-green" : "text-gray-400")}>Yes</span>
+                        <span className={cn("text-sm font-bold", watchedValues.includeFlights ? "text-ghana-green" : "text-gray-400 dark:text-gray-500")}>Yes</span>
                     </div>
                 </div>
 
                 {watchedValues.includeFlights && (
                     <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
                         <div className="space-y-2">
-                            <Label htmlFor="flightCost" className="text-base font-bold text-gray-900">Estimated Cost Per Person (USD)</Label>
+                            <Label htmlFor="flightCost" className="text-base font-bold text-gray-900 dark:text-white">Estimated Cost Per Person (USD)</Label>
                             <div className="relative">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">$</span>
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 font-medium">$</span>
                                 <input
                                     id="flightCost"
                                     type="number"
                                     placeholder="e.g. 1200"
-                                    className="flex h-12 w-full rounded-xl border-2 border-gray-100 bg-white px-4 py-2 pl-8 text-base ring-offset-background focus:outline-none focus:border-ghana-green focus:ring-0 transition-colors"
+                                    className="flex h-12 w-full rounded-xl border-2 border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-2 pl-8 text-base dark:text-white ring-offset-background focus:outline-none focus:border-ghana-green focus:ring-0 transition-colors"
                                     {...register('flightCost', { valueAsNumber: true })}
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="origin" className="text-base font-bold text-gray-900">Flight Origin</Label>
+                            <Label htmlFor="origin" className="text-base font-bold text-gray-900 dark:text-white">Flight Origin</Label>
                             <select
                                 id="origin"
-                                className="flex h-12 w-full rounded-xl border-2 border-gray-100 bg-white px-4 py-2 text-base focus:outline-none focus:border-ghana-green transition-colors"
+                                className="flex h-12 w-full rounded-xl border-2 border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-2 text-base dark:text-white focus:outline-none focus:border-ghana-green transition-colors"
                                 {...register('origin')}
                             >
                                 <option value="USA">USA / North America</option>
@@ -616,8 +616,8 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
                             </select>
                         </div>
 
-                        <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl text-sm text-blue-800 flex items-start gap-3">
-                            <Info className="h-5 w-5 shrink-0 mt-0.5 text-blue-600" />
+                        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-xl text-sm text-blue-800 dark:text-blue-300 flex items-start gap-3">
+                            <Info className="h-5 w-5 shrink-0 mt-0.5 text-blue-600 dark:text-blue-400" />
                             <div className="space-y-2">
                                 <p className="font-medium">Not sure? Check real-time prices on Google Flights.</p>
                                 <a
@@ -634,13 +634,13 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
                 )}
             </div>
 
-            <div className="flex items-center justify-between p-5 border-2 border-gray-100 rounded-xl bg-white hover:border-gray-200 transition-colors">
+            <div className="flex items-center justify-between p-5 border-2 border-gray-100 dark:border-gray-800 rounded-xl bg-white dark:bg-gray-900 hover:border-gray-200 dark:hover:border-gray-700 transition-colors">
                 <div className="space-y-1">
-                    <Label className="text-base sm:text-lg font-bold text-gray-900">Include Travel Insurance?</Label>
-                    <p className="text-sm text-gray-500">Add estimated travel insurance costs.</p>
+                    <Label className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">Include Travel Insurance?</Label>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Add estimated travel insurance costs.</p>
                 </div>
                 <div className="flex items-center space-x-3">
-                    <span className={cn("text-sm font-bold", !watchedValues.includeInsurance ? "text-gray-900" : "text-gray-400")}>No</span>
+                    <span className={cn("text-sm font-bold", !watchedValues.includeInsurance ? "text-gray-900 dark:text-white" : "text-gray-400 dark:text-gray-500")}>No</span>
                     <label className="relative inline-flex items-center cursor-pointer">
                         <input
                             type="checkbox"
@@ -649,9 +649,9 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
                             onChange={(e) => setValue('includeInsurance', e.target.checked)}
                             aria-label="Include Travel Insurance"
                         />
-                        <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-ghana-green/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-ghana-green"></div>
+                        <div className="w-14 h-7 bg-gray-200 dark:bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-ghana-green/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 dark:after:border-gray-600 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-ghana-green"></div>
                     </label>
-                    <span className={cn("text-sm font-bold", watchedValues.includeInsurance ? "text-ghana-green" : "text-gray-400")}>Yes</span>
+                    <span className={cn("text-sm font-bold", watchedValues.includeInsurance ? "text-ghana-green" : "text-gray-400 dark:text-gray-500")}>Yes</span>
                 </div>
             </div>
         </div>
@@ -660,7 +660,7 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
     const renderStep6 = () => (
         <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
             <div className="text-center mb-6 px-4">
-                <p className="text-base sm:text-lg text-gray-600">Select what you're into to help us refine your itinerary.</p>
+                <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400">Select what you're into to help us refine your itinerary.</p>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {interestOptions.map((interest) => (
@@ -670,7 +670,7 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
                             "cursor-pointer flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 hover:shadow-md text-center gap-3 h-32",
                             watchedValues.interests.includes(interest.id)
                                 ? "bg-ghana-green text-white border-ghana-green shadow-lg transform scale-105"
-                                : "bg-white text-gray-700 border-gray-100 hover:border-ghana-green/30 hover:bg-gray-50"
+                                : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-100 dark:border-gray-800 hover:border-ghana-green/30 hover:bg-gray-50 dark:hover:bg-gray-800"
                         )}
                     >
                         <input
@@ -699,25 +699,25 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
 
         return (
             <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
-                <div className="bg-white rounded-2xl p-6 sm:p-8 space-y-6 border-2 border-gray-100 shadow-sm">
-                    <div className="flex items-center justify-between border-b border-gray-100 pb-4">
-                        <h3 className="text-lg sm:text-xl font-bold text-gray-900">Trip Overview</h3>
-                        <span className="text-sm font-medium text-gray-500">Step 7 of 7 (v7.0.2)</span>
+                <div className="bg-white dark:bg-ghana-black rounded-2xl p-6 sm:p-8 space-y-6 border-2 border-gray-100 dark:border-gray-800 shadow-sm">
+                    <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-4">
+                        <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Trip Overview</h3>
+                        <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Step 7 of 7 (v7.0.2)</span>
                     </div>
 
                     <div className="space-y-4">
                         {/* Budget & Duration */}
-                        <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group">
+                        <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group">
                             <div className="flex items-center gap-4 flex-1">
-                                <div className="p-2 bg-white rounded-lg shadow-sm text-ghana-green">
+                                <div className="p-2 bg-white dark:bg-ghana-black rounded-lg shadow-sm text-ghana-green">
                                     <Calendar className="h-6 w-6" />
                                 </div>
                                 <div>
-                                    <span className="text-sm font-medium text-gray-500 block">Duration & Travelers</span>
-                                    <span className="text-sm sm:text-base font-bold text-gray-900">
+                                    <span className="text-sm font-medium text-gray-500 dark:text-gray-400 block">Duration & Travelers</span>
+                                    <span className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">
                                         {watchedValues.duration} days • {watchedValues.travelers} {watchedValues.travelers === 1 ? 'traveler' : 'travelers'}
                                     </span>
-                                    <div className="text-xs text-gray-500 mt-1">
+                                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                                         {watchedValues.month} • {watchedValues.arrivalCity} • {watchedValues.roomSharing}
                                     </div>
                                 </div>
@@ -734,15 +734,15 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
                         </div>
 
                         {/* Travel Style */}
-                        <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group">
+                        <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group">
                             <div className="flex items-center gap-4 flex-1">
-                                <div className="p-2 bg-white rounded-lg shadow-sm text-ghana-green">
+                                <div className="p-2 bg-white dark:bg-ghana-black rounded-lg shadow-sm text-ghana-green">
                                     <Heart className="h-6 w-6" />
                                 </div>
                                 <div>
-                                    <span className="text-sm font-medium text-gray-500 block">Style & Accommodation</span>
-                                    <span className="text-base font-bold text-gray-900">{travelStyleLabel}</span>
-                                    <div className="text-xs text-gray-500 mt-1">
+                                    <span className="text-sm font-medium text-gray-500 dark:text-gray-400 block">Style & Accommodation</span>
+                                    <span className="text-base font-bold text-gray-900 dark:text-white">{travelStyleLabel}</span>
+                                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                                         Staying in: {watchedValues.accommodationType}
                                     </div>
                                 </div>
@@ -759,14 +759,14 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
                         </div>
 
                         {/* Destinations */}
-                        <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group">
+                        <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group">
                             <div className="flex items-center gap-4 flex-1">
-                                <div className="p-2 bg-white rounded-lg shadow-sm text-ghana-green">
+                                <div className="p-2 bg-white dark:bg-ghana-black rounded-lg shadow-sm text-ghana-green">
                                     <MapPin className="h-6 w-6" />
                                 </div>
                                 <div>
-                                    <span className="text-sm font-medium text-gray-500 block">Destinations</span>
-                                    <span className="text-base font-bold text-gray-900 line-clamp-1">{regions}</span>
+                                    <span className="text-sm font-medium text-gray-500 dark:text-gray-400 block">Destinations</span>
+                                    <span className="text-base font-bold text-gray-900 dark:text-white line-clamp-1">{regions}</span>
                                 </div>
                             </div>
                             <Button
@@ -781,14 +781,14 @@ export function BudgetForm({ onSubmit, onBack, isLoading = false, initialStep = 
                         </div>
 
                         {/* Transport */}
-                        <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group">
+                        <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group">
                             <div className="flex items-center gap-4 flex-1">
-                                <div className="p-2 bg-white rounded-lg shadow-sm text-ghana-green">
+                                <div className="p-2 bg-white dark:bg-ghana-black rounded-lg shadow-sm text-ghana-green">
                                     <Calculator className="h-6 w-6" />
                                 </div>
                                 <div>
-                                    <span className="text-sm font-medium text-gray-500 block">Transport</span>
-                                    <span className="text-base font-bold text-gray-900">{transportLabel}</span>
+                                    <span className="text-sm font-medium text-gray-500 dark:text-gray-400 block">Transport</span>
+                                    <span className="text-base font-bold text-gray-900 dark:text-white">{transportLabel}</span>
                                 </div>
                             </div>
                             <Button

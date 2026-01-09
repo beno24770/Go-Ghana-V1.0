@@ -10,7 +10,7 @@ interface WeatherWidgetProps {
 
 export function WeatherWidget({ region = "Accra", temperature = 28, condition = "Mostly Sunny", className = "" }: WeatherWidgetProps) {
     return (
-        <Card className={`p-6 bg-gradient-to-br from-blue-500 to-blue-600 text-white border-none relative overflow-hidden ${className}`}>
+        <Card className={`p-6 bg-gradient-to-br from-blue-500 to-blue-600 dark:from-indigo-900 dark:to-ghana-black text-white border-none dark:border-gray-800 relative overflow-hidden ${className}`}>
             {/* Background Decor */}
             <div className="absolute -right-8 -top-8 text-blue-400/20">
                 <CloudSun size={140} />

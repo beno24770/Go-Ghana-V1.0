@@ -18,7 +18,7 @@ export function TripHeaderWidget({
     onShare
 }: TripHeaderWidgetProps) {
     return (
-        <Card className={`relative overflow-hidden group border-none shadow-lg ${className}`}>
+        <Card className={`relative overflow-hidden group border-none shadow-lg dark:bg-ghana-black ${className}`}>
             {/* Background Image */}
             <div className="absolute inset-0">
                 <img

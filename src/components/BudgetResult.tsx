@@ -261,7 +261,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
         <div className="w-full max-w-7xl mx-auto mt-8 space-y-6">
             {/* Header */}
             <div className="text-center space-y-4">
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
                     Your Trip Budget Dashboard
                 </h1>
                 <p className="text-lg text-gray-600">
@@ -276,30 +276,30 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                 <div className="lg:col-span-2 space-y-6">
                     {/* Key Metrics */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <Card className="border-t-4 border-t-ghana-green">
+                        <Card className="border-t-4 border-t-ghana-green dark:bg-ghana-black dark:border-gray-800">
                             <CardContent className="p-6 text-center">
-                                <p className="text-sm font-medium text-gray-500 uppercase mb-1">Total Budget</p>
+                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Total Budget</p>
                                 <p className="text-3xl font-bold text-ghana-green">{formatCurrency(breakdown.total)}</p>
                             </CardContent>
                         </Card>
-                        <Card className="border-t-4 border-t-[#FCD116]">
+                        <Card className="border-t-4 border-t-[#FCD116] dark:bg-ghana-black dark:border-gray-800">
                             <CardContent className="p-6 text-center">
-                                <p className="text-sm font-medium text-gray-500 uppercase mb-1">Per Person</p>
-                                <p className="text-3xl font-bold text-gray-900">{formatCurrency(perPerson)}</p>
+                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Per Person</p>
+                                <p className="text-3xl font-bold text-gray-900 dark:text-white">{formatCurrency(perPerson)}</p>
                             </CardContent>
                         </Card>
-                        <Card className="border-t-4 border-t-[#CE1126]">
+                        <Card className="border-t-4 border-t-[#CE1126] dark:bg-ghana-black dark:border-gray-800">
                             <CardContent className="p-6 text-center">
-                                <p className="text-sm font-medium text-gray-500 uppercase mb-1">Daily Average</p>
-                                <p className="text-3xl font-bold text-gray-900">{formatCurrency(dailyAverage)}</p>
+                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Daily Average</p>
+                                <p className="text-3xl font-bold text-gray-900 dark:text-white">{formatCurrency(dailyAverage)}</p>
                             </CardContent>
                         </Card>
                     </div>
 
                     {/* Budget Visualization */}
-                    <Card>
+                    <Card className="dark:bg-ghana-black dark:border-gray-800">
                         <CardHeader>
-                            <CardTitle>Budget Distribution</CardTitle>
+                            <CardTitle className="dark:text-white">Budget Distribution</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <BudgetChart data={chartData} />
@@ -307,9 +307,9 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                     </Card>
 
                     {/* Category Breakdown */}
-                    <Card>
+                    <Card className="dark:bg-ghana-black dark:border-gray-800">
                         <CardHeader>
-                            <CardTitle>Expense Categories</CardTitle>
+                            <CardTitle className="dark:text-white">Expense Categories</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-3">
                             <CategoryCard
@@ -384,33 +384,33 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
 
                     {/* Regional Breakdown (Collapsible) */}
                     {breakdown.regionalBreakdown && breakdown.regionalBreakdown.length > 0 && (
-                        <Card>
+                        <Card className="dark:bg-ghana-black dark:border-gray-800">
                             <CardHeader>
                                 <button
                                     onClick={() => setShowRegionalDetails(!showRegionalDetails)}
                                     className="w-full flex items-center justify-between hover:text-ghana-green transition-colors"
                                 >
-                                    <CardTitle>Regional Cost Details</CardTitle>
-                                    {showRegionalDetails ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                                    <CardTitle className="dark:text-white">Regional Cost Details</CardTitle>
+                                    {showRegionalDetails ? <ChevronUp className="h-5 w-5 dark:text-white" /> : <ChevronDown className="h-5 w-5 dark:text-white" />}
                                 </button>
                             </CardHeader>
                             {showRegionalDetails && (
                                 <CardContent>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         {breakdown.regionalBreakdown.map((region) => (
-                                            <Card key={region.region} className="border-l-4 border-l-ghana-green">
+                                            <Card key={region.region} className="border-l-4 border-l-ghana-green dark:bg-gray-900 dark:border-gray-800">
                                                 <CardHeader className="pb-2">
-                                                    <CardTitle className="text-lg flex justify-between">
+                                                    <CardTitle className="text-lg flex justify-between dark:text-white">
                                                         <span>{region.region}</span>
                                                         <span className="text-ghana-green">{formatCurrency(region.totalCost)}</span>
                                                     </CardTitle>
                                                 </CardHeader>
                                                 <CardContent className="space-y-2">
-                                                    <p className="text-sm text-gray-500">
+                                                    <p className="text-sm text-gray-500 dark:text-gray-400">
                                                         Daily Est.: {formatCurrency(region.dailyCost)}
                                                     </p>
                                                     {region.note && (
-                                                        <p className="text-xs text-amber-600 bg-amber-50 p-2 rounded border border-amber-100 italic">
+                                                        <p className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 p-2 rounded border border-amber-100 dark:border-amber-800 italic">
                                                             {region.note}
                                                         </p>
                                                     )}
@@ -427,9 +427,9 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                 {/* Right Column - Action Panel */}
                 <div className="lg:col-span-1">
                     <div className="sticky top-6 space-y-4">
-                        <Card className="border-2 border-ghana-green">
+                        <Card className="border-2 border-ghana-green dark:bg-ghana-black">
                             <CardHeader>
-                                <CardTitle className="text-lg">Next Steps</CardTitle>
+                                <CardTitle className="text-lg dark:text-white">Next Steps</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3">
                                 {/* Primary Action */}
@@ -447,7 +447,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                     <div className="space-y-2">
                                         <Button
                                             variant="outline"
-                                            className="w-full justify-start"
+                                            className="w-full justify-start dark:border-gray-700 dark:text-white dark:hover:bg-gray-800"
                                             onClick={() => handleAction('save')}
                                             disabled={isSaving}
                                         >
@@ -456,7 +456,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                         </Button>
                                         <Button
                                             variant="outline"
-                                            className="w-full justify-start"
+                                            className="w-full justify-start dark:border-gray-700 dark:text-white dark:hover:bg-gray-800"
                                             onClick={() => handleAction('pdf')}
                                             disabled={isGeneratingPdf}
                                         >
@@ -467,12 +467,12 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                 </div>
 
                                 {/* Get Help */}
-                                <div className="pt-2 border-t">
-                                    <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Get Expert Help</p>
+                                <div className="pt-2 border-t dark:border-gray-800">
+                                    <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">Get Expert Help</p>
                                     <div className="space-y-2">
                                         <Button
                                             variant="outline"
-                                            className="w-full justify-start"
+                                            className="w-full justify-start dark:border-gray-700 dark:text-white dark:hover:bg-gray-800"
                                             onClick={toggleChat}
                                         >
                                             <MessageCircle className="mr-2 h-4 w-4" />
@@ -480,7 +480,7 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
                                         </Button>
                                         <Button
                                             variant="outline"
-                                            className="w-full justify-start"
+                                            className="w-full justify-start dark:border-gray-700 dark:text-white dark:hover:bg-gray-800"
                                             onClick={handleConsultation}
                                             disabled={isBooking}
                                         >
@@ -492,10 +492,10 @@ export function BudgetResult({ breakdown, isLoading = false, formData, onContinu
 
                                 {/* Edit Budget */}
                                 {onEditBudget && (
-                                    <div className="pt-2 border-t">
+                                    <div className="pt-2 border-t dark:border-gray-800">
                                         <Button
                                             variant="ghost"
-                                            className="w-full justify-start text-gray-600 hover:text-ghana-green"
+                                            className="w-full justify-start text-gray-600 dark:text-gray-400 hover:text-ghana-green"
                                             onClick={() => onEditBudget?.(1)}
                                         >
                                             <Edit2 className="mr-2 h-4 w-4" />

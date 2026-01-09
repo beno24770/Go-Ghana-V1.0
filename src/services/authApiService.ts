@@ -93,14 +93,15 @@ export async function refreshToken(): Promise<string | null> {
         const response = await fetch(`${API_BASE}/auth/refresh`, {
             method: 'POST',
             credentials: 'include',
-        });
+        }).catch(() => null); // Prevent ERR_CONNECTION_REFUSED from being unhandled
 
-        if (!response.ok) {
+        if (!response || !response.ok) {
             setAuthState(null, null);
             return null;
         }
 
-        const data = await response.json();
+        const data = await response.json().catch(() => null);
+        if (!data || !data.data) return null;
         accessToken = data.data.accessToken;
         return accessToken;
     } catch {

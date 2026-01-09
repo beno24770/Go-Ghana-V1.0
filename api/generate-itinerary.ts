@@ -19,7 +19,7 @@ export default async function handler(req: Request) {
     }
 
     try {
-        const { budget, formData, availableAccommodations, availableRestaurants, availableActivities }: ItineraryRequest = await req.json();
+        const { budget, formData, availableAccommodations, availableRestaurants, availableActivities } = (await req.json()) as ItineraryRequest;
 
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
@@ -76,11 +76,11 @@ IMPORTANT: Return ONLY the JSON object, no additional text or markdown formattin
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
+            const errorData = (await response.json()) as any;
             throw new Error(`Gemini API Error: ${errorData.error?.message || response.statusText}`);
         }
 
-        const responseData = await response.json();
+        const responseData = (await response.json()) as any;
         const content = responseData.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
 
         // Parse the JSON response

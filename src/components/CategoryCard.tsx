@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { LucideIcon, ChevronDown, ChevronUp, MessageCircle } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import { ChevronDown, ChevronUp, MessageCircle } from 'lucide-react';
 import { Card, CardContent } from './ui/Card';
 import { Button } from './ui/Button';
 
@@ -41,7 +42,7 @@ export function CategoryCard({
                         </div>
                         <div className="flex-1">
                             <div className="flex items-center gap-2">
-                                <p className="font-semibold text-gray-900">{label}</p>
+                                <p className="font-semibold text-gray-900 dark:text-white">{label}</p>
                                 {tips && (
                                     <button className="text-gray-400 hover:text-gray-600">
                                         {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
@@ -52,7 +53,7 @@ export function CategoryCard({
                         </div>
                     </div>
                     <div className="text-right">
-                        <p className="text-lg font-bold text-gray-900">{formatCurrency(amount)}</p>
+                        <p className="text-lg font-bold text-gray-900 dark:text-white">{formatCurrency(amount)}</p>
                         {onEdit && (
                             <Button
                                 variant="ghost"
@@ -61,14 +62,14 @@ export function CategoryCard({
                                     e.stopPropagation();
                                     onEdit();
                                 }}
-                                className="text-xs text-gray-500 hover:text-ghana-green h-6 px-2 mt-1"
+                                className="text-xs text-gray-500 dark:text-gray-400 hover:text-ghana-green h-6 px-2 mt-1"
                             >
                                 Edit
                             </Button>
                         )}
                     </div>
                 </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                     <div
                         className="h-full rounded-full transition-all duration-300"
                         style={{ width: `${percentage}%`, backgroundColor: color }}
@@ -77,11 +78,11 @@ export function CategoryCard({
 
                 {/* Expandable Tips Section */}
                 {tips && isExpanded && (
-                    <div className="mt-4 pt-4 border-t border-gray-100 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
-                        <p className="text-sm font-semibold text-gray-700 mb-2">💡 What to expect:</p>
+                    <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
+                        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">💡 What to expect:</p>
                         <ul className="space-y-2">
                             {tips.map((tip, index) => (
-                                <li key={index} className="text-sm text-gray-600 flex items-start gap-2">
+                                <li key={index} className="text-sm text-gray-600 dark:text-gray-400 flex items-start gap-2">
                                     <span className="text-ghana-green mt-0.5">•</span>
                                     <span>{tip}</span>
                                 </li>

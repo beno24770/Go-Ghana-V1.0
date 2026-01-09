@@ -60,13 +60,13 @@ export function Dashboard() {
     if (!activeTrip) {
         return (
             <div className="container mx-auto px-4 py-12 text-center">
-                <div className="max-w-md mx-auto bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <div className="max-w-md mx-auto bg-white dark:bg-ghana-black p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+                    <div className="w-16 h-16 bg-green-100 dark:bg-ghana-green/20 rounded-full flex items-center justify-center mx-auto mb-6">
                         <MapPin className="h-8 w-8 text-[#006B3F]" />
                     </div>
                     {error && <p className="text-red-500 mb-4">{error}</p>}
-                    <h2 className="text-2xl font-bold mb-2">No trips yet</h2>
-                    <p className="text-muted-foreground mb-8">Start planning your Ghana adventure to see your dashboard.</p>
+                    <h2 className="text-2xl font-bold mb-2 dark:text-white">No trips yet</h2>
+                    <p className="text-muted-foreground dark:text-gray-400 mb-8">Start planning your Ghana adventure to see your dashboard.</p>
                     <Button
                         onClick={() => navigate('/?start=true')}
                         className="w-full bg-[#006B3F] hover:bg-[#005030]"
@@ -79,18 +79,18 @@ export function Dashboard() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50/50 pb-12">
+        <div className="min-h-screen bg-gray-50/50 dark:bg-[#111827] pb-12">
             {/* Navigation Tabs (Mock) */}
-            <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-200 mb-6">
+            <div className="sticky top-0 z-30 bg-white/80 dark:bg-ghana-black/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 mb-6">
                 <div className="container mx-auto px-4 overflow-x-auto">
                     <div className="flex items-center gap-1 h-14">
                         <Button variant="ghost" className="bg-[#006B3F]/10 text-[#006B3F] hover:bg-[#006B3F]/20 rounded-full px-4 h-9 text-sm font-medium">
                             Dashboard
                         </Button>
-                        <Button variant="ghost" className="text-gray-600 hover:text-gray-900 rounded-full px-4 h-9 text-sm font-medium">
+                        <Button variant="ghost" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-full px-4 h-9 text-sm font-medium">
                             My Trips
                         </Button>
-                        <Button variant="ghost" className="text-gray-600 hover:text-gray-900 rounded-full px-4 h-9 text-sm font-medium">
+                        <Button variant="ghost" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-full px-4 h-9 text-sm font-medium">
                             Wallet
                         </Button>
                     </div>
@@ -158,7 +158,7 @@ export function Dashboard() {
 
                 {/* 7. Quick Action / Placeholder */}
                 <div className="col-span-1 md:col-span-2 lg:col-span-1 row-span-1">
-                    <div className="bg-[#FCD116] rounded-lg p-6 h-full flex flex-col justify-center items-start text-[#1F2937]">
+                    <div className="bg-[#FCD116] dark:bg-[#FCD116]/90 rounded-2xl p-6 h-full flex flex-col justify-center items-start text-[#1F2937]">
                         <h3 className="font-bold text-lg mb-2">Ready for your trip?</h3>
                         <p className="text-sm mb-4 opacity-80">Check your visa requirements and vaccinations.</p>
                         <Button variant="outline" className="w-full bg-white/20 border-black/10 hover:bg-white/30 text-black border-none">
@@ -172,16 +172,16 @@ export function Dashboard() {
             {/* Simple Trip Selector for verification/switching */}
             {trips.length > 1 && (
                 <div className="container mx-auto px-4 mt-8">
-                    <h3 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">Your Other Trips</h3>
+                    <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4">Your Other Trips</h3>
                     <div className="flex gap-4 overflow-x-auto pb-4">
                         {trips.filter(t => t.id !== activeTripId).map(trip => (
                             <button
                                 key={trip.id}
                                 onClick={() => setActiveTripId(trip.id)}
-                                className="min-w-[200px] p-4 bg-white rounded-lg border border-gray-200 hover:border-[#006B3F] transition-colors text-left"
+                                className="min-w-[200px] p-4 bg-white dark:bg-ghana-black rounded-xl border border-gray-200 dark:border-gray-800 hover:border-[#006B3F] transition-colors text-left"
                             >
-                                <div className="font-bold text-gray-800">{trip.formData.duration} Days in Ghana</div>
-                                <div className="text-xs text-gray-500 mt-1">{new Date(trip.createdAt.seconds * 1000).toLocaleDateString()}</div>
+                                <div className="font-bold text-gray-800 dark:text-white">{trip.formData.duration} Days in Ghana</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">{new Date(trip.createdAt.seconds * 1000).toLocaleDateString()}</div>
                             </button>
                         ))}
                     </div>

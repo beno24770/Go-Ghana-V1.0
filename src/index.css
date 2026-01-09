@@ -57,6 +57,14 @@ body {
   overflow-x: hidden;
 }
 
+.dark body {
+  background-color: #111827;
+  color: #F9FAFB;
+  --tooltip-bg: #1F2937;
+  --tooltip-border: #374151;
+  --tooltip-text: #F9FAFB;
+}
+
 /* Handwritten Font Utility */
 .font-hand {
   font-family: 'Caveat', cursive;

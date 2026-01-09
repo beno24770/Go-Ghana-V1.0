@@ -13,6 +13,8 @@ import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 import { knowledgeService } from './services/knowledgeService';
 import { OfflineGuide } from './components/offline/OfflineGuide';
 import { SplashIntro } from './components/SplashIntro';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { ThemeToggle } from './components/ThemeToggle';
 import type { BudgetFormData, BudgetBreakdown, Tour } from './types';
 import type { SelectedRecommendations } from './types/recommendations';
 
@@ -387,9 +389,12 @@ function AppContent() {
       {/* Navigation Bar */}
       <div className="fixed top-2 sm:top-4 left-2 right-2 sm:left-auto sm:right-4 z-50">
         <div className="flex flex-wrap gap-2 items-center justify-end">
+          {/* Theme Toggle - Global */}
+          <ThemeToggle />
+
           {/* Local Mode Toggle - Global */}
           {currentStep !== 1 && currentStep !== 13 && (
-            <div className="flex items-center gap-2 px-2 sm:px-3 py-1.5 sm:py-2 bg-white/90 backdrop-blur shadow-md rounded-full">
+            <div className="flex items-center gap-2 px-2 sm:px-3 py-1.5 sm:py-2 bg-white/90 dark:bg-ghana-black/90 dark:border dark:border-gray-800 backdrop-blur shadow-md rounded-full">
               <span className="text-xs font-medium text-gray-600 hidden sm:inline">Local</span>
               <button
                 onClick={() => handleLocalModeToggle(!isLocalMode)}
@@ -412,7 +417,7 @@ function AppContent() {
                 setCurrentStep(1);
                 setIsLocalMode(false); // Optional: Reset local mode when going home
               }}
-              className="px-3 sm:px-4 py-1.5 sm:py-2 bg-white/90 backdrop-blur shadow-md rounded-full text-xs sm:text-sm font-medium hover:bg-white transition-colors flex items-center gap-1 sm:gap-2 min-h-[44px] whitespace-nowrap"
+              className="px-3 sm:px-4 py-1.5 sm:py-2 bg-white/90 dark:bg-ghana-black/90 dark:border dark:border-gray-800 dark:text-white backdrop-blur shadow-md rounded-full text-xs sm:text-sm font-medium hover:bg-white dark:hover:bg-gray-800 transition-colors flex items-center gap-1 sm:gap-2 min-h-[44px] whitespace-nowrap"
             >
               <span className="sm:inline">Home</span>
             </button>
@@ -420,7 +425,7 @@ function AppContent() {
           {currentStep !== 1 && currentStep !== 10 && currentStep !== 11 && currentStep !== 12 && currentStep !== 13 && currentStep !== 14 && currentStep !== 15 && (
             <button
               onClick={() => setCurrentStep(10)}
-              className="px-3 sm:px-4 py-1.5 sm:py-2 bg-white/90 backdrop-blur shadow-md rounded-full text-xs sm:text-sm font-medium hover:bg-white transition-colors min-h-[44px] whitespace-nowrap"
+              className="px-3 sm:px-4 py-1.5 sm:py-2 bg-white/90 dark:bg-ghana-black/90 dark:border dark:border-gray-800 dark:text-white backdrop-blur shadow-md rounded-full text-xs sm:text-sm font-medium hover:bg-white dark:hover:bg-gray-800 transition-colors min-h-[44px] whitespace-nowrap"
             >
               My Trips
             </button>
@@ -448,7 +453,7 @@ function AppContent() {
                   setCurrentStep(1);
                 }
               }}
-              className="px-3 sm:px-4 py-1.5 sm:py-2 bg-white/90 backdrop-blur shadow-md rounded-full text-xs sm:text-sm font-medium hover:bg-white transition-colors min-h-[44px] whitespace-nowrap"
+              className="px-3 sm:px-4 py-1.5 sm:py-2 bg-white/90 dark:bg-ghana-black/90 dark:border dark:border-gray-800 dark:text-white backdrop-blur shadow-md rounded-full text-xs sm:text-sm font-medium hover:bg-white dark:hover:bg-gray-800 transition-colors min-h-[44px] whitespace-nowrap"
             >
               {currentStep === 10 && formData ? 'Back to Summary' : 'Back'}
             </button>
@@ -467,13 +472,15 @@ function AppContent() {
 
 function App() {
   return (
-    <CurrencyProvider>
-      <AuthProvider>
-        <ChatProvider>
-          <AppContent />
-        </ChatProvider>
-      </AuthProvider>
-    </CurrencyProvider>
+    <ThemeProvider>
+      <CurrencyProvider>
+        <AuthProvider>
+          <ChatProvider>
+            <AppContent />
+          </ChatProvider>
+        </AuthProvider>
+      </CurrencyProvider>
+    </ThemeProvider>
   );
 }
 

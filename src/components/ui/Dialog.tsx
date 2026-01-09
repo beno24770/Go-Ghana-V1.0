@@ -17,6 +17,7 @@ interface DialogHeaderProps {
 
 interface DialogTitleProps {
     children: ReactNode;
+    className?: string;
 }
 
 export function Dialog({ open, onOpenChange, children }: DialogProps) {
@@ -51,9 +52,9 @@ export function DialogHeader({ children }: DialogHeaderProps) {
     );
 }
 
-export function DialogTitle({ children }: DialogTitleProps) {
+export function DialogTitle({ children, className = '' }: DialogTitleProps) {
     return (
-        <h2 className="text-xl font-semibold text-gray-900">
+        <h2 className={`text-xl font-semibold text-gray-900 ${className}`}>
             {children}
         </h2>
     );

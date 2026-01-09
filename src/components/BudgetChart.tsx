@@ -67,17 +67,18 @@ export function BudgetChart({ data }: BudgetChartProps) {
                     <Tooltip
                         formatter={(value: number) => `GHS ${value.toLocaleString()}`}
                         contentStyle={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                            border: '1px solid #e5e7eb',
+                            backgroundColor: 'var(--tooltip-bg, rgba(255, 255, 255, 0.95))',
+                            border: '1px solid var(--tooltip-border, #e5e7eb)',
                             borderRadius: '8px',
-                            padding: '8px 12px'
+                            padding: '8px 12px',
+                            color: 'var(--tooltip-text, inherit)'
                         }}
                     />
                     <Legend
                         verticalAlign="bottom"
                         height={36}
                         iconType="circle"
-                        formatter={(value) => <span className="text-sm">{value}</span>}
+                        formatter={(value) => <span className="text-sm dark:text-gray-300">{value}</span>}
                     />
                 </PieChart>
             </ResponsiveContainer>

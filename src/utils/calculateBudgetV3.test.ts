@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest';
 import { calculateBudget } from './calculateBudget';
 import type { BudgetFormData } from '../types';
 
@@ -12,7 +13,6 @@ describe('Budget Engine V3', () => {
         regions: ['Greater Accra', 'Central'],
         transportMode: 'public', // Cheap
         month: 'October', // Shoulder season
-        currency: 'USD',
         includeFlights: false,
         includeInsurance: false,
         roomSharing: 'private'

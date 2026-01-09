@@ -19,7 +19,7 @@ export default async function handler(req: Request) {
     }
 
     try {
-        const { recommendation }: VerificationRequest = await req.json();
+        const { recommendation } = (await req.json()) as VerificationRequest;
 
         if (!recommendation || !recommendation.name || !recommendation.location) {
             return new Response(
@@ -81,7 +81,7 @@ If information is not available, omit that field.`;
             throw new Error(`Verification failed: ${response.statusText}`);
         }
 
-        const responseData = await response.json();
+        const responseData = (await response.json()) as any;
         const content = responseData.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
 
         const cleanContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();

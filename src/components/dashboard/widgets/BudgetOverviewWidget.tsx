@@ -27,18 +27,18 @@ export function BudgetOverviewWidget({ totalBudget, breakdown, className = "" }:
     ].filter(item => item.value > 0);
 
     return (
-        <Card className={`p-6 flex flex-col ${className}`}>
+        <Card className={`p-6 flex flex-col dark:bg-ghana-black dark:border-gray-800 ${className}`}>
             <div className="flex justify-between items-start mb-4">
                 <div>
-                    <h3 className="font-bold flex items-center gap-2">
+                    <h3 className="font-bold flex items-center gap-2 dark:text-white">
                         <span className="w-1 h-4 bg-[#006B3F] rounded-full"></span>
                         BUDGET
                     </h3>
-                    <p className="text-2xl font-bold mt-1">
-                        ${totalBudget.toLocaleString()} <span className="text-sm font-normal text-gray-400">Total</span>
+                    <p className="text-2xl font-bold mt-1 dark:text-white">
+                        ${totalBudget.toLocaleString()} <span className="text-sm font-normal text-gray-400 dark:text-gray-500">Total</span>
                     </p>
                 </div>
-                <button className="text-gray-400 hover:text-gray-600">
+                <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                     <MoreHorizontal className="w-5 h-5" />
                 </button>
             </div>
@@ -53,13 +53,19 @@ export function BudgetOverviewWidget({ totalBudget, breakdown, className = "" }:
                             paddingAngle={5}
                             dataKey="value"
                         >
-                            {data.map((entry, index) => (
+                            {data.map((_, index) => (
                                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                             ))}
                         </Pie>
                         <Tooltip
                             formatter={(value: number) => `$${value.toLocaleString()}`}
-                            contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                            contentStyle={{
+                                backgroundColor: 'var(--tooltip-bg, rgba(255, 255, 255, 0.95))',
+                                border: '1px solid var(--tooltip-border, transparent)',
+                                borderRadius: '8px',
+                                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                                color: 'var(--tooltip-text, inherit)'
+                            }}
                         />
                     </PieChart>
                 </ResponsiveContainer>
@@ -67,13 +73,13 @@ export function BudgetOverviewWidget({ totalBudget, breakdown, className = "" }:
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <div className="text-center">
                         <span className="text-xs text-gray-400 block">Spend</span>
-                        <span className="font-bold text-gray-700">0%</span>
+                        <span className="font-bold text-gray-700 dark:text-gray-300">0%</span>
                     </div>
                 </div>
             </div>
 
             {/* Legend - simplified */}
-            <div className="flex flex-wrap gap-2 mt-4 text-xs text-gray-500">
+            <div className="flex flex-wrap gap-2 mt-4 text-xs text-gray-500 dark:text-gray-400">
                 {data.slice(0, 3).map((item, index) => (
                     <div key={item.name} className="flex items-center gap-1">
                         <span className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[index] }}></span>

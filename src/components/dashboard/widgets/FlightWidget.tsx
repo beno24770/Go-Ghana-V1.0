@@ -11,7 +11,7 @@ interface FlightWidgetProps {
 
 export function FlightWidget({ origin = "JFK", destination = "ACC", date = "Pending", budget = 1200, className = "" }: FlightWidgetProps) {
     return (
-        <Card className={`p-6 bg-[#4B0082] text-white border-none ${className}`}>
+        <Card className={`p-6 bg-[#4B0082] dark:bg-ghana-black text-white border-none dark:border dark:border-gray-800 ${className}`}>
             <div className="flex justify-between items-start mb-6">
                 <h3 className="font-bold flex items-center gap-2 uppercase text-xs tracking-wider text-purple-200">
                     <Plane className="w-3 h-3" />

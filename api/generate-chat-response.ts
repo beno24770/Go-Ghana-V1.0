@@ -17,7 +17,7 @@ export default async function handler(req: Request) {
     }
 
     try {
-        const { userMessage, context = {} }: ChatRequest = await req.json();
+        const { userMessage, context = {} } = (await req.json()) as ChatRequest;
 
         if (!userMessage) {
             return new Response(
@@ -73,11 +73,11 @@ Response style:
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
+            const errorData = (await response.json()) as any;
             throw new Error(`Gemini API Error: ${errorData.error?.message || response.statusText}`);
         }
 
-        const responseData = await response.json();
+        const responseData = (await response.json()) as any;
         const content = responseData.candidates?.[0]?.content?.parts?.[0]?.text || "I'm sorry, I couldn't generate a response.";
 
         return new Response(JSON.stringify({
